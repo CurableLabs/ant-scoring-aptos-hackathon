@@ -1,0 +1,189 @@
+{
+  "proposals": [
+    {
+      "id": 1,
+      "title": "CRISPR-Cas9 Gene Therapy for Alzheimer's Disease",
+      "researcher": "Dr. Alice Chen",
+      "institution": "Stanford University",
+      "description": "Novel approach using CRISPR-Cas9 to edit APOE4 variants in brain cells. Our preliminary studies in transgenic mice show a 40% reduction in amyloid plaques and improved cognitive function in behavioral tests. This research could revolutionize Alzheimer's treatment by addressing the genetic root cause.",
+      "ipfs_hash": "QmAlzheimer12345abcdef",
+      "funding_requested": "250000",
+      "duration_months": 24,
+      "category": "Gene Therapy",
+      "tags": ["CRISPR", "Alzheimer's", "Neuroscience", "Gene Editing"]
+    },
+    {
+      "id": 2,
+      "title": "AI-Powered Drug Discovery for Rare Cancers",
+      "researcher": "Dr. Bob Rodriguez",
+      "institution": "MIT",
+      "description": "Machine learning platform combining genomics data with chemical libraries to identify novel therapeutic targets for pediatric sarcomas. Our algorithm has successfully identified 12 potential drug candidates, with 3 validated in cell culture showing >70% growth inhibition.",
+      "ipfs_hash": "QmCancerAI67890ghijkl",
+      "funding_requested": "180000",
+      "duration_months": 18,
+      "category": "AI/ML in Healthcare",
+      "tags": ["AI", "Drug Discovery", "Cancer", "Machine Learning", "Pediatric"]
+    },
+    {
+      "id": 3,
+      "title": "Microbiome Engineering for Diabetes Prevention",
+      "researcher": "Dr. Carol Kim",
+      "institution": "UCSF",
+      "description": "Engineered probiotic consortium designed to regulate glucose metabolism through targeted microbiome modification. Initial results in diabetic mouse models show 30% improvement in glucose tolerance and 25% reduction in inflammatory markers.",
+      "ipfs_hash": "QmMicrobiome999mnop",
+      "funding_requested": "200000",
+      "duration_months": 20,
+      "category": "Microbiome Research",
+      "tags": ["Microbiome", "Diabetes", "Probiotics", "Metabolism"]
+    },
+    {
+      "id": 4,
+      "title": "Quantum Computing for Protein Folding Prediction",
+      "researcher": "Dr. David Zhang",
+      "institution": "Caltech",
+      "description": "Novel quantum algorithm for predicting protein folding structures with unprecedented accuracy. Our quantum simulator achieves 95% accuracy on known proteins and could accelerate drug discovery by 100x for complex biological targets.",
+      "ipfs_hash": "QmQuantumProtein456qrs",
+      "funding_requested": "300000",
+      "duration_months": 30,
+      "category": "Quantum Computing",
+      "tags": ["Quantum Computing", "Protein Folding", "Drug Discovery", "Algorithm"]
+    },
+    {
+      "id": 5,
+      "title": "Nanoparticle Delivery System for Brain Cancer",
+      "researcher": "Dr. Emily Watson",
+      "institution": "Johns Hopkins",
+      "description": "Targeted nanoparticle system that crosses the blood-brain barrier to deliver chemotherapy directly to glioblastoma tumors. In vitro studies show 80% tumor cell death with minimal impact on healthy neurons.",
+      "ipfs_hash": "QmNanoparticles789tuv",
+      "funding_requested": "220000",
+      "duration_months": 22,
+      "category": "Nanotechnology",
+      "tags": ["Nanoparticles", "Brain Cancer", "Drug Delivery", "Blood-Brain Barrier"]
+    }
+  ],
+  "scorers": [
+    {
+      "name": "Prof. David Miller",
+      "institution": "Harvard Medical School",
+      "specialty": "Biotech & Gene Therapy",
+      "experience_years": 15,
+      "publications": 89,
+      "h_index": 42
+    },
+    {
+      "name": "Dr. Emily Johnson", 
+      "institution": "Google DeepMind Health",
+      "specialty": "AI/ML in Healthcare",
+      "experience_years": 8,
+      "publications": 34,
+      "h_index": 28
+    },
+    {
+      "name": "Dr. Frank Zhang",
+      "institution": "Broad Institute",
+      "specialty": "Microbiome Research",
+      "experience_years": 12,
+      "publications": 67,
+      "h_index": 35
+    },
+    {
+      "name": "Prof. Sarah Williams",
+      "institution": "IBM Research",
+      "specialty": "Quantum Computing",
+      "experience_years": 10,
+      "publications": 45,
+      "h_index": 31
+    },
+    {
+      "name": "Dr. Michael Brown",
+      "institution": "NIH",
+      "specialty": "Nanotechnology & Drug Delivery",
+      "experience_years": 13,
+      "publications": 78,
+      "h_index": 38
+    }
+  ],
+  "scoring_scenarios": {
+    "high_quality": {
+      "description": "Exceptional research with strong preliminary data",
+      "expected_score_range": [85, 95],
+      "characteristics": ["Novel approach", "Strong preliminary data", "Clear methodology", "High impact potential"]
+    },
+    "good_quality": {
+      "description": "Solid research with decent feasibility",
+      "expected_score_range": [75, 84],
+      "characteristics": ["Incremental innovation", "Some preliminary data", "Standard methodology", "Moderate impact"]
+    },
+    "needs_improvement": {
+      "description": "Interesting concept but requires more development",
+      "expected_score_range": [60, 74],
+      "characteristics": ["Limited novelty", "Weak preliminary data", "Unclear methodology", "Uncertain impact"]
+    },
+    "borderline_passing": {
+      "description": "Just meets the 80% threshold",
+      "expected_score_range": [80, 82],
+      "characteristics": ["Adequate in most areas", "Meeting minimum requirements", "Some strengths and weaknesses"]
+    }
+  },
+  "ant_scoring_weights": {
+    "scientific_merit": {
+      "weight": 40,
+      "components": {
+        "novelty": 33.33,
+        "biological_plausibility": 33.33,
+        "prior_evidence": 33.33
+      }
+    },
+    "feasibility": {
+      "weight": 25,
+      "components": {
+        "technical_viability": 33.33,
+        "data_quality": 33.33,
+        "clarity_of_protocol": 33.33
+      }
+    },
+    "community_alignment": {
+      "weight": 20,
+      "components": {
+        "mission_fit": 50,
+        "dao_engagement": 50
+      }
+    },
+    "resource_efficiency": {
+      "weight": 10,
+      "components": {
+        "cost_effectiveness": 50,
+        "agentic_resource_use": 50
+      }
+    },
+    "open_science": {
+      "weight": 5,
+      "components": {
+        "data_protocol_sharing": 50,
+        "collaborative_potential": 50
+      }
+    }
+  },
+  "funding_tiers": {
+    "tier_1": {
+      "score_range": [80, 84],
+      "base_funding": 10000,
+      "bonus_multiplier": 1.0
+    },
+    "tier_2": {
+      "score_range": [85, 89],
+      "base_funding": 10000,
+      "bonus_multiplier": 1.2
+    },
+    "tier_3": {
+      "score_range": [90, 94],
+      "base_funding": 10000,
+      "bonus_multiplier": 1.5
+    },
+    "tier_4": {
+      "score_range": [95, 100],
+      "base_funding": 10000,
+      "bonus_multiplier": 2.0
+    }
+  }
+}
