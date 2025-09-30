@@ -1,5 +1,8 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 # ANT-CURE Token Integration Strategy
@@ -233,6 +236,7 @@ This creates a complete DeFi ecosystem where:
 
 
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
 =======
@@ -468,5 +472,7 @@ This creates a complete DeFi ecosystem where:
 
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

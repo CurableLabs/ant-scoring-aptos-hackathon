@@ -1,5 +1,8 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 // Example Node.js backend for wallet-free blockchain integration
@@ -156,6 +159,7 @@ app.listen(PORT, () => {
 // Export for testing
 module.exports = app;
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
 =======
@@ -314,5 +318,7 @@ app.listen(PORT, () => {
 module.exports = app;
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

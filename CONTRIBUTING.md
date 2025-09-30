@@ -1,5 +1,8 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 # 🤝 Contributing to America's Next Top CurAble
@@ -217,6 +220,7 @@ Every contribution helps make molecular discovery more accessible and engaging. 
 
 Start by exploring the [Good First Issues](https://github.com/[your-username]/americas-next-top-curable/labels/good%20first%20issue) label!
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
 =======
@@ -436,5 +440,7 @@ Every contribution helps make molecular discovery more accessible and engaging. 
 Start by exploring the [Good First Issues](https://github.com/[your-username]/americas-next-top-curable/labels/good%20first%20issue) label!
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

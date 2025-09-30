@@ -1,5 +1,8 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 [package]
@@ -23,6 +26,7 @@ local = "framework/move-stdlib"
 
 
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
 =======
@@ -48,5 +52,7 @@ local = "framework/move-stdlib"
 
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

@@ -1,5 +1,8 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 Aptos Ctrl+MOVE Hackathon: 3 Lanes Actionable Draft
@@ -419,6 +422,7 @@ Packages
 
 			
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
 Aptos Ctrl+MOVE Hackathon: 3 Lanes Actionable Draft
 Hi there! This is a possible route to utilizing the 3 lanes plan and 10000% open for critique, changes, etc. For housekeeping the on-chain logic will be separated into three chunks that are clean (hopefully????), professional Move modules, and the frontend will be a single, self-contained HTML file for maximum portability and ease of demonstration.
@@ -837,5 +841,7 @@ Packages
 
 			
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

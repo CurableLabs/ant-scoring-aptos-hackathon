@@ -1,5 +1,8 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 # 🚀 ANT Scoring System - Integration Guide
@@ -343,6 +346,7 @@ The integration connects your innovative ANT scoring algorithm with a full-stack
 
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
 # 🚀 ANT Scoring System - Integration Guide
 
@@ -685,5 +689,7 @@ The integration connects your innovative ANT scoring algorithm with a full-stack
 
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

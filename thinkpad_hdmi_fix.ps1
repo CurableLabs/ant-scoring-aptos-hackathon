@@ -1,5 +1,8 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 # ThinkPad HDMI Connection Fix Script
@@ -235,6 +238,7 @@ Write-Host ""
 Write-Host "=== TROUBLESHOOTING COMPLETE ===" -ForegroundColor Green
 Write-Host "Try connecting your monitor now!" -ForegroundColor Yellow
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
 # ThinkPad HDMI Connection Fix Script
 # Addresses common ThinkPad hybrid graphics and DisplayLink issues
@@ -469,5 +473,7 @@ Write-Host ""
 Write-Host "=== TROUBLESHOOTING COMPLETE ===" -ForegroundColor Green
 Write-Host "Try connecting your monitor now!" -ForegroundColor Yellow
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
