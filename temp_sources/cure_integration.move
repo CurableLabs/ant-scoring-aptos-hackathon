@@ -1,7 +1,10 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -284,6 +287,7 @@ module ant_scoring::cure_integration {
     const E_PROPOSAL_NOT_ACTIVE: u64 = 105; 
     const E_VOTING_ENDED: u64 = 106;
 }
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -565,6 +569,8 @@ module ant_scoring::cure_integration {
     const E_VOTING_ENDED: u64 = 106;
 }
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
