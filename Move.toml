@@ -1,31 +1,6 @@
 [package]
 name = "ant_scoring"
 version = "1.0.0"
-authors = ["CurableDAO Team"]
-license = "MIT"
 
 [addresses]
-ant_scoring = "_"
-std = "0x1"
-aptos_framework = "0x1"
-aptos_std = "0x1"
-
-[dev-addresses]
-ant_scoring = "0x42"
-
-[dependencies.AptosFramework]
-git = "https://github.com/aptos-labs/aptos-core.git"
-rev = "aptos-node-v1.8.0"
-subdir = "aptos-move/framework/aptos-framework"
-
-[dependencies.AptosStdlib]
-git = "https://github.com/aptos-labs/aptos-core.git"
-rev = "aptos-node-v1.8.0"
-subdir = "aptos-move/framework/aptos-stdlib"
-
-[dependencies.MoveStdlib]
-git = "https://github.com/aptos-labs/aptos-core.git"
-rev = "aptos-node-v1.8.0"
-subdir = "aptos-move/framework/move-stdlib"
-
-[dev-dependencies]
+ant_scoring = "0xa7b69f0024e6a6a82b5baec9b6b5fc89b12ab4e19066fcf6b9db52ceb76b6915"

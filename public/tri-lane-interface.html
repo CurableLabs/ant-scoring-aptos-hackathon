@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧬 Tri-Lane Tokenomics - ANT System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .tri-lane-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .lane-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lane-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+
+        .lane-1::before { background: linear-gradient(90deg, #ff6b6b, #ffa500); }
+        .lane-2::before { background: linear-gradient(90deg, #4ecdc4, #44a08d); }
+        .lane-3::before { background: linear-gradient(90deg, #a8edea, #fed6e3); }
+
+        .lane-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .lane-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
+        }
+
+        .lane-title {
+            flex: 1;
+        }
+
+        .lane-title h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .lane-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .lane-content {
+            space-y: 20px;
+        }
+
+        .token-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .token-balance {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .balance-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .balance-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .token-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-primary { background: #007bff; color: white; }
+        .btn-primary:hover { background: #0056b3; transform: translateY(-2px); }
+
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #1e7e34; transform: translateY(-2px); }
+
+        .btn-warning { background: #ffc107; color: #333; }
+        .btn-warning:hover { background: #e0a800; transform: translateY(-2px); }
+
+        .btn-info { background: #17a2b8; color: white; }
+        .btn-info:hover { background: #117a8b; transform: translateY(-2px); }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .flow-diagram {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .flow-step {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .flow-step::after {
+            content: '→';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: #007bff;
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+
+        .step-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .step-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .step-description {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #333;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .contract-status {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ffc107;
+        }
+
+        .status-dot.connected { background: #28a745; }
+        .status-dot.error { background: #dc3545; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .transaction-log {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-left: 3px solid #007bff;
+            background: white;
+        }
+
+        .success { border-left-color: #28a745; }
+        .error { border-left-color: #dc3545; }
+        .warning { border-left-color: #ffc107; }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .tri-lane-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-steps {
+                flex-direction: column;
+            }
+            
+            .flow-step::after {
+                content: '↓';
+                right: auto;
+                bottom: -25px;
+                top: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧬 Tri-Lane Tokenomics</h1>
+            <p>Lab Credits → CURE Tokens → Sub-DAO Governance</p>
+            <p><strong>Live on Aptos Devnet</strong></p>
+        </div>
+
+        <!-- Flow Diagram -->
+        <div class="flow-diagram">
+            <h3 style="text-align: center; margin-bottom: 30px;">🔄 Token Flow Pipeline</h3>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="step-icon">🧾</div>
+                    <div class="step-title">Lab Credits</div>
+                    <div class="step-description">Non-transferable IP custody</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-icon">💎</div>
+                    <div class="step-title">CURE Tokens</div>
+                    <div class="step-description">Community validation & gating</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-icon">🏛️</div>
+                    <div class="step-title">Sub-DAO Tokens</div>
+                    <div class="step-description">Governance & crowdfunding</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value" id="lab-credits-count">0</div>
+                <div class="metric-label">Lab Credits Issued</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="cure-supply">0</div>
+                <div class="metric-label">CURE Total Supply</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="subdao-count">0</div>
+                <div class="metric-label">Active Sub-DAOs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="current-phase">1</div>
+                <div class="metric-label">CURE Phase</div>
+            </div>
+        </div>
+
+        <!-- Tri-Lane Interface -->
+        <div class="tri-lane-grid">
+            <!-- Lane 1: Lab Credits -->
+            <div class="lane-card lane-1">
+                <div class="lane-header">
+                    <div class="lane-icon">🧾</div>
+                    <div class="lane-title">
+                        <h2>Lane 1: Lab Credits</h2>
+                        <div class="lane-subtitle">Non-transferable IP Custody</div>
+                    </div>
+                </div>
+                
+                <div class="lane-content">
+                    <div class="token-info">
+                        <div class="token-balance">
+                            <span class="balance-label">Your Lab Credits:</span>
+                            <span class="balance-value" id="user-lab-credits">0</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: #666;">
+                            ⚠️ Non-transferable - Immutable provenance record
+                        </div>
+                    </div>
+
+                    <form id="lab-credit-form">
+                        <div class="input-group">
+                            <label>IP Title:</label>
+                            <input type="text" id="ip-title" placeholder="Enter your research/IP title" required>
+                        </div>
+                        <div class="input-group">
+                            <label>IP Description:</label>
+                            <textarea id="ip-description" rows="3" placeholder="Describe your intellectual property" required></textarea>
+                        </div>
+                        <div class="input-group">
+                            <label>IPFS Hash (optional):</label>
+                            <input type="text" id="ip-hash" placeholder="QmHash...">
+                        </div>
+                        <div class="token-actions">
+                            <button type="submit" class="btn btn-primary">🧾 Issue Lab Credit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Lane 2: CURE Tokens -->
+            <div class="lane-card lane-2">
+                <div class="lane-header">
+                    <div class="lane-icon">💎</div>
+                    <div class="lane-title">
+                        <h2>Lane 2: CURE Tokens</h2>
+                        <div class="lane-subtitle">Validation & Community Gating</div>
+                    </div>
+                </div>
+                
+                <div class="lane-content">
+                    <div class="token-info">
+                        <div class="token-balance">
+                            <span class="balance-label">Your CURE Balance:</span>
+                            <span class="balance-value" id="user-cure-balance">0</span>
+                        </div>
+                        <div class="token-balance">
+                            <span class="balance-label">Staked CURE:</span>
+                            <span class="balance-value" id="user-cure-staked">0</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: #666;">
+                            Current Phase: <span id="cure-phase-display">Phase 1 (Fixed Price: $0.10)</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Purchase CURE Tokens:</label>
+                        <input type="number" id="cure-buy-amount" placeholder="Amount to purchase" min="1">
+                    </div>
+                    <div class="token-actions">
+                        <button class="btn btn-success" onclick="buyCURETokens()">💰 Buy CURE</button>
+                        <button class="btn btn-warning" onclick="showStakingModal()" id="stake-btn">🎯 Stake on Research</button>
+                        <button class="btn btn-info" onclick="showGovernanceModal()" disabled id="governance-btn">🗳️ Governance</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lane 3: Sub-DAO Tokens -->
+            <div class="lane-card lane-3">
+                <div class="lane-header">
+                    <div class="lane-icon">🏛️</div>
+                    <div class="lane-title">
+                        <h2>Lane 3: Sub-DAO Tokens</h2>
+                        <div class="lane-subtitle">Governance & Crowdfunding</div>
+                    </div>
+                </div>
+                
+                <div class="lane-content">
+                    <div class="token-info">
+                        <div class="token-balance">
+                            <span class="balance-label">Your DAO Tokens:</span>
+                            <span class="balance-value" id="user-dao-tokens">0</span>
+                        </div>
+                        <div class="token-balance">
+                            <span class="balance-label">Active Sub-DAOs:</span>
+                            <span class="balance-value" id="active-subdaos">0</span>
+                        </div>
+                    </div>
+
+                    <div id="subdao-list">
+                        <div style="text-align: center; color: #666; padding: 20px;">
+                            No Sub-DAOs created yet<br>
+                            <small>Complete Lane 1 & 2 validation first</small>
+                        </div>
+                    </div>
+
+                    <div class="token-actions">
+                        <button class="btn btn-primary" onclick="showCreateDAOModal()" disabled id="create-dao-btn">🏛️ Create Sub-DAO</button>
+                        <button class="btn btn-success" onclick="showBuyDAOTokenModal()" disabled id="buy-dao-btn">💰 Buy DAO Tokens</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANT Scoring Integration -->
+        <div class="lane-card" style="grid-column: 1 / -1;">
+            <div class="lane-header">
+                <div class="lane-icon">🧠</div>
+                <div class="lane-title">
+                    <h2>ANT AI Scoring System</h2>
+                    <div class="lane-subtitle">Validation Engine for Token Progression</div>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div class="token-info">
+                    <div class="balance-label">Validation Threshold</div>
+                    <div class="balance-value">80%</div>
+                </div>
+                <div class="token-info">
+                    <div class="balance-label">Latest ANT Score</div>
+                    <div class="balance-value" id="latest-ant-score">--</div>
+                </div>
+                <div class="token-info">
+                    <div class="balance-label">Validated Proposals</div>
+                    <div class="balance-value" id="validated-proposals">0</div>
+                </div>
+                <div class="token-actions">
+                    <button class="btn btn-primary" onclick="runANTScoring()">🧠 Run ANT Scoring</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Staking Modal -->
+    <div id="staking-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎯 Stake CURE on Research</h3>
+                <button class="close-btn" onclick="closeModal('staking-modal')">&times;</button>
+            </div>
+            
+            <div class="input-group">
+                <label>Select Research Proposal:</label>
+                <select id="proposal-select">
+                    <option value="1">CRISPR-Cas9 Gene Therapy for Parkinson's</option>
+                    <option value="2">AI-Powered Drug Discovery</option>
+                    <option value="3">Microbiome Engineering</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Stake Amount (CURE):</label>
+                <input type="number" id="stake-amount" placeholder="Amount to stake" min="1">
+            </div>
+            
+            <div class="token-actions">
+                <button class="btn btn-success" onclick="stakeCURETokens()">🎯 Stake CURE</button>
+                <button class="btn btn-warning" onclick="closeModal('staking-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create DAO Modal -->
+    <div id="create-dao-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🏛️ Create Sub-DAO</h3>
+                <button class="close-btn" onclick="closeModal('create-dao-modal')">&times;</button>
+            </div>
+            
+            <div class="input-group">
+                <label>DAO Name:</label>
+                <input type="text" id="dao-name" placeholder="e.g., Parkinson's Research Collective">
+            </div>
+            
+            <div class="input-group">
+                <label>Focus Area:</label>
+                <input type="text" id="dao-focus" placeholder="e.g., Neurodegeneration & Gene Therapy">
+            </div>
+            
+            <div class="input-group">
+                <label>Initial Token Price ($):</label>
+                <input type="number" id="dao-price" value="0.01" step="0.001" min="0.001">
+            </div>
+            
+            <div class="token-actions">
+                <button class="btn btn-primary" onclick="createSubDAO()">🏛️ Launch Sub-DAO</button>
+                <button class="btn btn-warning" onclick="closeModal('create-dao-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="contract-status">
+            <div class="status-indicator">
+                <div class="status-dot" id="contract-status-dot"></div>
+                <span>Contract: <span id="contract-status-text">Deploying...</span></span>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot connected"></div>
+                <span>Network: Aptos Devnet</span>
+            </div>
+        </div>
+        <div>
+            <span>Account: 0xa7b69f...6915</span>
+        </div>
+    </div>
+
+    <!-- Transaction Log -->
+    <div class="transaction-log" id="transaction-log" style="display: none;">
+        <h4>📋 Transaction Log</h4>
+        <div id="log-entries"></div>
+    </div>
+
+    <script>
+        // System state
+        let systemState = {
+            labCredits: 0,
+            cureBalance: 0,
+            cureStaked: 0,
+            curePhase: 1,
+            subDAOs: [],
+            contractDeployed: false,
+            contractAddress: null
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSystem();
+            updateUI();
+            connectToContract();
+        });
+
+        function initializeSystem() {
+            console.log('🚀 Initializing Tri-Lane Token System...');
+            addLogEntry('System initialized', 'success');
+            
+            // Simulate some initial state for demo
+            systemState.labCredits = 1;
+            systemState.cureBalance = 15000;
+            systemState.cureStaked = 5000;
+            
+            updateUI();
+        }
+
+        function updateUI() {
+            // Update metrics
+            document.getElementById('lab-credits-count').textContent = systemState.labCredits;
+            document.getElementById('cure-supply').textContent = systemState.cureBalance.toLocaleString();
+            document.getElementById('subdao-count').textContent = systemState.subDAOs.length;
+            document.getElementById('current-phase').textContent = systemState.curePhase;
+
+            // Update user balances
+            document.getElementById('user-lab-credits').textContent = systemState.labCredits;
+            document.getElementById('user-cure-balance').textContent = systemState.cureBalance.toLocaleString();
+            document.getElementById('user-cure-staked').textContent = systemState.cureStaked.toLocaleString();
+            document.getElementById('active-subdaos').textContent = systemState.subDAOs.length;
+
+            // Update phase display
+            const phaseText = systemState.curePhase === 1 ? 
+                'Phase 1 (Fixed Price: $0.10)' : 
+                'Phase 2 (Dynamic Bonding Curve)';
+            document.getElementById('cure-phase-display').textContent = phaseText;
+
+            // Enable/disable buttons based on state
+            document.getElementById('governance-btn').disabled = systemState.curePhase === 1;
+            document.getElementById('create-dao-btn').disabled = systemState.curePhase === 1;
+            document.getElementById('buy-dao-btn').disabled = systemState.subDAOs.length === 0;
+        }
+
+        function connectToContract() {
+            // Simulate contract connection
+            setTimeout(() => {
+                systemState.contractDeployed = true;
+                systemState.contractAddress = "0xa7b69f0024e6a6a82b5baec9b6b5fc89b12ab4e19066fcf6b9db52ceb76b6915";
+                
+                document.getElementById('contract-status-dot').className = 'status-dot connected';
+                document.getElementById('contract-status-text').textContent = 'Connected';
+                
+                addLogEntry('Connected to smart contract on Aptos Devnet', 'success');
+            }, 2000);
+        }
+
+        // Lane 1: Lab Credits
+        document.getElementById('lab-credit-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('ip-title').value;
+            const description = document.getElementById('ip-description').value;
+            const hash = document.getElementById('ip-hash').value;
+            
+            if (!title || !description) {
+                alert('Please fill in title and description');
+                return;
+            }
+
+            issueLabCredit(title, description, hash);
+        });
+
+        function issueLabCredit(title, description, hash) {
+            addLogEntry(`Issuing Lab Credit: ${title}`, 'info');
+            
+            // Simulate blockchain transaction
+            setTimeout(() => {
+                systemState.labCredits++;
+                const creditId = systemState.labCredits;
+                
+                addLogEntry(`✅ Lab Credit #${creditId} issued successfully`, 'success');
+                addLogEntry(`Title: ${title}`, 'info');
+                addLogEntry(`⚠️ NON-TRANSFERABLE - Immutable provenance`, 'warning');
+                
+                // Clear form
+                document.getElementById('lab-credit-form').reset();
+                updateUI();
+                
+                alert(`🧾 Lab Credit #${creditId} issued successfully!\n\nTitle: ${title}\n⚠️ This is a non-transferable proof of IP custody.`);
+            }, 1500);
+        }
+
+        // Lane 2: CURE Tokens
+        function buyCURETokens() {
+            const amount = parseInt(document.getElementById('cure-buy-amount').value);
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+
+            const price = systemState.curePhase === 1 ? 0.10 : getDynamicPrice();
+            const totalCost = amount * price;
+            
+            addLogEntry(`Purchasing ${amount} CURE tokens at $${price} each`, 'info');
+            
+            // Simulate blockchain transaction
+            setTimeout(() => {
+                systemState.cureBalance += amount;
+                
+                addLogEntry(`✅ Purchased ${amount} CURE tokens for $${totalCost.toFixed(2)}`, 'success');
+                
+                if (systemState.curePhase === 1) {
+                    addLogEntry(`⚠️ Phase 1: No selling allowed yet`, 'warning');
+                }
+                
+                document.getElementById('cure-buy-amount').value = '';
+                updateUI();
+                
+                alert(`💎 Successfully purchased ${amount} CURE tokens!\n\nTotal cost: $${totalCost.toFixed(2)}\nNew balance: ${systemState.cureBalance.toLocaleString()} CURE`);
+            }, 1500);
+        }
+
+        function showStakingModal() {
+            document.getElementById('staking-modal').classList.add('active');
+        }
+
+        function stakeCURETokens() {
+            const proposalId = document.getElementById('proposal-select').value;
+            const stakeAmount = parseInt(document.getElementById('stake-amount').value);
+            
+            if (!stakeAmount || stakeAmount <= 0) {
+                alert('Please enter a valid stake amount');
+                return;
+            }
+            
+            if (stakeAmount > systemState.cureBalance) {
+                alert(`Insufficient balance. You have ${systemState.cureBalance} CURE`);
+                return;
+            }
+
+            addLogEntry(`Staking ${stakeAmount} CURE on proposal #${proposalId}`, 'info');
+            
+            // Simulate blockchain transaction
+            setTimeout(() => {
+                systemState.cureBalance -= stakeAmount;
+                systemState.cureStaked += stakeAmount;
+                
+                addLogEntry(`✅ Staked ${stakeAmount} CURE successfully`, 'success');
+                
+                // Check if enough staking for validation
+                if (systemState.cureStaked >= 10000) {
+                    addLogEntry(`🎉 Community staking threshold met! Ready for ANT scoring`, 'success');
+                }
+                
+                closeModal('staking-modal');
+                updateUI();
+                
+                alert(`🎯 Successfully staked ${stakeAmount} CURE!\n\nTotal staked: ${systemState.cureStaked.toLocaleString()} CURE`);
+            }, 1500);
+        }
+
+        // ANT Scoring Integration
+        function runANTScoring() {
+            if (systemState.cureStaked < 10000) {
+                alert('Need at least 10,000 CURE staked to trigger ANT scoring validation');
+                return;
+            }
+
+            addLogEntry('🧠 Running ANT AI Scoring evaluation...', 'info');
+            
+            // Simulate ANT scoring
+            setTimeout(() => {
+                const antScore = Math.floor(Math.random() * 20) + 80; // 80-100% range
+                document.getElementById('latest-ant-score').textContent = antScore + '%';
+                
+                addLogEntry(`🎯 ANT Score: ${antScore}%`, 'success');
+                
+                if (antScore >= 80) {
+                    addLogEntry(`✅ Validation passed! Transitioning to Phase 2`, 'success');
+                    
+                    // Transition to Phase 2
+                    systemState.curePhase = 2;
+                    document.getElementById('governance-btn').disabled = false;
+                    document.getElementById('create-dao-btn').disabled = false;
+                    
+                    updateUI();
+                    
+                    alert(`🎉 ANT Validation Passed!\n\nScore: ${antScore}%\n✅ CURE tokens now have dynamic pricing\n✅ Sub-DAO creation enabled\n✅ Governance activated`);
+                }
+            }, 3000);
+        }
+
+        // Lane 3: Sub-DAO Functions
+        function showCreateDAOModal() {
+            document.getElementById('create-dao-modal').classList.add('active');
+        }
+
+        function createSubDAO() {
+            const daoName = document.getElementById('dao-name').value;
+            const focusArea = document.getElementById('dao-focus').value;
+            const initialPrice = parseFloat(document.getElementById('dao-price').value);
+            
+            if (!daoName || !focusArea) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            addLogEntry(`Creating Sub-DAO: ${daoName}`, 'info');
+            
+            // Simulate Sub-DAO creation
+            setTimeout(() => {
+                const daoId = systemState.subDAOs.length + 1;
+                const tokenSymbol = generateTokenSymbol(daoName);
+                
+                const newDAO = {
+                    id: daoId,
+                    name: daoName,
+                    focus: focusArea,
+                    token: tokenSymbol,
+                    price: initialPrice,
+                    supply: 0
+                };
+                
+                systemState.subDAOs.push(newDAO);
+                
+                addLogEntry(`✅ Sub-DAO created: ${daoName}`, 'success');
+                addLogEntry(`🎯 Token: ${tokenSymbol}`, 'info');
+                addLogEntry(`💰 Initial price: $${initialPrice}`, 'info');
+                
+                closeModal('create-dao-modal');
+                updateSubDAOList();
+                updateUI();
+                
+                alert(`🏛️ Sub-DAO Created Successfully!\n\nName: ${daoName}\nToken: ${tokenSymbol}\nInitial Price: $${initialPrice}\n\n🎉 Bonding curve is now active!`);
+            }, 2000);
+        }
+
+        function updateSubDAOList() {
+            const container = document.getElementById('subdao-list');
+            
+            if (systemState.subDAOs.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #666; padding: 20px;">
+                        No Sub-DAOs created yet<br>
+                        <small>Complete Lane 1 & 2 validation first</small>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = systemState.subDAOs.map(dao => `
+                <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">${dao.name}</div>
+                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 8px;">${dao.focus}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><strong>${dao.token}:</strong> $${dao.price}</span>
+                        <button class="btn btn-success" onclick="buyDAOTokens(${dao.id})" style="padding: 5px 10px; font-size: 0.8rem;">💰 Buy</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function buyDAOTokens(daoId) {
+            const dao = systemState.subDAOs.find(d => d.id === daoId);
+            if (!dao) return;
+            
+            const amount = prompt(`How many ${dao.token} tokens would you like to buy?\nCurrent price: $${dao.price}`);
+            if (!amount || isNaN(amount) || amount <= 0) return;
+            
+            const totalCost = amount * dao.price;
+            
+            addLogEntry(`Purchasing ${amount} ${dao.token} tokens`, 'info');
+            
+            setTimeout(() => {
+                dao.supply += parseInt(amount);
+                dao.price *= 1.05; // Simple bonding curve simulation
+                
+                addLogEntry(`✅ Purchased ${amount} ${dao.token} for $${totalCost.toFixed(3)}`, 'success');
+                addLogEntry(`📈 New ${dao.token} price: $${dao.price.toFixed(4)}`, 'info');
+                
+                updateSubDAOList();
+                
+                alert(`💰 Purchase Successful!\n\nTokens: ${amount} ${dao.token}\nCost: $${totalCost.toFixed(3)}\nNew Price: $${dao.price.toFixed(4)}`);
+            }, 1500);
+        }
+
+        // Utility functions
+        function getDynamicPrice() {
+            return 0.15 * (1 + systemState.cureBalance / 100000);
+        }
+
+        function generateTokenSymbol(daoName) {
+            return daoName.split(' ')
+                .filter(word => word.length > 2)
+                .map(word => word.substring(0, 2).toUpperCase())
+                .join('').substring(0, 6);
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showGovernanceModal() {
+            alert('🗳️ Governance features coming soon!\n\n• Vote on scoring weights\n• Authorize new scorers\n• Manage community treasury');
+        }
+
+        function addLogEntry(message, type = 'info') {
+            const logContainer = document.getElementById('log-entries');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+            
+            logContainer.insertBefore(entry, logContainer.firstChild);
+            
+            // Keep only last 20 entries
+            while (logContainer.children.length > 20) {
+                logContainer.removeChild(logContainer.lastChild);
+            }
+            
+            // Show transaction log
+            document.getElementById('transaction-log').style.display = 'block';
+        }
+
+        // Demo functions for testing
+        function simulateCompleteFlow() {
+            addLogEntry('🎭 Starting complete tri-lane demo simulation', 'info');
+            
+            setTimeout(() => issueLabCredit('CRISPR Gene Therapy', 'Revolutionary approach', ''), 1000);
+            setTimeout(() => buyCURETokens(), 2000);  
+            setTimeout(() => stakeCURETokens(), 3000);
+            setTimeout(() => runANTScoring(), 4000);
+        }
+
+        console.log('🧬 Tri-Lane Tokenomics Interface Ready!');
+        console.log('📋 Lab Credits: Non-transferable IP custody');
+        console.log('💎 CURE Tokens: Community validation & gating'); 
+        console.log('🏛️ Sub-DAO Tokens: Governance & crowdfunding');
+        console.log('\n🚀 Ready to interact with deployed contracts!');
+    </script>
+</body>
+</html>
+
+
+
+
+
