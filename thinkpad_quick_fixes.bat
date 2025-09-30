@@ -1,6 +1,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -111,6 +114,7 @@ if "%choice%"=="11" (
 echo Invalid choice. Please try again.
 pause
 goto menu
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 =======
@@ -221,6 +225,8 @@ echo Invalid choice. Please try again.
 pause
 goto menu
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======

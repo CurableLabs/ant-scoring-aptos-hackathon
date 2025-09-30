@@ -1,6 +1,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -467,6 +470,7 @@ export default TriLaneIntegration;
 
 
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
@@ -934,6 +938,8 @@ export default TriLaneIntegration;
 
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======

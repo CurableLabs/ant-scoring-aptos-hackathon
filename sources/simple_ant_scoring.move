@@ -1,6 +1,9 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -90,6 +93,7 @@ module ant_scoring::simple_ant_scoring {
 
 
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
@@ -180,6 +184,8 @@ module ant_scoring::simple_ant_scoring {
 
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
