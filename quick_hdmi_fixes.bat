@@ -1,4 +1,7 @@
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 @echo off
 echo === Quick HDMI Connection Fixes ===
 echo.
@@ -75,6 +78,7 @@ if "%choice%"=="9" (
 echo Invalid choice. Please try again.
 pause
 goto menu
+<<<<<<< Updated upstream
 =======
 @echo off
 echo === Quick HDMI Connection Fixes ===
@@ -153,3 +157,5 @@ echo Invalid choice. Please try again.
 pause
 goto menu
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes

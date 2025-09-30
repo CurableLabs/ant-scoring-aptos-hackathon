@@ -1,4 +1,7 @@
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 # ANT Scoring System - Integration Strategy for Hackathon Second Half
 
 ## 🏗️ Architecture Overview
@@ -126,6 +129,7 @@ GET  /api/scorers/authorized     // List authorized scorers
 
 
 
+<<<<<<< Updated upstream
 =======
 # ANT Scoring System - Integration Strategy for Hackathon Second Half
 
@@ -255,3 +259,5 @@ GET  /api/scorers/authorized     // List authorized scorers
 
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes

@@ -1,4 +1,7 @@
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 /// Simple ANT Scoring System for Deployment Demo
 module ant_scoring::simple_ant_scoring {
     use std::signer;
@@ -84,6 +87,7 @@ module ant_scoring::simple_ant_scoring {
 
 
 
+<<<<<<< Updated upstream
 
 =======
 /// Simple ANT Scoring System for Deployment Demo
@@ -172,3 +176,5 @@ module ant_scoring::simple_ant_scoring {
 
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes

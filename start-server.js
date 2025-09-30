@@ -1,4 +1,7 @@
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -36,6 +39,7 @@ server.on('error', (err) => {
     console.error('❌ Server error:', err);
 });
 
+<<<<<<< Updated upstream
 
 =======
 const http = require('http');
@@ -76,3 +80,5 @@ server.on('error', (err) => {
 });
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes

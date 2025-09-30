@@ -1,4 +1,7 @@
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 import { ANTScoringHelper, ScoreInput, Proposal } from './antScoringUtils';
 
 /**
@@ -461,6 +464,7 @@ export default TriLaneIntegration;
 
 
 
+<<<<<<< Updated upstream
 
 =======
 import { ANTScoringHelper, ScoreInput, Proposal } from './antScoringUtils';
@@ -926,3 +930,5 @@ export default TriLaneIntegration;
 
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes

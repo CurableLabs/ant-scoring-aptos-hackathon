@@ -1,4 +1,7 @@
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 /// ANT Token Bonding Curve Implementation
 module ant_scoring::bonding_curve {
     use std::signer;
@@ -279,6 +282,7 @@ module ant_scoring::bonding_curve {
         burn_cap: coin::BurnCapability<ANTToken>,
     }
 }
+<<<<<<< Updated upstream
 =======
 /// ANT Token Bonding Curve Implementation
 module ant_scoring::bonding_curve {
@@ -561,3 +565,5 @@ module ant_scoring::bonding_curve {
     }
 }
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes

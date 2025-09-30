@@ -1,4 +1,7 @@
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 import React, { useState, useEffect, useCallback } from 'react';
 import { ANTScoringHelper, ScoreInput, Proposal } from './antScoringUtils';
 
@@ -534,6 +537,7 @@ export default ANTApp;
 
 
 
+<<<<<<< Updated upstream
 =======
 import React, { useState, useEffect, useCallback } from 'react';
 import { ANTScoringHelper, ScoreInput, Proposal } from './antScoringUtils';
@@ -1071,3 +1075,5 @@ export default ANTApp;
 
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes

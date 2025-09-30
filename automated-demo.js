@@ -1,4 +1,7 @@
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 #!/usr/bin/env node
 
 /**
@@ -224,6 +227,7 @@ runDemo().catch(console.error);
 
 
 
+<<<<<<< Updated upstream
 
 =======
 #!/usr/bin/env node
@@ -452,3 +456,5 @@ runDemo().catch(console.error);
 
 
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
