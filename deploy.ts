@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
 
-import { AptosAccount, AptosClient, TxnBuilderTypes, MaybeHexString, HexString } from "aptos";
+import { Aptos, AptosConfig, Network, Account } from "@aptos-labs/ts-sdk";
 import * as fs from "fs";
 import * as path from "path";
 

@@ -1,0 +1,21 @@
+[package]
+name = "ant_scoring"
+version = "1.0.0"
+authors = ["CurableDAO Team"]
+
+[addresses]
+ant_scoring = "_"
+
+[dependencies.AptosFramework]
+local = "framework/aptos-framework"
+
+[dependencies.AptosStdlib] 
+local = "framework/aptos-stdlib"
+
+[dependencies.MoveStdlib]
+local = "framework/move-stdlib"
+
+
+
+
+

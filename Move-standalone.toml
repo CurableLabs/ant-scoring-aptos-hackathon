@@ -1,0 +1,11 @@
+[package]
+name = "ant_scoring"
+version = "1.0.0"
+
+[addresses]
+ant_scoring = "_"
+
+
+
+
+

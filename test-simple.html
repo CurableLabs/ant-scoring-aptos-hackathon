@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Simple Button</title>
+</head>
+<body>
+    <h1>Simple Test</h1>
+    
+    <form id="test-form">
+        <input type="text" id="test-input" placeholder="Enter test text">
+        <button type="button" onclick="testFunction()">Test Button</button>
+    </form>
+
+    <div id="output"></div>
+
+    <script>
+        function testFunction() {
+            console.log('Test function called');
+            const input = document.getElementById('test-input').value;
+            document.getElementById('output').innerHTML = 'Button works! Input: ' + input;
+            alert('Button is working!');
+        }
+    </script>
+</body>
+</html>
+

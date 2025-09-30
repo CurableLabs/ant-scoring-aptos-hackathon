@@ -1,0 +1,3273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧬 ANT Tri-Lane Tokenomics - Live Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="0.5" fill="%23ffffff" opacity="0.02"/><circle cx="75" cy="75" r="0.3" fill="%23ffffff" opacity="0.02"/><circle cx="50" cy="80" r="0.4" fill="%23ffffff" opacity="0.01"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 24px;
+        }
+
+        .header {
+            text-align: center;
+            color: #f8fafc;
+            margin-bottom: 48px;
+            padding: 64px 32px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+        }
+
+        .header h1 { 
+            font-size: 3.5rem; 
+            font-weight: 400;
+            margin-bottom: 16px; 
+            background: linear-gradient(135deg, #f8fafc, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+        
+        .header p { 
+            font-size: 1.125rem; 
+            opacity: 0.8; 
+            margin-bottom: 8px;
+            font-weight: 300;
+        }
+
+        .header .subtitle {
+            font-size: 0.95rem;
+            opacity: 0.6;
+            font-family: 'Roboto Mono', monospace;
+            letter-spacing: 0.05em;
+        }
+
+        .tri-lane-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .lane-card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .lane-card:hover { 
+            transform: translateY(-8px);
+            box-shadow: 
+                0 20px 25px -5px rgba(0, 0, 0, 0.2),
+                0 10px 10px -5px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .lane-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0.8;
+        }
+
+        .lane-1::before { background: linear-gradient(90deg, #f59e0b, #f97316); }
+        .lane-2::before { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+        .lane-3::before { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+
+        .lane-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.02) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .lane-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .lane-icon { 
+            font-size: 2.5rem; 
+            margin-right: 16px;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+        }
+
+        .lane-title h2 { 
+            font-size: 1.5rem; 
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #f8fafc;
+        }
+        
+        .lane-subtitle { 
+            color: #94a3b8; 
+            font-size: 0.875rem;
+            font-weight: 400;
+        }
+
+        .token-balance {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .balance-label { 
+            font-weight: 500; 
+            color: #cbd5e1;
+            font-size: 0.875rem;
+        }
+        
+        .balance-value { 
+            font-size: 1.5rem; 
+            font-weight: 600; 
+            color: #3b82f6;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 4px;
+            min-width: 140px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary { 
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8); 
+            color: white;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-success { 
+            background: linear-gradient(135deg, #10b981, #059669); 
+            color: white;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .btn-success:hover { 
+            background: linear-gradient(135deg, #0d9488, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-warning { 
+            background: linear-gradient(135deg, #f59e0b, #d97706); 
+            color: white;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        .btn-warning:hover { 
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-info { 
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed); 
+            color: white;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .btn-info:hover { 
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
+        }
+
+        .demo-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .demo-controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .status-display {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .flow-arrows {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            font-size: 2rem;
+            color: #007bff;
+        }
+
+        .log-container {
+            background: rgba(0, 0, 0, 0.4);
+            color: #22d3ee;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+            font-family: 'Roboto Mono', 'Courier New', monospace;
+            font-size: 0.85rem;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            backdrop-filter: blur(10px);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            opacity: 0.6;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .metric-label {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        .btn:disabled {
+            background: rgba(100, 116, 139, 0.3) !important;
+            color: rgba(148, 163, 184, 0.6) !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .progress-container {
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+        }
+
+        .progress-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .progress-title {
+            color: #f8fafc;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .progress-step {
+            margin: 20px 0;
+            opacity: 0.4;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            opacity: 1;
+            transform: scale(1.02);
+        }
+
+        .progress-step.completed {
+            opacity: 1;
+        }
+
+        .progress-bar-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            height: 8px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            border-radius: 8px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .score-breakdown {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .score-item.calculating {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .score-value {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .final-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #10b981;
+            text-align: center;
+            margin: 20px 0;
+            padding: 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .voting-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .voting-container {
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            max-width: 700px;
+            width: 90%;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .voting-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .vote-progress-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(#3b82f6 0deg, #1e293b 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 0 auto 30px;
+            transition: all 0.5s ease;
+        }
+
+        .vote-progress-inner {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .community-member {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            margin: 8px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .community-member:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(4px);
+        }
+
+        .vote-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+            min-width: 80px;
+        }
+
+        .vote-bullish {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .vote-bearish {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .vote-neutral {
+            background: rgba(100, 116, 139, 0.6);
+            color: #cbd5e1;
+        }
+
+        .voted {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .threshold-indicator {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧬 ANT Tri-Lane Tokenomics</h1>
+            <p>Molecular Custody → Community Validation → Live Marketplace Investment</p>
+            <p><strong>Live Demo - Aptos Ctrl+MOVE Hackathon</strong></p>
+            <p class="subtitle">Account: 0xa7b69f0024e6...6915 | Network: Aptos Devnet</p>
+        </div>
+
+
+        <!-- System Metrics -->
+        <div class="metric-grid" id="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value" id="lab-credits">0</div>
+                <div class="metric-label">Lab Badges Issued</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="cure-supply">0</div>
+                <div class="metric-label">CURE Total Supply</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="community-pool-metric">0</div>
+                <div class="metric-label">Community Pool</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="phase-status">1</div>
+                <div class="metric-label">Current Phase</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="subdao-count">0</div>
+                <div class="metric-label">Active Sub-DAOs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="ant-score">--</div>
+                <div class="metric-label">Latest ANT Score</div>
+            </div>
+        </div>
+
+        <!-- Tri-Lane Cards -->
+        <div class="tri-lane-grid">
+            <!-- Lane 1: Lab Badges -->
+            <div class="lane-card lane-1">
+                <div class="lane-header">
+                    <div class="lane-icon">🏅</div>
+                    <div class="lane-title">
+                        <h2>Lane 1: Lab Badges</h2>
+                        <div class="lane-subtitle">Molecular IP Custody & Provenance</div>
+                    </div>
+                </div>
+                
+                <div class="token-balance">
+                    <span class="balance-label">Your Lab Badges:</span>
+                    <span class="balance-value" id="user-lab-credits">0</span>
+                </div>
+                
+                <div style="font-size: 0.85rem; color: #666; margin-bottom: 20px;">
+                    🧬 Molecular custody • 📄 PDF documentation • ⚠️ Non-transferable
+                </div>
+
+                <form id="lab-badge-form" style="margin-bottom: 20px;" onsubmit="return false;">
+                    <div class="input-group">
+                        <label>Select Example or Enter Custom:</label>
+                        <select id="molecule-examples" onchange="loadMoleculeExample()" style="margin-bottom: 10px;">
+                            <option value="">-- Choose Example Molecule --</option>
+                            <option value="levodopa">L-DOPA (Parkinson's Treatment)</option>
+                            <option value="aspirin">Aspirin (Pain Relief)</option>
+                            <option value="morphine">Morphine (Pain Management)</option>
+                            <option value="penicillin">Penicillin (Antibiotic)</option>
+                            <option value="ibuprofen">Ibuprofen (Anti-inflammatory)</option>
+                            <option value="custom">Custom Molecule</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Molecule/Cure Name:</label>
+                        <input type="text" id="molecule-name" placeholder="e.g., PD-X1 Compound" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>SMILE ID:</label>
+                        <input type="text" id="smile-id" placeholder="e.g., CCN(CC)CCOC(=O)c1ccc(N)cc1" required>
+                        <small style="color: #666; font-size: 0.8rem;">Standardized molecular structure identifier</small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Molecule Documentation (PDF):</label>
+                        <input type="file" id="molecule-pdf" accept=".pdf" required>
+                        <small style="color: #666; font-size: 0.8rem;">Upload research documentation, synthesis notes, or assay data</small>
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 16px; border-radius: 8px; margin-top: 12px; font-size: 0.8rem; color: #34d399;">
+                            ⚡ <strong>Auto-Demo Feature:</strong> SMILE ID + PDF validation triggers complete tri-lane workflow with your molecular data
+                        </div>
+                    </div>
+                    
+                    
+                    <button type="button" class="btn btn-primary" id="issue-badge-btn" onclick="startDemo()">🏅 Issue Lab Badge & Auto-Run Demo</button>
+                </form>
+                
+                <button class="btn btn-info" onclick="viewLabBadge()">👁️ View Badge</button>
+                <button class="btn btn-warning" onclick="alert('Button works!'); addLog('✅ Button test successful');">🧪 Quick Test</button>
+            </div>
+
+            <!-- Lane 2: CURE Tokens -->
+            <div class="lane-card lane-2">
+                <div class="lane-header">
+                    <div class="lane-icon">💎</div>
+                    <div class="lane-title">
+                        <h2>Lane 2: CURE Tokens</h2>
+                        <div class="lane-subtitle">Validation & Community Gating</div>
+                    </div>
+                </div>
+                
+                <div class="token-balance">
+                    <span class="balance-label">Your CURE Balance:</span>
+                    <span class="balance-value" id="user-cure-balance">0</span>
+                </div>
+                
+                <div class="token-balance">
+                    <span class="balance-label">Community Pool:</span>
+                    <span class="balance-value" id="community-cure-total">0</span>
+                </div>
+
+                <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 16px; margin: 16px 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="color: #f8fafc; font-weight: 600;">🎯 Threshold Progress</span>
+                        <span style="color: #3b82f6; font-family: 'Roboto Mono', monospace;" id="threshold-percentage">0%</span>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.1); border-radius: 8px; height: 12px; overflow: hidden;">
+                        <div id="threshold-progress-bar" style="height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); width: 0%; transition: width 0.5s ease;"></div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 8px; text-align: center;">
+                        Need <span id="cure-needed">80,000 CURE for 80%</span> to unlock Sub-DAO creation
+                    </div>
+                </div>
+
+                <div id="molecular-connection" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 20px; margin: 20px 0; display: none; backdrop-filter: blur(10px);">
+                    <div style="font-weight: 600; margin-bottom: 12px; color: #f8fafc; display: flex; align-items: center;">
+                        <span style="margin-right: 8px;">🔗</span>
+                        Connected Molecular Data
+                        <span style="margin-left: auto; font-size: 0.7rem; color: #64748b; font-family: 'Roboto Mono', monospace;">Live</span>
+                    </div>
+                    <div style="font-size: 0.875rem; color: #cbd5e1; line-height: 1.6;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span>🧬 Molecule:</span>
+                            <span id="connected-molecule" style="color: #3b82f6; font-family: 'Roboto Mono', monospace;">--</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span>🎯 Disease Target:</span>
+                            <span id="connected-target" style="color: #10b981;">--</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span>💰 CURE Value:</span>
+                            <span id="connected-cure-value" style="color: #f59e0b; font-family: 'Roboto Mono', monospace;">--</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>🆔 Token ID:</span>
+                            <span id="connected-cure-id" style="color: #8b5cf6; font-family: 'Roboto Mono', monospace; font-size: 0.75rem;">--</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 20px; line-height: 1.5;">
+                    Phase: <span id="cure-phase-text">1 (Fixed $0.10)</span> • KYC Required<br>
+                    <span style="color: #3b82f6;">💡 CURE value determined by molecular analysis</span><br>
+                    <span style="color: #10b981;">🏗️ Build community pool to unlock Sub-DAO creation</span>
+                </div>
+
+                <div id="recent-purchases" style="background: rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 16px; margin: 16px 0; max-height: 120px; overflow-y: auto;">
+                    <div style="font-weight: 600; color: #f8fafc; margin-bottom: 12px; font-size: 0.9rem;">🏦 Recent CURE Purchases</div>
+                    <div id="purchase-log" style="font-size: 0.8rem; color: #cbd5e1;">
+                        <div style="color: #64748b; text-align: center; padding: 20px;">No purchases yet - Start building the community pool!</div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-success" onclick="buyCURETokens()">💰 Buy CURE Tokens</button>
+                <button class="btn btn-primary" onclick="simulateCommunityPurchases()" id="community-buy-btn">🌍 Simulate Community Buys</button>
+                <button class="btn btn-info" onclick="checkValidation()" id="validation-btn" disabled>🧠 Run Validation</button>
+            </div>
+
+            <!-- Lane 3: Sub-DAO Tokens -->
+            <div class="lane-card lane-3">
+                <div class="lane-header">
+                    <div class="lane-icon">🏛️</div>
+                    <div class="lane-title">
+                        <h2>Lane 3: Molecular Marketplace</h2>
+                        <div class="lane-subtitle">$PDCure Tokens & Direct Investment</div>
+                    </div>
+                </div>
+                
+                <div class="token-balance">
+                    <span class="balance-label">Your $PDCure Holdings:</span>
+                    <span class="balance-value" id="user-dao-tokens">0</span>
+                </div>
+
+                <div class="token-balance">
+                    <span class="balance-label">Molecules Live:</span>
+                    <span class="balance-value" id="live-molecules-count">0</span>
+                </div>
+                
+                <div id="marketplace-display" style="min-height: 120px; margin-bottom: 20px;">
+                    <div style="text-align: center; color: #64748b; padding: 30px;">
+                        🏪 Molecular Marketplace<br>
+                        <small>Molecules will appear here after community validation</small>
+                    </div>
+                </div>
+                
+                <button class="btn btn-info" onclick="viewMarketplaceDetails()" id="marketplace-btn">📊 Marketplace Stats</button>
+                <button class="btn btn-success" onclick="buyDAOTokens()" disabled id="buy-dao-btn">💰 Invest in Molecule</button>
+                <button class="btn btn-primary" onclick="simulateBondingCurve()" disabled id="bonding-curve-btn">📈 Simulate Bonding Curve</button>
+                
+                <div style="background: rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 16px; margin-top: 16px; font-size: 0.8rem; color: #94a3b8;">
+                    🏪 <strong>Molecular Marketplace:</strong> Community validation creates liquidity pools. Molecules become live investments with $PDCure tokens. Direct shareholder participation in therapeutic success!
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Demo Log -->
+        <div style="background: rgba(15, 23, 42, 0.8); border-radius: 16px; padding: 32px; margin-bottom: 40px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);">
+            <h3 style="color: #f8fafc; margin-bottom: 20px; font-weight: 500; display: flex; align-items: center;">
+                <span style="margin-right: 12px;">📋</span>
+                Live Transaction Log
+                <span style="margin-left: auto; font-size: 0.75rem; color: #64748b; font-family: 'Roboto Mono', monospace;">Real-time</span>
+            </h3>
+            <div class="log-container" id="transaction-log">
+                <div class="log-entry">🚀 Tri-Lane Tokenomics System Ready</div>
+                <div class="log-entry">🏅 Submit molecular data to auto-trigger complete workflow</div>
+            </div>
+        </div>
+
+        <!-- Bottom Demo Controls -->
+        <div style="background: rgba(15, 23, 42, 0.9); border-radius: 16px; padding: 32px; margin-bottom: 24px; border: 1px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); position: relative;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);"></div>
+            
+            <h3 style="color: #f8fafc; margin-bottom: 24px; font-weight: 500; text-align: center;">
+                🎮 System Controls
+            </h3>
+            
+            <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="resetDemo()">🔄 Reset System</button>
+                <button class="btn btn-info" onclick="showSystemStatus()">📊 System Status</button>
+                <button class="btn btn-warning" onclick="downloadMolecularData()" id="download-btn">💾 Export Data</button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px; font-size: 0.8rem; color: #64748b;">
+                <p>💡 Auto-Demo: Submit molecular data above to see complete tri-lane workflow</p>
+                <p>🧬 SMILE ID + PDF validation triggers automatic tokenomics demonstration</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Network Status -->
+    <div style="position: fixed; top: 24px; right: 24px; background: rgba(15, 23, 42, 0.9); padding: 12px 20px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); z-index: 1000;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem;">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></div>
+            <span style="color: #e2e8f0;">Aptos Devnet</span>
+        </div>
+    </div>
+
+    <!-- Progress Overlay -->
+    <div id="progress-overlay" class="progress-overlay">
+        <div class="progress-container">
+            <div class="progress-title">🧬 Molecular Analysis in Progress</div>
+            
+            <div id="validation-steps">
+                <div class="progress-step" id="step-smile">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="color: #cbd5e1;">🧪 SMILE ID Validation</span>
+                        <span id="smile-status" style="color: #64748b;">Pending...</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="smile-progress"></div>
+                    </div>
+                </div>
+
+                <div class="progress-step" id="step-pdf">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="color: #cbd5e1;">📄 PDF Readability Check</span>
+                        <span id="pdf-status" style="color: #64748b;">Pending...</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="pdf-progress"></div>
+                    </div>
+                </div>
+
+                <div class="progress-step" id="step-analysis">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="color: #cbd5e1;">🧠 Molecular Analysis</span>
+                        <span id="analysis-status" style="color: #64748b;">Pending...</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="analysis-progress"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="score-breakdown" id="score-breakdown" style="display: none;">
+                <h4 style="color: #f8fafc; margin-bottom: 16px; text-align: center;">📊 Therapeutic Score Calculation</h4>
+                
+                <div class="score-item" id="score-base">
+                    <span style="color: #cbd5e1;">Base Score</span>
+                    <span class="score-value" id="base-score-value">0</span>
+                </div>
+                
+                <div class="score-item" id="score-therapeutic">
+                    <span style="color: #cbd5e1;">+ Therapeutic Indicators</span>
+                    <span class="score-value" id="therapeutic-score-value">0</span>
+                </div>
+                
+                <div class="score-item" id="score-disease">
+                    <span style="color: #cbd5e1;">+ Disease Specificity</span>
+                    <span class="score-value" id="disease-score-value">0</span>
+                </div>
+                
+                <div class="score-item" id="score-complexity">
+                    <span style="color: #cbd5e1;">+ Structural Complexity</span>
+                    <span class="score-value" id="complexity-score-value">0</span>
+                </div>
+                
+                <div class="score-item" id="score-validation">
+                    <span style="color: #cbd5e1;">+ Validation Factors</span>
+                    <span class="score-value" id="validation-score-value">0</span>
+                </div>
+
+                <div class="final-score" id="final-therapeutic-score">
+                    Final Score: <span id="final-score-value">0</span>/100
+                </div>
+
+                <div id="validation-result" style="text-align: center; margin-top: 20px; font-weight: 600;">
+                    <div id="result-icon" style="font-size: 3rem; margin-bottom: 12px;"></div>
+                    <div id="result-text" style="font-size: 1.2rem;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Community Voting Modal -->
+    <div id="voting-modal" class="voting-modal">
+        <div class="voting-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h3 style="color: #f8fafc; font-weight: 600; font-size: 1.5rem;">🗳️ Community Molecular Vote</h3>
+                <button onclick="closeVotingModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="color: #cbd5e1; margin-bottom: 16px;">
+                    <strong id="voting-molecule-name">PD-X1 Neuroprotective Compound</strong>
+                </div>
+                <div style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px;">
+                    🔬 SMILE: <span id="voting-smile-id" style="font-family: 'Roboto Mono', monospace;">CCN(CC)CCOC(=O)c1ccc(N)cc1</span>
+                </div>
+                <div style="color: #94a3b8; font-size: 0.9rem;">
+                    🎯 Target: <span id="voting-disease-target">Parkinson's Disease</span>
+                </div>
+            </div>
+
+            <!-- Progress Circle -->
+            <div class="vote-progress-circle" id="vote-progress-circle">
+                <div class="vote-progress-inner">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: #3b82f6; font-family: 'Roboto Mono', monospace;" id="vote-percentage">0%</div>
+                    <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 4px;">Bullish</div>
+                </div>
+            </div>
+
+            <div class="threshold-indicator">
+                <div style="color: #f8fafc; font-weight: 600; margin-bottom: 8px;">🎯 80% Threshold Required for Sub-DAO Creation</div>
+                <div style="color: #94a3b8; font-size: 0.9rem;">
+                    Current: <span id="current-bullish-count">0</span> / <span id="total-community-count">10</span> community members
+                </div>
+            </div>
+
+            <!-- Community Members -->
+            <div style="margin: 24px 0;">
+                <h4 style="color: #f8fafc; margin-bottom: 16px; font-weight: 500;">💭 Community Sentiment</h4>
+                <div id="community-members-list">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 16px; margin-top: 30px;">
+                <button class="btn btn-success" onclick="simulatePositiveVoting()" id="auto-vote-btn">🚀 Simulate Community Voting</button>
+                <button class="btn btn-warning" onclick="resetVoting()">🔄 Reset Votes</button>
+            </div>
+
+            <div id="voting-result" style="display: none; text-align: center; margin-top: 24px; padding: 20px; border-radius: 12px;">
+                <!-- Result will be shown here -->
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // System state
+        let state = {
+            labBadges: 0,
+            labBadgeData: [], // Store badge details including SMILE IDs and PDFs
+            cureBalance: 0,
+            communityCureTotal: 0, // Total CURE purchased by community
+            cureThreshold: 100000, // 100K CURE needed for 80% threshold
+            curePhase: 1,
+            subDAOs: [],
+            antScore: 0,
+            totalCureSupply: 0,
+            contractAddress: "0xa7b69f0024e6a6a82b5baec9b6b5fc89b12ab4e19066fcf6b9db52ceb76b6915",
+            recentPurchases: [], // Track purchase sources
+            communityVoting: {
+                isActive: false,
+                currentMolecule: null,
+                members: [],
+                bullishVotes: 0,
+                totalVotes: 0,
+                thresholdMet: false
+            }
+        };
+
+        function addLog(message, delay = 0) {
+            setTimeout(() => {
+                const logContainer = document.getElementById('transaction-log');
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                entry.innerHTML = `${new Date().toLocaleTimeString()} - ${message}`;
+                logContainer.appendChild(entry);
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }, delay);
+        }
+
+        function updateUI() {
+            // Update top metrics
+            document.getElementById('lab-credits').textContent = state.labBadges;
+            document.getElementById('cure-supply').textContent = state.totalCureSupply.toLocaleString();
+            document.getElementById('community-pool-metric').textContent = state.communityCureTotal.toLocaleString();
+            document.getElementById('phase-status').textContent = state.curePhase;
+            document.getElementById('subdao-count').textContent = state.subDAOs.length;
+            document.getElementById('ant-score').textContent = state.antScore > 0 ? state.antScore + '%' : '--';
+
+            // Update lane displays
+            document.getElementById('user-lab-credits').textContent = state.labBadges;
+            document.getElementById('user-cure-balance').textContent = state.cureBalance.toLocaleString();
+            document.getElementById('community-cure-total').textContent = state.communityCureTotal.toLocaleString();
+            document.getElementById('user-dao-tokens').textContent = state.subDAOs.reduce((sum, dao) => sum + dao.userTokens, 0);
+
+            // Update threshold progress (80% of 100K = 80K target)
+            const targetAmount = 80000; // 80% of 100K
+            const actualProgress = Math.min(100, Math.round((state.communityCureTotal / targetAmount) * 100));
+            document.getElementById('threshold-percentage').textContent = actualProgress + '%';
+            document.getElementById('threshold-progress-bar').style.width = actualProgress + '%';
+            
+            // Update needed amount for 80% threshold
+            const remaining = Math.max(0, targetAmount - state.communityCureTotal);
+            document.getElementById('cure-needed').textContent = remaining.toLocaleString() + ' CURE for 80%';
+
+            // Update progress bar color based on progress toward 80K
+            const progressBar = document.getElementById('threshold-progress-bar');
+            if (state.communityCureTotal >= 80000) { // 80% threshold reached
+                progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+                state.communityVoting.thresholdMet = true;
+            } else if (state.communityCureTotal >= 40000) { // 50%+ progress
+                progressBar.style.background = 'linear-gradient(90deg, #f59e0b, #d97706)';
+            } else {
+                progressBar.style.background = 'linear-gradient(90deg, #3b82f6, #06b6d4)';
+            }
+
+            // Update phase text
+            const phaseText = state.curePhase === 1 ? '1 (Fixed $0.10)' : '2 (Dynamic Curve)';
+            document.getElementById('cure-phase-text').textContent = phaseText;
+
+            // Enable/disable buttons based on CURE threshold progress (80K out of 100K)
+            const thresholdMet = state.communityCureTotal >= 80000;
+            
+            document.getElementById('validation-btn').disabled = !thresholdMet;
+            document.getElementById('create-dao-btn').disabled = !thresholdMet || state.antScore < 80;
+            document.getElementById('buy-dao-btn').disabled = state.subDAOs.length === 0;
+            
+            // Update validation button appearance
+            if (thresholdMet) {
+                document.getElementById('validation-btn').style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                document.getElementById('validation-btn').textContent = '🧠 Ready for Validation';
+            }
+
+            // Update Sub-DAO display
+            updateSubDAODisplay();
+        }
+
+        function investInMolecule(daoId) {
+            const dao = state.subDAOs.find(d => d.id === daoId);
+            if (!dao) return;
+            
+            const amount = prompt(`Invest in ${dao.moleculeName} via ${dao.symbol} tokens\n\nCurrent Price: $${dao.currentPrice.toFixed(4)}\nDisease Target: ${dao.diseaseTarget}\n\nHow many tokens would you like to purchase?`);
+            
+            if (!amount || isNaN(amount) || amount <= 0) return;
+            
+            const numAmount = parseInt(amount);
+            const totalCost = numAmount * dao.currentPrice;
+            
+            addLog(`💰 Investment: ${numAmount} ${dao.symbol} tokens for $${totalCost.toFixed(2)}`);
+            
+            setTimeout(() => {
+                dao.supply += numAmount;
+                dao.userTokens += numAmount;
+                dao.shareholders += 1;
+                dao.currentPrice *= (1 + numAmount / 10000); // Bonding curve
+                dao.marketCap = dao.supply * dao.currentPrice;
+                
+                addLog(`✅ Investment successful! You now own ${numAmount} ${dao.symbol} tokens`);
+                addLog(`📈 New ${dao.symbol} price: $${dao.currentPrice.toFixed(4)} (bonding curve)`);
+                addLog(`🏛️ You're now a shareholder in ${dao.moleculeName}'s therapeutic success!`);
+                addLog(`📊 Market cap increased to $${dao.marketCap.toFixed(0)}`);
+                
+                updateMarketplaceDisplay();
+                updateUI();
+                
+                alert(`🎉 Investment Successful!\n\nTokens: ${numAmount} ${dao.symbol}\nCost: $${totalCost.toFixed(2)}\nNew Price: $${dao.currentPrice.toFixed(4)}\n\nYou're now a shareholder in this molecule's therapeutic development!`);
+            }, 1500);
+        }
+
+        function viewMarketplaceDetails() {
+            if (state.subDAOs.length === 0) {
+                alert('🏪 Molecular Marketplace\n\nNo molecules are live yet. Complete the tri-lane workflow first!\n\n1. Submit molecular data (Lane 1)\n2. Build community CURE pool (Lane 2)\n3. Auto-create marketplace listing (Lane 3)');
+                return;
+            }
+            
+            const dao = state.subDAOs[0];
+            const molecule = state.labBadgeData[0];
+            alert(`🏪 Molecular Marketplace Details\n\n🧬 Molecule: ${dao.moleculeName}\n🔬 SMILE ID: ${molecule.smileId}\n🎯 Disease Target: ${dao.diseaseTarget}\n🧠 ANT Score: ${state.antScore}%\n\n💰 Investment Details:\n💎 Token: ${dao.symbol}\n📈 Current Price: $${dao.currentPrice.toFixed(4)}\n📊 Market Cap: $${dao.marketCap.toFixed(0)}\n👥 Shareholders: ${dao.shareholders}\n💧 Liquidity Pool: ${dao.liquidityPool.cureReserve.toLocaleString()} CURE\n\n🚀 Status: LIVE for direct therapeutic investment!\nEach token represents ownership in this molecule's clinical and commercial success.`);
+        }
+
+        function simulateBondingCurve() {
+            if (state.subDAOs.length === 0) return;
+            
+            const dao = state.subDAOs[0];
+            
+            addLog(`📈 BONDING CURVE SIMULATION for ${dao.symbol}`);
+            addLog(`🎯 Simulating market activity and price discovery...`);
+            
+            // Disable button during simulation
+            const btn = document.getElementById('bonding-curve-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Simulating...';
+            
+            let simulationStep = 0;
+            const investors = [
+                { name: 'Early Investor A', amount: 1000, type: 'Angel' },
+                { name: 'Biotech Fund', amount: 5000, type: 'Fund' },
+                { name: 'Research Consortium', amount: 2500, type: 'Institution' },
+                { name: 'Patient Investor', amount: 800, type: 'Individual' },
+                { name: 'Pharma Strategic', amount: 8000, type: 'Strategic' },
+                { name: 'Community Pool', amount: 1200, type: 'Community' }
+            ];
+            
+            const bondingInterval = setInterval(() => {
+                if (simulationStep >= investors.length) {
+                    clearInterval(bondingInterval);
+                    btn.disabled = false;
+                    btn.textContent = `📈 ${dao.symbol} Bonding Curve`;
+                    
+                    addLog(`🎉 Bonding curve simulation complete!`);
+                    addLog(`💰 ${dao.symbol} market cap: $${dao.marketCap.toFixed(0)}`);
+                    addLog(`📈 Price appreciation: ${(((dao.currentPrice / 0.012) - 1) * 100).toFixed(1)}%`);
+                    addLog(`👥 Total shareholders: ${dao.shareholders}`);
+                    return;
+                }
+                
+                const investor = investors[simulationStep];
+                const costBefore = dao.currentPrice;
+                
+                // Apply bonding curve
+                dao.supply += investor.amount;
+                dao.shareholders += 1;
+                const liquidityImpact = investor.amount / dao.liquidityPool.cureReserve;
+                dao.currentPrice *= (1 + liquidityImpact * 0.08);
+                dao.marketCap = dao.supply * dao.currentPrice;
+                
+                const appreciation = ((dao.currentPrice / costBefore - 1) * 100);
+                addLog(`📈 ${investor.name}: ${investor.amount} ${dao.symbol} → Price: $${costBefore.toFixed(4)} → $${dao.currentPrice.toFixed(4)} (+${appreciation.toFixed(1)}%)`);
+                
+                updateMarketplaceDisplay();
+                updateUI();
+                
+                simulationStep++;
+            }, 1800);
+        }
+
+        function updateSubDAODisplay() {
+            const container = document.getElementById('subdao-display');
+            
+            if (state.subDAOs.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #666; padding: 30px;">
+                        No Sub-DAOs created yet<br>
+                        <small>Complete validation first</small>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = state.subDAOs.map(dao => `
+                <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">${dao.name}</div>
+                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 8px;">${dao.focus}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><strong>${dao.symbol}:</strong> $${dao.price.toFixed(4)}</span>
+                        <span>Supply: ${dao.supply.toLocaleString()}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Lane 1: Lab Badges
+        
+        // SIMPLIFIED INITIALIZATION
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🌐 Page loaded successfully');
+            
+            // Basic initialization
+            updateUI();
+            addLog('🌐 Tri-Lane System Ready');
+            addLog('🏅 Select example molecule and click button to test');
+            
+            // Test if basic functions work
+            setTimeout(() => {
+                addLog('✅ JavaScript loaded successfully - System operational');
+            }, 1000);
+        });
+
+        // Load example molecules with auto-populate including PDF
+        function loadMoleculeExample() {
+            const select = document.getElementById('molecule-examples');
+            const value = select.value;
+            
+            const examples = {
+                'levodopa': {
+                    name: 'L-DOPA Parkinson\'s Treatment',
+                    smile: 'NC(Cc1ccc(O)c(O)c1)C(=O)O',
+                    pdfName: 'L-DOPA_Research_Data.pdf'
+                },
+                'aspirin': {
+                    name: 'Aspirin Pain Relief',
+                    smile: 'CC(=O)OC1=CC=CC=C1C(=O)O',
+                    pdfName: 'Aspirin_Clinical_Studies.pdf'
+                },
+                'morphine': {
+                    name: 'Morphine Pain Management', 
+                    smile: 'CN1CC[C@]23c4c5ccc(O)c4O[C@H]2[C@@H](O)C=C[C@H]3[C@H]1C5',
+                    pdfName: 'Morphine_Pharmacology.pdf'
+                },
+                'penicillin': {
+                    name: 'Penicillin G Antibiotic',
+                    smile: 'CC1([C@@H](N2[C@H](S1)[C@@H](C2=O)NC(=O)Cc3ccccc3)C(=O)O)C',
+                    pdfName: 'Penicillin_Discovery_Data.pdf'
+                },
+                'ibuprofen': {
+                    name: 'Ibuprofen Anti-inflammatory',
+                    smile: 'CC(C)Cc1ccc(C(C)C(=O)O)cc1',
+                    pdfName: 'Ibuprofen_Safety_Profile.pdf'
+                }
+            };
+            
+            if (value && examples[value]) {
+                // Auto-populate name and SMILE ID
+                document.getElementById('molecule-name').value = examples[value].name;
+                document.getElementById('smile-id').value = examples[value].smile;
+                
+                // Create a mock PDF file object for examples
+                const mockPdfContent = createMockPDF(examples[value].name, examples[value].smile);
+                const mockFile = new File([mockPdfContent], examples[value].pdfName, { type: 'application/pdf' });
+                
+                // Set the file input (this is tricky, but we can simulate it)
+                const fileInput = document.getElementById('molecule-pdf');
+                
+                // Create a DataTransfer object to simulate file selection
+                const dt = new DataTransfer();
+                dt.items.add(mockFile);
+                fileInput.files = dt.files;
+                
+                addLog(`📋 Example loaded: ${examples[value].name}`);
+                addLog(`🔬 SMILE ID: ${examples[value].smile}`);
+                addLog(`📄 PDF: ${examples[value].pdfName} (auto-generated for demo)`);
+                addLog(`✅ All fields populated - Ready to submit!`);
+                
+            } else if (value === 'custom') {
+                document.getElementById('molecule-name').value = '';
+                document.getElementById('smile-id').value = '';
+                document.getElementById('molecule-pdf').value = '';
+                addLog('✏️ Custom molecule mode - Enter your own data');
+            }
+        }
+
+        // Create mock PDF content for examples
+        function createMockPDF(moleculeName, smileId) {
+            // Create a simple PDF-like content (simplified for demo)
+            const pdfHeader = '%PDF-1.4\n';
+            const pdfContent = `
+Research Documentation for ${moleculeName}
+
+SMILE ID: ${smileId}
+
+This is a demo PDF file auto-generated for the ${moleculeName} molecule.
+In a real system, this would contain:
+- Synthesis protocols
+- Assay data  
+- Clinical studies
+- Safety profiles
+- Regulatory documentation
+
+Generated for Aptos Ctrl+Move Hackathon
+ANT Tri-Lane Tokenomics Demo
+            `;
+            
+            return pdfHeader + pdfContent;
+        }
+
+        // Test function to verify JavaScript is working
+        function testJavaScript() {
+            console.log('🧪 JavaScript test function called');
+            addLog('🧪 JavaScript test successful - System is responsive');
+            alert('✅ JavaScript Working!\n\nSystem Status: Operational\nForm Handler: Ready\nValidation: Loaded\n\nTry selecting an example molecule and submitting!');
+        }
+
+        // SIMPLE DEMO STARTER - Direct button click
+        function startDemo() {
+            console.log('🚀 Start Demo button clicked');
+            addLog('🚀 Starting tri-lane demo...');
+            
+            const moleculeName = document.getElementById('molecule-name').value;
+            const smileId = document.getElementById('smile-id').value;
+            const pdfFile = document.getElementById('molecule-pdf').files[0];
+            
+            if (!moleculeName || !smileId) {
+                alert('Please select an example molecule first, or enter custom data!');
+                return;
+            }
+
+            // If no PDF, create a mock one
+            if (!pdfFile) {
+                addLog('📄 No PDF uploaded - Creating demo PDF for validation...');
+            }
+            
+            addLog(`🧬 Processing molecule: ${moleculeName}`);
+            addLog(`🔬 SMILE ID: ${smileId}`);
+            
+            // Run simplified demo
+            runSimplifiedDemo(moleculeName, smileId);
+        }
+
+        // Simplified demo that definitely works
+        async function runSimplifiedDemo(moleculeName, smileId) {
+            try {
+                addLog('🏅 LANE 1: Starting molecular validation...');
+                
+                // Disable button
+                const btn = document.getElementById('issue-badge-btn');
+                btn.disabled = true;
+                btn.textContent = '⏳ Processing...';
+                
+                await sleep(1000);
+                
+                // Calculate ANT score
+                const antScore = 75 + Math.floor(Math.random() * 20); // 75-95
+                state.antScore = antScore;
+                state.labBadges = 1;
+                
+                addLog(`🧠 ANT Score calculated: ${antScore}%`);
+                
+                if (antScore >= 80) {
+                    addLog(`✅ ANT validation PASSED! Proceeding to Lane 2...`);
+                    
+                    // Update UI
+                    updateUI();
+                    
+                    await sleep(2000);
+                    
+                    // Start Lane 2
+                    addLog('💎 LANE 2: Community CURE building activated!');
+                    
+                    // Enable community button
+                    const communityBtn = document.getElementById('community-buy-btn');
+                    communityBtn.disabled = false;
+                    communityBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    communityBtn.textContent = '🚀 Start Community Building';
+                    
+                    addLog('🎯 Click "Start Community Building" to continue to Lane 2!');
+                    
+                } else {
+                    addLog(`❌ ANT validation failed: ${antScore}% < 80%`);
+                }
+                
+                // Reset button
+                btn.disabled = false;
+                btn.textContent = '🏅 Issue Lab Badge & Auto-Run Demo';
+                
+            } catch (error) {
+                console.error('Demo error:', error);
+                addLog(`❌ Demo error: ${error.message}`);
+            }
+        }
+
+        async function issueLabBadge() {
+            try {
+                console.log('🏅 Lab Badge validation function called');
+                addLog('🏅 Starting Lane 1 molecular validation process...');
+                
+                const moleculeName = document.getElementById('molecule-name').value;
+                const smileId = document.getElementById('smile-id').value;
+                const pdfFile = document.getElementById('molecule-pdf').files[0];
+                
+                console.log('📋 Form data:', { moleculeName, smileId, pdfFile: pdfFile ? pdfFile.name : 'none' });
+                
+                if (!moleculeName || !smileId || !pdfFile) {
+                    const missingFields = [];
+                    if (!moleculeName) missingFields.push('Molecule Name');
+                    if (!smileId) missingFields.push('SMILE ID');
+                    if (!pdfFile) missingFields.push('PDF File');
+                    
+                    addLog(`❌ Missing required fields: ${missingFields.join(', ')}`);
+                    alert(`Please fill in all required fields:\n\n${missingFields.map(field => '• ' + field).join('\n')}\n\nTip: Select an example molecule to auto-populate all fields!`);
+                    return;
+                }
+
+                // Disable button and show processing state
+                const submitBtn = document.getElementById('issue-badge-btn');
+                submitBtn.disabled = true;
+                submitBtn.textContent = '⏳ Processing...';
+                
+                addLog('🏅 LANE 1: Molecular validation starting...');
+                addLog(`🧬 Molecule: ${moleculeName}`);
+                addLog(`🔬 SMILE ID: ${smileId}`);
+                addLog(`📄 PDF: ${pdfFile.name} (${(pdfFile.size / 1024).toFixed(1)} KB)`);
+
+                // Show progress overlay
+                showProgressOverlay();
+                
+                // Step 1: Validate SMILE ID with visual progress
+                await validateSMILEWithProgress(smileId, moleculeName);
+            
+            // Step 2: Validate PDF with visual progress  
+            const pdfValidation = await validatePDFWithProgress(pdfFile);
+            
+            if (!pdfValidation.isReadable) {
+                hideProgressOverlay();
+                resetSubmitButton();
+                addLog(`❌ PDF validation failed - ${pdfValidation.error}`);
+                alert(`PDF validation failed: ${pdfValidation.error}\n\nPlease upload a valid PDF document.`);
+                return;
+            }
+
+            try {
+                // Step 3: Run comprehensive molecular analysis with score visualization
+                const molecularAnalysis = await runMolecularAnalysisWithProgress(smileId, moleculeName);
+                
+                state.labBadges++;
+                const badgeId = state.labBadges;
+                
+                // Store badge data
+                const badgeData = {
+                    id: badgeId,
+                    moleculeName,
+                    smileId,
+                    pdfName: pdfFile.name,
+                    pdfSize: pdfFile.size,
+                    timestamp: Date.now(),
+                    custodyProof: generateMolecularCustodyProof(badgeId, smileId),
+                    cureTokenData: molecularAnalysis
+                };
+                
+                state.labBadgeData.push(badgeData);
+                
+                addLog(`✅ Lab Badge #${badgeId} issued successfully`);
+                addLog(`🔒 Molecular Custody Proof: ${badgeData.custodyProof}`);
+                addLog(`⚠️ NON-TRANSFERABLE - Immutable molecular provenance`);
+                
+                // Show CURE token connectivity
+                await sleep(1000);
+                addLog(`🔗 Connecting molecular data to CURE tokenomics...`);
+                
+            addLog(`💎 CURE Token Analysis Complete:`);
+            addLog(`   🧬 Molecular Weight: ${molecularAnalysis.molecularWeight}`);
+            addLog(`   🎯 Therapeutic Score: ${molecularAnalysis.therapeuticScore}/100`);
+            addLog(`   💰 Base CURE Value: ${molecularAnalysis.baseCureValue.toLocaleString()} tokens`);
+            addLog(`   🏷️ Disease Target: ${molecularAnalysis.diseaseTarget}`);
+            
+            // Calculate and display ANT Score immediately
+            await sleep(1000);
+            addLog(`🧠 Calculating ANT Score for molecular validation...`);
+            const antScore = calculateANTScoreFromMolecule(molecularAnalysis);
+            state.antScore = antScore;
+            
+            addLog(`✅ ANT Score calculated: ${antScore}% (Scientific merit assessment)`);
+            addLog(`   📊 Based on therapeutic potential and molecular complexity`);
+            addLog(`   ⚡ Ready for Lane 2 community validation!`);
+                
+                // Clear form and reset button
+                document.getElementById('lab-badge-form').reset();
+                resetSubmitButton();
+                
+                // Update CURE token section with molecular data
+                updateCUREConnection(badgeData);
+                updateUI();
+                
+                await sleep(2000);
+                
+                // Auto-flow to Lane 2 community building
+                addLog(`🚀 All validations passed! Molecular data ready for community validation`);
+                addLog(`🔗 Flowing to Lane 2: Community CURE token building phase...`);
+                await sleep(1500);
+                
+                // Enable community buying for this molecule
+                enableCommunityPhase(badgeData);
+                
+            } catch (error) {
+                // Handle any validation failures
+                console.error('Lab Badge submission failed:', error);
+                addLog(`❌ Lane 1 submission failed: ${error.message}`);
+                resetSubmitButton();
+                return false;
+            }
+            
+            return false; // Prevent any form submission
+        }
+
+        function viewLabBadge() {
+            if (state.labBadges === 0) {
+                alert('No Lab Badges issued yet. Issue one first!');
+                return;
+            }
+            
+            const badge = state.labBadgeData[state.labBadgeData.length - 1]; // Latest badge
+            
+            alert(`🏅 Lab Badge Details\n\nBadge ID: #${badge.id}\nMolecule: ${badge.moleculeName}\nSMILE ID: ${badge.smileId}\nPDF: ${badge.pdfName}\nCustody Proof: ${badge.custodyProof}\n\nStatus: Non-transferable\nProvenance: Locked & Immutable`);
+        }
+
+
+        function isValidSMILE(smile) {
+            // Comprehensive SMILE validation with stricter criteria
+            if (smile.length < 3 || smile.length > 200) return false;
+            
+            // Check for valid SMILE characters
+            const hasValidChars = /^[CNOPSFClBrI\(\)\[\]@\-=#+0-9\.\\\/cnsH]+$/.test(smile);
+            if (!hasValidChars) return false;
+            
+            // Must have actual atoms (not just numbers/symbols)
+            const hasAtoms = /[CNOPSFClBrIcns]/.test(smile);
+            if (!hasAtoms) return false;
+            
+            // Check for balanced parentheses and brackets
+            const parenBalance = (smile.match(/\(/g) || []).length - (smile.match(/\)/g) || []).length;
+            const bracketBalance = (smile.match(/\[/g) || []).length - (smile.match(/\]/g) || []).length;
+            if (parenBalance !== 0 || bracketBalance !== 0) return false;
+            
+            // Reject if too simple (like just "CCO" or very basic structures)
+            const atomCount = (smile.match(/[CNOPSFClBrI]/gi) || []).length;
+            const complexity = smile.length + atomCount;
+            
+            // Must have minimum complexity for therapeutic compounds
+            if (complexity < 15) return false;
+            
+            // Must have some functional groups or rings for drug-like properties
+            const hasFunctionalGroups = /[=@\(\)\[\]#]/.test(smile);
+            if (!hasFunctionalGroups) return false;
+            
+            return true;
+        }
+
+        function generateMolecularCustodyProof(badgeId, smileId) {
+            // Generate molecular custody proof using badge ID and SMILE hash
+            const smileHash = btoa(smileId).substring(0, 8);
+            return `MOL_${badgeId}_${smileHash}_${Date.now().toString(36).toUpperCase()}`;
+        }
+
+        function analyzeMoleculeForCURE(smileId, moleculeName) {
+            // Analyze SMILE ID to generate CURE token parameters
+            
+            // Calculate approximate molecular weight from SMILE
+            const molecularWeight = calculateMolecularWeight(smileId);
+            
+            // Determine therapeutic potential based on structure
+            const therapeuticScore = calculateTherapeuticScore(smileId, moleculeName);
+            
+            // Calculate base CURE value based on complexity and potential
+            const complexity = smileId.length + (smileId.match(/[CNO]/g) || []).length * 2;
+            const baseCureValue = Math.floor((therapeuticScore * complexity) / 2);
+            
+            // Predict disease target based on molecular features
+            const diseaseTarget = predictDiseaseTarget(smileId, moleculeName);
+            
+            // Generate CURE token metadata
+            const cureTokenId = generateCURETokenId(smileId);
+            
+            return {
+                molecularWeight: molecularWeight.toFixed(1),
+                therapeuticScore,
+                baseCureValue,
+                diseaseTarget,
+                cureTokenId,
+                smileHash: btoa(smileId).substring(0, 12),
+                analysisTimestamp: Date.now()
+            };
+        }
+
+        function calculateMolecularWeight(smileId) {
+            // Simplified molecular weight calculation based on SMILE atoms
+            const atomWeights = {
+                'C': 12.01, 'N': 14.01, 'O': 16.00, 'S': 32.07, 'P': 30.97,
+                'F': 19.00, 'Cl': 35.45, 'Br': 79.90, 'I': 126.90
+            };
+            
+            let weight = 0;
+            for (let char of smileId) {
+                if (atomWeights[char]) {
+                    weight += atomWeights[char];
+                }
+            }
+            
+            // Add estimated H atoms (simplified)
+            const carbonCount = (smileId.match(/C/g) || []).length;
+            weight += carbonCount * 1.008; // Approximate H atoms
+            
+            return weight;
+        }
+
+        function calculateTherapeuticScore(smileId, moleculeName) {
+            let score = 50; // Base score
+            
+            // Bonus for therapeutic indicators in name
+            if (moleculeName.toLowerCase().includes('therapeutic') || 
+                moleculeName.toLowerCase().includes('drug') ||
+                moleculeName.toLowerCase().includes('compound')) {
+                score += 20;
+            }
+            
+            // Bonus for disease-specific terms
+            if (moleculeName.toLowerCase().includes('pd') || 
+                moleculeName.toLowerCase().includes('parkinson')) {
+                score += 15;
+            }
+            
+            // Bonus for structural complexity (rings, functional groups)
+            if (smileId.includes('c') || smileId.includes('C')) score += 10; // Aromatic/aliphatic
+            if (smileId.includes('N')) score += 8; // Nitrogen (often in drugs)
+            if (smileId.includes('O')) score += 5; // Oxygen
+            if (smileId.includes('=')) score += 5; // Double bonds
+            if (smileId.includes('(') || smileId.includes('[')) score += 10; // Branching/rings
+            
+            return Math.min(95, score); // Cap at 95
+        }
+
+        function predictDiseaseTarget(smileId, moleculeName) {
+            const name = moleculeName.toLowerCase();
+            
+            // Disease prediction based on molecular name and structure
+            if (name.includes('pd') || name.includes('parkinson')) {
+                return "Parkinson's Disease";
+            } else if (name.includes('alzheimer') || name.includes('dementia')) {
+                return "Alzheimer's Disease";
+            } else if (name.includes('cancer') || name.includes('oncology')) {
+                return "Cancer Therapy";
+            } else if (name.includes('diabetes') || name.includes('glucose')) {
+                return "Diabetes Treatment";
+            } else if (smileId.includes('N') && smileId.length > 20) {
+                return "CNS Disorders"; // Complex nitrogen-containing compounds often target CNS
+            } else if (smileId.includes('c1ccc') || smileId.includes('C1CCC')) {
+                return "Cardiovascular Disease"; // Aromatic rings common in cardio drugs
+            } else {
+                return "General Therapeutics";
+            }
+        }
+
+        function generateCURETokenId(smileId) {
+            // Generate unique CURE token ID based on SMILE structure
+            const smileHash = btoa(smileId).replace(/[^A-Z0-9]/g, '').substring(0, 8);
+            return `CURE_${smileHash}_${Date.now().toString(36).toUpperCase()}`;
+        }
+
+        function calculateANTScoreFromMolecule(molecularAnalysis) {
+            // ANT Score = Weighted average of all molecular criteria (more realistic)
+            
+            // Therapeutic Score (40% weight) - Core therapeutic potential
+            const therapeuticWeight = 0.40;
+            const therapeuticComponent = molecularAnalysis.therapeuticScore * therapeuticWeight;
+            
+            // Drug-likeness Score (25% weight) - Molecular weight and ADMET properties
+            const mw = parseFloat(molecularAnalysis.molecularWeight);
+            let drugLikenessScore = 50; // Base
+            if (mw >= 150 && mw <= 500) drugLikenessScore = 85; // Optimal range
+            else if (mw < 150) drugLikenessScore = 70; // Too small
+            else if (mw > 500) drugLikenessScore = 60; // Too large
+            const drugLikenessComponent = drugLikenessScore * 0.25;
+            
+            // Disease Specificity (20% weight) - Targeted vs general
+            let specificityScore = 60; // General therapeutics
+            if (molecularAnalysis.diseaseTarget === "Parkinson's Disease") specificityScore = 90;
+            else if (molecularAnalysis.diseaseTarget === "Alzheimer's Disease") specificityScore = 88;
+            else if (molecularAnalysis.diseaseTarget === "Cancer Therapy") specificityScore = 85;
+            else if (molecularAnalysis.diseaseTarget !== "General Therapeutics") specificityScore = 75;
+            const specificityComponent = specificityScore * 0.20;
+            
+            // Innovation Score (10% weight) - Based on CURE value and complexity
+            let innovationScore = Math.min(95, Math.max(40, molecularAnalysis.baseCureValue / 50));
+            const innovationComponent = innovationScore * 0.10;
+            
+            // Safety/Regulatory Score (5% weight) - Random factor representing regulatory assessment
+            const safetyScore = 70 + Math.floor(Math.random() * 25); // 70-94
+            const safetyComponent = safetyScore * 0.05;
+            
+            // Calculate final weighted ANT score
+            const finalANTScore = Math.round(
+                therapeuticComponent + 
+                drugLikenessComponent + 
+                specificityComponent + 
+                innovationComponent + 
+                safetyComponent
+            );
+            
+            return Math.min(95, Math.max(65, finalANTScore)); // Realistic range 65-95
+        }
+
+        async function validatePDFReadability(pdfFile) {
+            // Comprehensive PDF validation
+            
+            try {
+                // Check file type
+                if (pdfFile.type !== 'application/pdf' && !pdfFile.name.toLowerCase().endsWith('.pdf')) {
+                    return { isReadable: false, error: 'File is not a PDF document' };
+                }
+                
+                // Check file size (reasonable limits)
+                const maxSize = 50 * 1024 * 1024; // 50MB max
+                const minSize = 1024; // 1KB min
+                
+                if (pdfFile.size > maxSize) {
+                    return { isReadable: false, error: `File too large (${(pdfFile.size / 1024 / 1024).toFixed(1)}MB). Maximum 50MB allowed.` };
+                }
+                
+                if (pdfFile.size < minSize) {
+                    return { isReadable: false, error: 'File too small - appears to be empty or corrupted' };
+                }
+                
+                // Try to read file header to verify it's a real PDF
+                const buffer = await readFileAsArrayBuffer(pdfFile.slice(0, 10));
+                const header = new Uint8Array(buffer);
+                const headerString = String.fromCharCode(...header.slice(0, 4));
+                
+                if (headerString !== '%PDF') {
+                    return { isReadable: false, error: 'Invalid PDF header - file may be corrupted' };
+                }
+                
+                // Estimate page count based on file size (rough approximation)
+                const estimatedPages = Math.max(1, Math.floor(pdfFile.size / 50000)); // ~50KB per page average
+                
+                return {
+                    isReadable: true,
+                    fileSize: pdfFile.size,
+                    pageCount: estimatedPages,
+                    fileName: pdfFile.name
+                };
+                
+            } catch (error) {
+                return { isReadable: false, error: 'Error reading PDF file: ' + error.message };
+            }
+        }
+
+        function readFileAsArrayBuffer(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = e => reject(new Error('Failed to read file'));
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        // Progress System Functions
+        function showProgressOverlay() {
+            document.getElementById('progress-overlay').style.display = 'flex';
+            // Reset all progress states
+            resetProgressSteps();
+        }
+
+        function hideProgressOverlay() {
+            document.getElementById('progress-overlay').style.display = 'none';
+        }
+
+        function resetSubmitButton() {
+            const submitBtn = document.getElementById('issue-badge-btn');
+            submitBtn.disabled = false;
+            submitBtn.textContent = '🏅 Issue Lab Badge & Auto-Run Demo';
+        }
+
+        function resetProgressSteps() {
+            // Reset all steps to pending
+            ['step-smile', 'step-pdf', 'step-analysis'].forEach(id => {
+                document.getElementById(id).classList.remove('active', 'completed');
+            });
+            
+            // Reset status texts
+            document.getElementById('smile-status').textContent = 'Pending...';
+            document.getElementById('pdf-status').textContent = 'Pending...';
+            document.getElementById('analysis-status').textContent = 'Pending...';
+            
+            // Reset progress bars
+            ['smile-progress', 'pdf-progress', 'analysis-progress'].forEach(id => {
+                document.getElementById(id).style.width = '0%';
+            });
+
+            // Hide score breakdown
+            document.getElementById('score-breakdown').style.display = 'none';
+        }
+
+        async function validateSMILEWithProgress(smileId, moleculeName) {
+            // Activate SMILE validation step
+            document.getElementById('step-smile').classList.add('active');
+            document.getElementById('smile-status').textContent = 'Validating...';
+            document.getElementById('smile-status').style.color = '#3b82f6';
+
+            // Animated progress
+            for (let i = 0; i <= 100; i += 10) {
+                document.getElementById('smile-progress').style.width = i + '%';
+                await sleep(100);
+            }
+
+            // Check validation
+            if (!isValidSMILE(smileId)) {
+                document.getElementById('smile-status').textContent = '❌ Failed';
+                document.getElementById('smile-status').style.color = '#ef4444';
+                document.getElementById('smile-progress').style.background = 'linear-gradient(90deg, #ef4444, #dc2626)';
+                
+                await sleep(1500);
+                hideProgressOverlay();
+                resetSubmitButton();
+                
+                addLog(`❌ SMILE ID validation failed - Invalid molecular structure`);
+                alert(`SMILE ID Validation Failed!\n\nReason: Invalid molecular structure\n\nRequirements:\n• Minimum 15 character complexity\n• Balanced parentheses/brackets\n• Must contain functional groups\n• Drug-like molecular features\n\nTry a more complex pharmaceutical molecule.`);
+                throw new Error('SMILE validation failed');
+            }
+
+            // Success
+            document.getElementById('smile-status').textContent = '✅ Validated';
+            document.getElementById('smile-status').style.color = '#10b981';
+            document.getElementById('step-smile').classList.remove('active');
+            document.getElementById('step-smile').classList.add('completed');
+            
+            addLog(`✅ SMILE ID validated successfully - Complex molecular structure confirmed`);
+        }
+
+        async function validatePDFWithProgress(pdfFile) {
+            // Activate PDF validation step
+            document.getElementById('step-pdf').classList.add('active');
+            document.getElementById('pdf-status').textContent = 'Checking...';
+            document.getElementById('pdf-status').style.color = '#3b82f6';
+
+            // Animated progress
+            for (let i = 0; i <= 100; i += 20) {
+                document.getElementById('pdf-progress').style.width = i + '%';
+                await sleep(150);
+            }
+
+            const validation = await validatePDFReadability(pdfFile);
+
+            if (!validation.isReadable) {
+                document.getElementById('pdf-status').textContent = '❌ Failed';
+                document.getElementById('pdf-status').style.color = '#ef4444';
+                document.getElementById('pdf-progress').style.background = 'linear-gradient(90deg, #ef4444, #dc2626)';
+                return validation;
+            }
+
+            // Success
+            document.getElementById('pdf-status').textContent = '✅ Readable';
+            document.getElementById('pdf-status').style.color = '#10b981';
+            document.getElementById('step-pdf').classList.remove('active');
+            document.getElementById('step-pdf').classList.add('completed');
+
+            addLog(`✅ PDF validated successfully - ${(pdfFile.size / 1024).toFixed(1)} KB, ${validation.pageCount} pages`);
+            return validation;
+        }
+
+        async function runMolecularAnalysisWithProgress(smileId, moleculeName) {
+            // Activate analysis step
+            document.getElementById('step-analysis').classList.add('active');
+            document.getElementById('analysis-status').textContent = 'Analyzing...';
+            document.getElementById('analysis-status').style.color = '#3b82f6';
+
+            // Show score breakdown
+            document.getElementById('score-breakdown').style.display = 'block';
+
+            // Animated analysis progress
+            for (let i = 0; i <= 100; i += 5) {
+                document.getElementById('analysis-progress').style.width = i + '%';
+                await sleep(50);
+            }
+
+            // Calculate scores with animation
+            let finalScore = await animateScoreCalculation(smileId, moleculeName);
+
+            // Comprehensive validation check (this is where things can fail even with high scores)
+            const validationResult = await performComprehensiveValidation(smileId, moleculeName, finalScore);
+
+            if (!validationResult.passed) {
+                // Failed comprehensive validation
+                document.getElementById('analysis-status').textContent = '❌ Failed';
+                document.getElementById('analysis-status').style.color = '#ef4444';
+                document.getElementById('analysis-progress').style.background = 'linear-gradient(90deg, #ef4444, #dc2626)';
+                
+                // Show failure result
+                document.getElementById('result-icon').textContent = '❌';
+                document.getElementById('result-text').innerHTML = `<span style="color: #ef4444;">Validation Failed</span><br><small style="color: #94a3b8;">${validationResult.reason}</small>`;
+                
+                await sleep(3000);
+                hideProgressOverlay();
+                resetSubmitButton();
+                
+                addLog(`❌ Comprehensive validation failed - ${validationResult.reason}`);
+                alert(`Molecular Validation Failed!\n\nTherapeutic Score: ${finalScore}/100\nReason: ${validationResult.reason}\n\nEven high-scoring molecules can fail if they don't meet all validation criteria.`);
+                throw new Error('Comprehensive validation failed');
+            }
+
+            // Success
+            document.getElementById('analysis-status').textContent = '✅ Complete';
+            document.getElementById('analysis-status').style.color = '#10b981';
+            document.getElementById('step-analysis').classList.remove('active');
+            document.getElementById('step-analysis').classList.add('completed');
+
+            // Show success result - DON'T auto-close
+            document.getElementById('result-icon').textContent = '🎉';
+            document.getElementById('result-text').innerHTML = `<span style="color: #10b981;">Validation Passed!</span><br><small style="color: #94a3b8;">Click anywhere to continue</small>`;
+            
+            // Add click to close functionality instead of auto-close
+            document.getElementById('progress-overlay').onclick = function(e) {
+                if (e.target === document.getElementById('progress-overlay')) {
+                    hideProgressOverlay();
+                }
+            };
+
+            // Calculate and set ANT score immediately
+            const antScore = calculateANTScoreFromMolecule({
+                therapeuticScore: finalScore,
+                molecularWeight: calculateMolecularWeight(smileId),
+                diseaseTarget: predictDiseaseTarget(smileId, moleculeName),
+                baseCureValue: Math.floor((finalScore * (smileId.length + (smileId.match(/[CNO]/g) || []).length * 2)) / 2)
+            });
+            
+            state.antScore = antScore;
+            
+            addLog(`✅ Comprehensive molecular analysis completed successfully`);
+            addLog(`🎯 Therapeutic Score: ${finalScore}/100 - PASSED all validation criteria`);
+            addLog(`🧠 ANT Score: ${antScore}% (Scientific merit for hackathon)`);
+            
+            // Update UI immediately to show Lab Badge count and ANT score
+            updateUI();
+            
+            // Add detailed validation success breakdown
+            await sleep(1000);
+            addLog(`📋 DETAILED VALIDATION SUCCESS:`);
+            await sleep(300);
+            addLog(`   ✅ Molecular Structure: Valid SMILE notation with proper complexity`);
+            await sleep(300);
+            addLog(`   ✅ Drug-likeness: Molecular weight ${calculateMolecularWeight(smileId).toFixed(1)} Da (optimal range)`);
+            await sleep(300);
+            addLog(`   ✅ Therapeutic Potential: ${finalScore}% score (above 70% threshold)`);
+            await sleep(300);
+            addLog(`   ✅ Disease Targeting: ${predictDiseaseTarget(smileId, moleculeName)} specificity confirmed`);
+            await sleep(300);
+            addLog(`   ✅ PDF Documentation: Validated and readable research data`);
+            await sleep(300);
+            addLog(`   ✅ ANT Scientific Merit: ${antScore}% (algorithmic assessment)`);
+            await sleep(500);
+            addLog(`🎉 ALL CRITERIA PASSED - Molecule ready for community validation!`);
+
+            return analyzeMoleculeForCURE(smileId, moleculeName);
+        }
+
+        async function animateScoreCalculation(smileId, moleculeName) {
+            // Calculate weighted components for realistic ANT scoring
+            
+            // Therapeutic Potential (40% weight)
+            document.getElementById('score-base').classList.add('calculating');
+            await sleep(800);
+            let therapeuticScore = 65 + Math.floor(Math.random() * 25); // 65-90 range
+            if (moleculeName.toLowerCase().includes('therapeutic') || 
+                moleculeName.toLowerCase().includes('drug') ||
+                moleculeName.toLowerCase().includes('compound')) {
+                therapeuticScore += 5; // Therapeutic naming bonus
+            }
+            const therapeuticWeighted = Math.round(therapeuticScore * 0.40);
+            document.getElementById('base-score-value').textContent = `${therapeuticScore} (40%)`;
+            document.getElementById('score-base').classList.remove('calculating');
+            addLog(`🎯 Therapeutic Potential: ${therapeuticScore}/100 → ${therapeuticWeighted} weighted points`);
+            await sleep(700);
+
+            // Drug-likeness (25% weight)
+            document.getElementById('score-therapeutic').classList.add('calculating');
+            await sleep(800);
+            const mw = calculateMolecularWeight(smileId);
+            let drugLikenessScore = 50;
+            if (mw >= 150 && mw <= 500) drugLikenessScore = 85; // Optimal range
+            else if (mw < 150) drugLikenessScore = 70; // Too small
+            else if (mw > 500) drugLikenessScore = 60; // Too large
+            const drugLikenessWeighted = Math.round(drugLikenessScore * 0.25);
+            document.getElementById('therapeutic-score-value').textContent = `${drugLikenessScore} (25%)`;
+            document.getElementById('score-therapeutic').classList.remove('calculating');
+            addLog(`⚗️ Drug-likeness: ${drugLikenessScore}/100 (MW: ${mw.toFixed(1)}Da) → ${drugLikenessWeighted} weighted points`);
+            await sleep(700);
+
+            // Disease Specificity (20% weight)
+            document.getElementById('score-disease').classList.add('calculating');
+            await sleep(800);
+            const diseaseName = predictDiseaseTarget(smileId, moleculeName);
+            let specificityScore = 60; // General therapeutics
+            if (diseaseName === "Parkinson's Disease") specificityScore = 90;
+            else if (diseaseName === "Alzheimer's Disease") specificityScore = 88;
+            else if (diseaseName === "Cancer Therapy") specificityScore = 85;
+            else if (diseaseName !== "General Therapeutics") specificityScore = 75;
+            const specificityWeighted = Math.round(specificityScore * 0.20);
+            document.getElementById('disease-score-value').textContent = `${specificityScore} (20%)`;
+            document.getElementById('score-disease').classList.remove('calculating');
+            addLog(`🏷️ Disease Specificity: ${specificityScore}/100 (${diseaseName}) → ${specificityWeighted} weighted points`);
+            await sleep(700);
+
+            // Innovation Score (10% weight)
+            document.getElementById('score-complexity').classList.add('calculating');
+            await sleep(800);
+            const baseCureValue = Math.floor((therapeuticScore * (smileId.length + (smileId.match(/[CNO]/g) || []).length * 2)) / 2);
+            let innovationScore = Math.min(95, Math.max(40, baseCureValue / 50));
+            const innovationWeighted = Math.round(innovationScore * 0.10);
+            document.getElementById('complexity-score-value').textContent = `${innovationScore} (10%)`;
+            document.getElementById('score-complexity').classList.remove('calculating');
+            addLog(`💡 Innovation Score: ${innovationScore}/100 (Novel approach) → ${innovationWeighted} weighted points`);
+            await sleep(700);
+
+            // Safety/Regulatory (5% weight)
+            document.getElementById('score-validation').classList.add('calculating');
+            await sleep(800);
+            const safetyScore = 70 + Math.floor(Math.random() * 25); // 70-94
+            const safetyWeighted = Math.round(safetyScore * 0.05);
+            document.getElementById('validation-score-value').textContent = `${safetyScore} (5%)`;
+            document.getElementById('score-validation').classList.remove('calculating');
+            addLog(`🛡️ Safety/Regulatory: ${safetyScore}/100 → ${safetyWeighted} weighted points`);
+            await sleep(800);
+
+            // Calculate weighted ANT Score
+            const finalANTScore = Math.round(
+                therapeuticWeighted + 
+                drugLikenessWeighted + 
+                specificityWeighted + 
+                innovationWeighted + 
+                safetyWeighted
+            );
+            
+            document.getElementById('final-score-value').textContent = finalANTScore;
+            
+            await sleep(1000);
+            addLog(`🧠 FINAL ANT SCORE: ${finalANTScore}/100 (Weighted Average)`);
+            addLog(`   📊 Breakdown: ${therapeuticWeighted} + ${drugLikenessWeighted} + ${specificityWeighted} + ${innovationWeighted} + ${safetyWeighted} = ${finalANTScore}`);
+            
+            if (finalANTScore >= 80) {
+                addLog(`✅ ANT VALIDATION PASSED - Score ≥80% threshold! Molecule qualifies for community validation.`);
+                addLog(`🔄 PROCEEDING TO LANE 2: Community CURE building phase...`);
+                return finalANTScore;
+            } else {
+                addLog(`❌ ANT VALIDATION FAILED - Score ${finalANTScore}% below 80% threshold`);
+                addLog(`📝 Molecule needs improvement before community validation`);
+                throw new Error(`ANT score too low: ${finalANTScore}%`);
+            }
+        }
+
+        async function performComprehensiveValidation(smileId, moleculeName, therapeuticScore) {
+            // Comprehensive validation that can fail even high scores
+            
+            // Check drug-likeness (Lipinski's Rule of Five simulation)
+            const molecularWeight = calculateMolecularWeight(smileId);
+            if (molecularWeight > 500) {
+                return { passed: false, reason: 'Molecular weight too high (>500 Da) - Poor drug-likeness' };
+            }
+            
+            // Check for toxic substructures (simplified)
+            const toxicPatterns = ['CC(C)C(C)C(C)C', 'NNNNN', 'CCCCCCCCCCC']; // Very simplified
+            for (let pattern of toxicPatterns) {
+                if (smileId.includes(pattern)) {
+                    return { passed: false, reason: 'Contains potentially toxic substructure' };
+                }
+            }
+            
+            // Fail if therapeutic score is too low despite other factors
+            if (therapeuticScore < 70) {
+                return { passed: false, reason: `Therapeutic score too low (${therapeuticScore}/100) - Need ≥70 for validation` };
+            }
+            
+            // Random validation failure for demo (10% chance)
+            if (Math.random() < 0.1) {
+                return { passed: false, reason: 'Failed regulatory compliance check - Resubmit with additional data' };
+            }
+            
+            // Additional checks for pharmaceutical viability
+            const atomCount = (smileId.match(/[CNOPSFClBrI]/gi) || []).length;
+            if (atomCount < 8) {
+                return { passed: false, reason: 'Insufficient molecular complexity for therapeutic application' };
+            }
+            
+            return { passed: true, reason: 'All validation criteria met' };
+        }
+
+        function updateCUREConnection(badgeData) {
+            // Show molecular connection in CURE section
+            const connectionDiv = document.getElementById('molecular-connection');
+            connectionDiv.style.display = 'block';
+            
+            document.getElementById('connected-molecule').textContent = badgeData.moleculeName;
+            document.getElementById('connected-target').textContent = badgeData.cureTokenData.diseaseTarget;
+            document.getElementById('connected-cure-value').textContent = badgeData.cureTokenData.baseCureValue.toLocaleString();
+            document.getElementById('connected-cure-id').textContent = badgeData.cureTokenData.cureTokenId;
+            
+            // Auto-set CURE purchase amount based on molecular analysis
+            const recommendedAmount = badgeData.cureTokenData.baseCureValue;
+            
+            addLog(`🔗 Molecular data connected to CURE tokenomics:`);
+            addLog(`   💡 Recommended CURE purchase: ${recommendedAmount.toLocaleString()} tokens`);
+            addLog(`   🎯 Based on ${badgeData.cureTokenData.diseaseTarget} therapeutic potential`);
+        }
+
+        // Lane 2: CURE Tokens - Community Pool Building
+        async function buyCURETokens() {
+            let promptText = 'Enter your details to purchase CURE tokens:\n\nFormat: "Name,Amount"\nExample: "Dr. Smith,5000"\n\nPhase 1 Price: $0.10 each\nKYC Status: ✅ Verified';
+            
+            // Add molecular-based recommendation if available
+            if (state.labBadgeData.length > 0) {
+                const latestBadge = state.labBadgeData[state.labBadgeData.length - 1];
+                promptText += `\n\n🧬 Supporting molecule: "${latestBadge.moleculeName}"\n💡 Recommended: ${latestBadge.cureTokenData.baseCureValue.toLocaleString()} CURE tokens\n🎯 Disease Target: ${latestBadge.cureTokenData.diseaseTarget}`;
+            }
+            
+            const input = prompt(promptText);
+            
+            if (!input) return;
+            
+            // Parse input 
+            const parts = input.split(',');
+            if (parts.length !== 2) {
+                alert('Please use format: "Name,Amount"');
+                return;
+            }
+            
+            const buyerName = parts[0].trim();
+            const amount = parseInt(parts[1].trim());
+            
+            if (!buyerName || isNaN(amount) || amount <= 0) {
+                alert('Please enter valid name and amount');
+                return;
+            }
+            
+            const price = state.curePhase === 1 ? 0.10 : 0.15;
+            const totalCost = amount * price;
+            
+            addLog(`💰 CURE Token Purchase Initiated`);
+            addLog(`   👤 Buyer: ${buyerName}`);
+            addLog(`   💵 Amount: ${amount.toLocaleString()} CURE tokens`);
+            addLog(`   💸 Cost: $${totalCost.toFixed(2)} (${price} per token)`);
+            
+            await sleep(1500);
+            
+            // Add to community pool and buyer's balance
+            state.cureBalance += amount;
+            state.communityCureTotal += amount;
+            state.totalCureSupply += amount;
+            
+            // Record purchase with source transparency
+            const purchase = {
+                buyer: buyerName,
+                amount: amount,
+                cost: totalCost,
+                timestamp: Date.now(),
+                purpose: state.labBadgeData.length > 0 ? `Supporting ${state.labBadgeData[state.labBadgeData.length - 1].moleculeName}` : 'General pool contribution'
+            };
+            
+            state.recentPurchases.unshift(purchase); // Add to beginning
+            if (state.recentPurchases.length > 10) state.recentPurchases.pop(); // Keep last 10
+            
+            addLog(`✅ Purchase successful! ${buyerName} contributed ${amount.toLocaleString()} CURE`);
+            addLog(`🏦 Community pool now: ${state.communityCureTotal.toLocaleString()} CURE`);
+            
+            // Update purchase log
+            updatePurchaseLog();
+            
+            // Check threshold progress (targeting 80K out of 100K for 80%)
+            const tokensNeeded = Math.max(0, 80000 - state.communityCureTotal);
+            const actualPercentage = Math.round((state.communityCureTotal / 80000) * 100);
+            addLog(`📊 Progress: ${state.communityCureTotal.toLocaleString()}/80,000 CURE (${Math.min(100, actualPercentage)}%)`);
+            addLog(`🎯 ${tokensNeeded.toLocaleString()} CURE needed to reach 80% threshold for Sub-DAO`);
+            
+            if (state.communityCureTotal >= 80000) {
+                addLog(`🎉 Community threshold achieved! Smart contract validation complete!`);
+                addLog(`🤖 Autonomous Sub-DAO creation authorized by blockchain logic`);
+                state.communityVoting.thresholdMet = true;
+                
+                // Auto-trigger Sub-DAO creation - fully autonomous
+                setTimeout(async () => {
+                    await triggerAutonomousSubDAOCreation();
+                }, 2000);
+            }
+            
+            updateUI();
+        }
+
+        function simulateCommunityPurchases() {
+            addLog(`🌍 Simulating realistic community CURE purchases...`);
+            
+            // Realistic community with varied participation (some don't buy, reflecting real sentiment)
+            const communityMembers = [
+                { name: 'Stanford Research Institute', amount: 15000, type: 'Institution', willBuy: true, confidence: 'high' },
+                { name: 'Dr. Sarah Wilson', amount: 8000, type: 'Researcher', willBuy: true, confidence: 'high' },
+                { name: 'Parkinson\'s Foundation', amount: 12000, type: 'Foundation', willBuy: true, confidence: 'high' },
+                { name: 'Prof. Michael Chen', amount: 0, type: 'Academic', willBuy: false, confidence: 'skeptical' }, // Doesn't buy
+                { name: 'Biotech Ventures LLC', amount: 18000, type: 'Investment', willBuy: true, confidence: 'high' },
+                { name: 'Patient Advocacy Network', amount: 5000, type: 'Advocacy', willBuy: true, confidence: 'medium' },
+                { name: 'Research Hospital Alpha', amount: 10000, type: 'Healthcare', willBuy: true, confidence: 'medium' },
+                { name: 'Dr. Skeptical Reviewer', amount: 0, type: 'Specialist', willBuy: false, confidence: 'bearish' }, // Doesn't buy
+                { name: 'Neurologist Dr. Kim', amount: 6000, type: 'Specialist', willBuy: true, confidence: 'medium' },
+                { name: 'Medical Innovation Fund', amount: 14000, type: 'Fund', willBuy: true, confidence: 'high' },
+                { name: 'Cautious Investor', amount: 0, type: 'Investor', willBuy: false, confidence: 'neutral' }, // Doesn't buy
+                { name: 'Community Member Pool', amount: 5000, type: 'Community', willBuy: true, confidence: 'medium' },
+                { name: 'Biotech Startup Beta', amount: 3000, type: 'Startup', willBuy: true, confidence: 'medium' },
+                { name: 'Research Student Group', amount: 1200, type: 'Students', willBuy: true, confidence: 'medium' },
+                { name: 'Patient Family Network', amount: 2800, type: 'Family', willBuy: true, confidence: 'high' }
+            ];
+            
+            // Disable button during simulation
+            const btn = document.getElementById('community-buy-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Simulating...';
+            
+            let memberIndex = 0;
+            const purchaseInterval = setInterval(async () => {
+                if (memberIndex >= communityMembers.length || state.communityCureTotal >= 80000) {
+                    clearInterval(purchaseInterval);
+                    btn.disabled = false;
+                    btn.textContent = '🌍 Simulate Community Buys';
+                    
+                    // Final assessment
+                    if (state.communityCureTotal >= 80000) {
+                        addLog(`🎉 LANE 2 COMPLETE! Community threshold achieved!`);
+                        addLog(`✅ Community CURE pool: ${state.communityCureTotal.toLocaleString()} tokens`);
+                        addLog(`🤖 Smart contract validation: ANT Score ${state.antScore}% + Community ≥80K CURE`);
+                        addLog(`🔄 LANE 2 → LANE 3 TRANSITION STARTING...`);
+                        state.communityVoting.thresholdMet = true;
+                        
+                        // Visual transition to Lane 3
+                        addFlowArrow(2, 3);
+                        
+                        // Auto-trigger marketplace creation
+                        setTimeout(async () => {
+                            addLog(`⚡ Autonomous marketplace creation starting...`);
+                            await triggerAutonomousSubDAOCreation();
+                        }, 3000);
+                    } else {
+                        addLog(`⚠️ Community threshold not reached: ${state.communityCureTotal.toLocaleString()} / 80,000 CURE`);
+                        addLog(`📝 ${80000 - state.communityCureTotal} more CURE needed from community`);
+                    }
+                    return;
+                }
+                
+                const member = communityMembers[memberIndex];
+                const price = state.curePhase === 1 ? 0.10 : 0.15;
+                
+                if (member.willBuy) {
+                    // Member decides to buy CURE tokens
+                    const totalCost = member.amount * price;
+                    
+                    state.communityCureTotal += member.amount;
+                    state.totalCureSupply += member.amount;
+                    
+                    // Record purchase
+                    const purchase = {
+                        buyer: member.name,
+                        amount: member.amount,
+                        cost: totalCost,
+                        timestamp: Date.now(),
+                        type: member.type,
+                        confidence: member.confidence,
+                        purpose: `Supporting ${state.labBadgeData[0]?.moleculeName || 'molecule'}`
+                    };
+                    
+                    state.recentPurchases.unshift(purchase);
+                    if (state.recentPurchases.length > 15) state.recentPurchases.pop();
+                    
+                    const progressPercent = Math.round((state.communityCureTotal / 80000) * 100);
+                    addLog(`💰 ${member.name} (${member.confidence}) purchased ${member.amount.toLocaleString()} CURE → ${progressPercent}%`);
+                } else {
+                    // Member chooses not to buy (realistic community behavior)
+                    addLog(`⏸️ ${member.name} (${member.confidence}) declined to purchase - ${member.confidence} about molecule`);
+                }
+                
+                // Update purchase log and UI
+                updatePurchaseLog();
+                updateUI();
+                
+                memberIndex++;
+            }, 1400); // Slower for better visibility
+        }
+
+        function updatePurchaseLog() {
+            const logContainer = document.getElementById('purchase-log');
+            
+            if (state.recentPurchases.length === 0) {
+                logContainer.innerHTML = '<div style="color: #64748b; text-align: center; padding: 20px;">No purchases yet - Start building the community pool!</div>';
+                return;
+            }
+            
+            logContainer.innerHTML = state.recentPurchases.map(purchase => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; margin: 4px 0; background: rgba(255, 255, 255, 0.03); border-radius: 6px; border-left: 3px solid #3b82f6;">
+                    <div>
+                        <div style="font-weight: 500; color: #f8fafc; font-size: 0.85rem;">${purchase.buyer}</div>
+                        <div style="color: #94a3b8; font-size: 0.75rem;">${purchase.type || 'Supporter'} • ${purchase.purpose}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: #3b82f6; font-weight: 600; font-family: 'Roboto Mono', monospace;">${purchase.amount.toLocaleString()}</div>
+                        <div style="color: #64748b; font-size: 0.75rem;">$${purchase.cost.toFixed(0)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+
+        async function checkValidation() {
+            const actualProgress = Math.round((state.communityCureTotal / 80000) * 100);
+            
+            if (state.communityCureTotal < 80000) {
+                alert(`Need 80,000 CURE tokens before ANT validation!\n\nCurrent: ${state.communityCureTotal.toLocaleString()} CURE (${actualProgress}%)\n\nNeed ${(80000 - state.communityCureTotal).toLocaleString()} more CURE tokens`);
+                return;
+            }
+            
+            addLog('🧠 Running ANT AI Scoring evaluation...');
+            addLog('📊 Analyzing across 5 dimensions...');
+            
+            await sleep(2000);
+            
+            // Simulate high-quality score
+            const antScore = Math.floor(Math.random() * 15) + 85; // 85-100%
+            state.antScore = antScore;
+            
+            addLog(`🎯 ANT Score calculated: ${antScore}%`);
+            addLog(`📋 Scientific Merit: 90% | Feasibility: 88% | Community: 92%`);
+            
+            if (antScore >= 80) {
+                addLog(`✅ VALIDATION PASSED! Score ≥ 80% threshold`);
+                addLog(`🚀 Transitioning CURE to Phase 2 (Dynamic Pricing)`);
+                
+                state.curePhase = 2;
+                
+                await sleep(1000);
+                
+                addLog(`🎉 Phase 2 activated! CURE tokens now use bonding curve pricing`);
+                addLog(`✅ Sub-DAO creation enabled`);
+                
+                document.getElementById('create-dao-btn').disabled = false;
+                document.getElementById('create-dao-btn').style.background = '#28a745';
+            } else {
+                addLog(`❌ Validation failed - Score below 80% threshold`);
+            }
+            
+            updateUI();
+        }
+
+        // Lane 3: Sub-DAO
+        async function createMolecularMarketplace() {
+            const molecule = state.labBadgeData[0];
+            
+            addLog(`🏪 MOLECULAR MARKETPLACE CREATION`);
+            
+            await sleep(1000);
+            
+            // Step 1: Create liquidity pool
+            addLog(`💰 Creating liquidity pool for ${molecule.moleculeName}...`);
+            await sleep(1500);
+            
+            const liquidityPool = {
+                molecule: molecule.moleculeName,
+                cureReserve: state.communityCureTotal,
+                pdcureSupply: 0,
+                totalLiquidity: state.communityCureTotal * 0.10 // 10% as initial liquidity
+            };
+            
+            addLog(`✅ Liquidity Pool Created:`);
+            addLog(`   💎 CURE Reserve: ${liquidityPool.cureReserve.toLocaleString()} tokens`);
+            addLog(`   💧 Initial Liquidity: $${(liquidityPool.totalLiquidity * 0.10).toLocaleString()}`);
+            
+            await sleep(1500);
+            
+            // Step 2: Create SubDAO with $PDCure tokens
+            addLog(`🏛️ Creating SubDAO for ${molecule.moleculeName}...`);
+            
+            const daoId = state.subDAOs.length + 1;
+            const tokenSymbol = generatePDCureTokenSymbol(molecule.moleculeName);
+            
+            const newSubDAO = {
+                id: daoId,
+                moleculeName: molecule.moleculeName,
+                diseaseTarget: molecule.cureTokenData.diseaseTarget,
+                symbol: tokenSymbol, // $PDCure variant
+                initialPrice: 0.012,
+                currentPrice: 0.012,
+                supply: 0,
+                userTokens: 0,
+                liquidityPool: liquidityPool,
+                isLive: true,
+                shareholders: 0,
+                marketCap: 0
+            };
+            
+            state.subDAOs.push(newSubDAO);
+            
+            addLog(`✅ SubDAO Created: ${molecule.moleculeName} DAO`);
+            addLog(`🎯 Token: ${tokenSymbol} (Disease-specific $PDCure)`);
+            addLog(`💰 Initial Price: $${newSubDAO.initialPrice}`);
+            addLog(`📈 Bonding curve active - Direct molecular investment enabled`);
+            
+            await sleep(1500);
+            
+            // Step 3: Make live in marketplace
+            addLog(`🚀 ${molecule.moleculeName} now LIVE in marketplace!`);
+            addLog(`👥 Investors can now buy ${tokenSymbol} tokens to become shareholders`);
+            addLog(`📊 Each purchase increases molecule valuation and community traffic`);
+            
+            // Update marketplace display  
+            updateMarketplaceDisplay();
+            
+            // Show Lane 3 completion
+            addLog(`🎉 LANE 3 COMPLETE! Molecular marketplace is now LIVE!`);
+            highlightLaneAsActive(3);
+            
+            // Enable investment with clear call-to-action
+            document.getElementById('buy-dao-btn').disabled = false;
+            document.getElementById('buy-dao-btn').style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            document.getElementById('buy-dao-btn').textContent = `💰 Invest in ${tokenSymbol}`;
+            
+            document.getElementById('bonding-curve-btn').disabled = false;
+            document.getElementById('bonding-curve-btn').style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+            document.getElementById('bonding-curve-btn').textContent = `📈 ${tokenSymbol} Bonding Curve`;
+            
+            addLog(`👥 Investors can now become shareholders in ${molecule.moleculeName}!`);
+            addLog(`📈 Each investment increases molecular valuation via bonding curve`);
+            addLog(`💰 ${tokenSymbol} tokens represent direct ownership in therapeutic success`);
+            addLog(`🏛️ Complete autonomous pipeline: Discovery → Community → Live Investment!`);
+            
+            updateUI();
+        }
+
+        function generatePDCureTokenSymbol(moleculeName) {
+            // Generate disease-specific $PDCure variant
+            const name = moleculeName.toLowerCase();
+            if (name.includes('parkinson') || name.includes('pd')) {
+                return '$PDCure-PD';
+            } else if (name.includes('alzheimer')) {
+                return '$PDCure-ALZ';
+            } else if (name.includes('cancer')) {
+                return '$PDCure-ONC';
+            } else if (name.includes('diabetes')) {
+                return '$PDCure-DIA';
+            } else {
+                return '$PDCure-GEN';
+            }
+        }
+
+        function updateMarketplaceDisplay() {
+            const container = document.getElementById('marketplace-display');
+            
+            if (state.subDAOs.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #64748b; padding: 30px;">
+                        🏪 Molecular Marketplace<br>
+                        <small>Molecules will appear here after community validation</small>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = state.subDAOs.map(dao => `
+                <div style="border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px; background: rgba(16, 185, 129, 0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                        <div>
+                            <div style="font-weight: 600; color: #f8fafc; margin-bottom: 4px;">🧬 ${dao.moleculeName}</div>
+                            <div style="font-size: 0.8rem; color: #94a3b8;">${dao.diseaseTarget} • LIVE</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="color: #10b981; font-weight: 600; font-family: 'Roboto Mono', monospace;">${dao.symbol}</div>
+                            <div style="font-size: 0.8rem; color: #64748b;">$${dao.currentPrice.toFixed(4)}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 0.75rem; margin-bottom: 12px;">
+                        <div>
+                            <div style="color: #94a3b8;">Liquidity:</div>
+                            <div style="color: #3b82f6; font-weight: 600;">$${(dao.liquidityPool.totalLiquidity * 0.10).toFixed(0)}K</div>
+                        </div>
+                        <div>
+                            <div style="color: #94a3b8;">Shareholders:</div>
+                            <div style="color: #f59e0b; font-weight: 600;">${dao.shareholders}</div>
+                        </div>
+                        <div>
+                            <div style="color: #94a3b8;">Market Cap:</div>
+                            <div style="color: #8b5cf6; font-weight: 600;">$${dao.marketCap.toLocaleString()}</div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="investInMolecule(${dao.id})" class="btn btn-success" style="width: 100%; font-size: 0.8rem; padding: 8px;">
+                        🚀 Become Shareholder
+                    </button>
+                </div>
+            `).join('');
+
+            document.getElementById('live-molecules-count').textContent = state.subDAOs.length;
+        }
+
+        async function buyDAOTokens() {
+            if (state.subDAOs.length === 0) return;
+            
+            const dao = state.subDAOs[0];
+            
+            // Enhanced investment interface
+            const amount = prompt(`🧬 Invest in ${dao.moleculeName}\n\n💎 Token: ${dao.symbol}\n💰 Current Price: $${dao.currentPrice.toFixed(4)}\n📊 Market Cap: $${dao.marketCap.toFixed(0)}\n👥 Shareholders: ${dao.shareholders}\n🎯 Disease: ${dao.diseaseTarget}\n\nHow many ${dao.symbol} tokens would you like to purchase?\n(Each token represents equity in this molecule's therapeutic success)`);
+            
+            if (!amount || isNaN(amount) || amount <= 0) return;
+            
+            const numAmount = parseInt(amount);
+            const totalCost = numAmount * dao.currentPrice;
+            
+            addLog(`💰 MOLECULAR INVESTMENT INITIATED`);
+            addLog(`   🧬 Molecule: ${dao.moleculeName}`);
+            addLog(`   💎 Token: ${dao.symbol}`);
+            addLog(`   📈 Investment: ${numAmount} tokens for $${totalCost.toFixed(2)}`);
+            
+            await sleep(1500);
+            
+            // Update bonding curve mechanics
+            dao.supply += numAmount;
+            dao.userTokens += numAmount;
+            dao.shareholders += 1;
+            
+            // Realistic bonding curve with liquidity impact
+            const liquidityImpact = numAmount / dao.liquidityPool.cureReserve;
+            const priceIncrease = 1 + (liquidityImpact * 0.05); // 5% impact per liquidity ratio
+            dao.currentPrice *= priceIncrease;
+            dao.marketCap = dao.supply * dao.currentPrice;
+            
+            addLog(`✅ Investment successful! ${numAmount} ${dao.symbol} tokens acquired`);
+            addLog(`📈 Bonding curve impact: $${dao.currentPrice.toFixed(4)} (+${((priceIncrease - 1) * 100).toFixed(1)}%)`);
+            addLog(`🏛️ You're now a shareholder in ${dao.moleculeName}'s therapeutic development!`);
+            addLog(`💰 Your stake: ${numAmount} tokens (${((numAmount / dao.supply) * 100).toFixed(1)}% of molecule)`);
+            addLog(`📊 Updated market cap: $${dao.marketCap.toFixed(0)}`);
+            
+            updateMarketplaceDisplay();
+            updateUI();
+            
+            alert(`🎉 Molecular Investment Complete!\n\n🧬 Molecule: ${dao.moleculeName}\n💎 Tokens: ${numAmount} ${dao.symbol}\n💰 Cost: $${totalCost.toFixed(2)}\n📈 New Price: $${dao.currentPrice.toFixed(4)}\n🏛️ Ownership: ${((numAmount / dao.supply) * 100).toFixed(1)}%\n\nYou're now invested in this molecule's therapeutic success! Each clinical milestone will impact your token value.`);
+        }
+
+        // Complete Demo
+        async function runCompleteDemo() {
+            addLog('🎭 Starting complete tri-lane demonstration...');
+            
+            // Reset state
+            state = {
+                labBadges: 0,
+                labBadgeData: [],
+                cureBalance: 0,
+                cureStaked: 0,
+                curePhase: 1,
+                subDAOs: [],
+                antScore: 0,
+                totalCureSupply: 0,
+                contractAddress: state.contractAddress
+            };
+            updateUI();
+            
+            await sleep(1000);
+            
+            // Run the demo workflow (this will create its own badge)
+            await runCompleteDemoWorkflow();
+        }
+
+        // Separate workflow function that can be called from Lab Badge submission or manual demo
+        async function runCompleteDemoWorkflow(existingBadgeData = null) {
+            let currentMolecule;
+            
+            if (existingBadgeData) {
+                // Use the molecule data from the Lab Badge form
+                addLog(`🔗 STEP 2: Using submitted molecular data for CURE workflow...`);
+                currentMolecule = existingBadgeData;
+                addLog(`🧬 Using molecule: ${currentMolecule.moleculeName}`);
+                addLog(`🔬 SMILE ID: ${currentMolecule.smileId}`);
+                addLog(`💰 Calculated CURE Value: ${currentMolecule.cureTokenData.baseCureValue.toLocaleString()} tokens`);
+            } else {
+                // Create demo molecule for manual demo run
+                addLog('🏅 STEP 1: Creating demo molecular submission...');
+                await sleep(1500);
+                
+                state.labBadges = 1;
+                const demoSmileId = "CCN(CC)CCOC(=O)c1ccc(N)cc1";
+                const demoMoleculeName = "PD-X1 Neuroprotective Compound";
+                
+                // Run molecular analysis for CURE connectivity
+                const molecularAnalysis = analyzeMoleculeForCURE(demoSmileId, demoMoleculeName);
+                
+                currentMolecule = {
+                    id: 1,
+                    moleculeName: demoMoleculeName,
+                    smileId: demoSmileId,
+                    pdfName: "PD-X1_Research_Data.pdf",
+                    pdfSize: 2048000,
+                    timestamp: Date.now(),
+                    custodyProof: generateMolecularCustodyProof(1, demoSmileId),
+                    cureTokenData: molecularAnalysis
+                };
+                
+                state.labBadgeData.push(currentMolecule);
+                
+                addLog('✅ Lab Badge #1 issued: "PD-X1 Neuroprotective Compound"');
+                addLog(`🔬 SMILE ID: ${currentMolecule.smileId}`);
+                addLog(`📄 PDF: ${currentMolecule.pdfName} (${(currentMolecule.pdfSize / 1024).toFixed(1)} KB)`);
+                addLog(`🔒 Molecular Custody Proof: ${currentMolecule.custodyProof}`);
+                addLog('⚠️ NON-TRANSFERABLE - Immutable molecular provenance');
+                
+                await sleep(1000);
+                
+                // Show CURE connection
+                addLog(`🔗 Connecting to CURE tokenomics...`);
+                addLog(`💎 CURE Analysis: MW=${molecularAnalysis.molecularWeight}, Score=${molecularAnalysis.therapeuticScore}`);
+                addLog(`🎯 Disease Target: ${molecularAnalysis.diseaseTarget}`);
+                addLog(`💰 Base CURE Value: ${molecularAnalysis.baseCureValue.toLocaleString()} tokens`);
+                addLog(`🆔 CURE Token ID: ${molecularAnalysis.cureTokenId}`);
+                
+                // Update CURE connection UI
+                updateCUREConnection(currentMolecule);
+                updateUI();
+            }
+            
+            await sleep(2000);
+            
+            // Step 2: Community builds CURE pool (realistic amounts)
+            addLog(`💎 STEP 2: Community CURE pool building for "${currentMolecule.moleculeName}"...`);
+            addLog(`🎯 Disease target: ${currentMolecule.cureTokenData.diseaseTarget}`);
+            addLog(`🏗️ Target: ${state.cureThreshold.toLocaleString()} CURE tokens for 80% threshold`);
+            await sleep(1000);
+            
+            // Community purchases totaling 100K CURE
+            const realisticBuyers = [
+                { name: 'Stanford Research Institute', amount: 15000, type: 'Institution' },
+                { name: 'Dr. Sarah Wilson', amount: 8000, type: 'Researcher' },
+                { name: 'Parkinson\'s Foundation', amount: 12000, type: 'Foundation' },
+                { name: 'Prof. Michael Chen', amount: 7000, type: 'Academic' },
+                { name: 'Biotech Ventures LLC', amount: 18000, type: 'Investment' },
+                { name: 'Patient Advocacy Network', amount: 5000, type: 'Advocacy' },
+                { name: 'Research Hospital Alpha', amount: 10000, type: 'Healthcare' },
+                { name: 'Neurologist Dr. Kim', amount: 6000, type: 'Specialist' },
+                { name: 'Medical Innovation Fund', amount: 14000, type: 'Fund' },
+                { name: 'Community Member Pool', amount: 5000, type: 'Community' }
+            ]; // Total: 100,000 CURE tokens
+            
+            for (let i = 0; i < realisticBuyers.length; i++) {
+                const buyer = realisticBuyers[i];
+                const price = 0.10;
+                const totalCost = buyer.amount * price;
+                
+                // Add to community pool
+                state.communityCureTotal += buyer.amount;
+                state.totalCureSupply += buyer.amount;
+                
+                // Record purchase
+                const purchase = {
+                    buyer: buyer.name,
+                    amount: buyer.amount,
+                    cost: totalCost,
+                    timestamp: Date.now(),
+                    type: buyer.type,
+                    purpose: `Supporting ${currentMolecule.moleculeName}`
+                };
+                state.recentPurchases.unshift(purchase);
+                
+                // Calculate progress
+                const thresholdPercentage = Math.round((state.communityCureTotal / state.cureThreshold) * 100);
+                
+                addLog(`💰 ${buyer.name} (${buyer.type}) purchased ${buyer.amount.toLocaleString()} CURE ($${totalCost.toFixed(0)})`);
+                addLog(`   📊 Progress: ${thresholdPercentage}% (${state.communityCureTotal.toLocaleString()}/${state.cureThreshold.toLocaleString()} CURE)`);
+                
+                updatePurchaseLog();
+                updateUI();
+                
+                // Check if threshold reached
+                if (thresholdPercentage >= 80) {
+                    addLog(`🎉 80% threshold achieved! Community pool complete!`);
+                    state.communityVoting.thresholdMet = true;
+                    break;
+                }
+                
+                await sleep(800);
+            }
+            
+            await sleep(1500);
+            
+            // Step 3: Check if 80% threshold reached for Sub-DAO creation
+            const thresholdPercentage = Math.round((state.communityCureTotal / state.cureThreshold) * 100);
+            
+            if (thresholdPercentage >= 80) {
+                addLog(`✅ 80% CURE threshold achieved! (${thresholdPercentage}%)`);
+                addLog(`🏗️ Community has shown sufficient interest in "${currentMolecule.moleculeName}"`);
+                addLog(`💰 Total community pool: ${state.communityCureTotal.toLocaleString()} CURE tokens`);
+                state.communityVoting.thresholdMet = true;
+            } else {
+                addLog(`⚠️ 80% threshold not yet reached (${thresholdPercentage}%)`);
+                addLog(`📝 Need ${(state.cureThreshold - state.communityCureTotal).toLocaleString()} more CURE tokens`);
+                return; // Stop demo if threshold not met
+            }
+            
+            await sleep(2000);
+            
+            // Initialize voting for the demo
+            state.communityVoting.isActive = true;
+            state.communityVoting.currentMolecule = currentMolecule;
+            state.communityVoting.members = generateCommunityMembers();
+            state.communityVoting.bullishVotes = 0;
+            state.communityVoting.totalVotes = 0;
+            state.communityVoting.thresholdMet = false;
+            
+            addLog(`📊 Community assessment: ${state.communityVoting.members.length} experts evaluating molecular potential`);
+            
+            // Simulate voting process
+            for (let i = 0; i < state.communityVoting.members.length; i++) {
+                const member = state.communityVoting.members[i];
+                const random = Math.random();
+                let voteType;
+                
+                if (random < member.bias) {
+                    voteType = 'bullish';
+                    state.communityVoting.bullishVotes++;
+                } else if (random < member.bias + 0.2) {
+                    voteType = 'neutral';
+                } else {
+                    voteType = 'bearish';
+                }
+                
+                member.hasVoted = true;
+                member.vote = voteType;
+                state.communityVoting.totalVotes++;
+                
+                const percentage = Math.round((state.communityVoting.bullishVotes / state.communityVoting.members.length) * 100);
+                addLog(`🗳️ ${member.name}: ${voteType.toUpperCase()} (${percentage}% bullish so far)`);
+                
+                await sleep(600);
+            }
+            
+            const finalPercentage = Math.round((state.communityVoting.bullishVotes / state.communityVoting.members.length) * 100);
+            
+            if (finalPercentage >= 80) {
+                state.communityVoting.thresholdMet = true;
+                addLog(`🎉 Community voting complete: ${finalPercentage}% BULLISH!`);
+                addLog(`✅ 80% threshold achieved - Sub-DAO creation authorized`);
+            } else {
+                addLog(`❌ Community voting failed: Only ${finalPercentage}% bullish (need 80%)`);
+                addLog(`📝 Molecule needs community support before proceeding`);
+                return; // Stop the demo if voting fails
+            }
+            
+            await sleep(2000);
+            
+            // Step 5: ANT Validation (only if community vote passed)
+            addLog('🧠 STEP 5: ANT AI Scoring evaluation...');
+            addLog('📊 Analyzing Scientific Merit, Feasibility, Community Alignment...');
+            
+            await sleep(3000);
+            
+            state.antScore = 90;
+            addLog('🎯 ANT Score: 90% - VALIDATION PASSED!');
+            addLog('✅ Scientific Merit: 90% | Feasibility: 88% | Community: 92%');
+            
+            await sleep(1000);
+            
+            addLog('🚀 CURE Phase 2 transition triggered!');
+            state.curePhase = 2;
+            addLog('📈 Dynamic bonding curve pricing now active');
+            updateUI();
+            
+            await sleep(2000);
+            
+            // Step 5: Sub-DAO Creation
+            addLog('🏛️ STEP 5: Creating Sub-DAO for validated research...');
+            
+            await sleep(2000);
+            
+            const newDAO = {
+                id: 1,
+                name: "Parkinson's Research Collective",
+                focus: "Neurodegeneration & Gene Therapy", 
+                symbol: "PARECO",
+                price: 0.008,
+                supply: 0,
+                userTokens: 0
+            };
+            
+            state.subDAOs.push(newDAO);
+            
+            addLog(`✅ Sub-DAO created: ${newDAO.name}`);
+            addLog(`🎯 Token: ${newDAO.symbol} | Price: $${newDAO.price}`);
+            addLog(`💰 Bonding curve active - Ready for crowdfunding!`);
+            addLog(`🗳️ Decentralized governance enabled`);
+            
+            updateUI();
+            
+            await sleep(2000);
+            
+            // Final summary
+            addLog('🎉 TRI-LANE MOLECULAR TOKENOMICS COMPLETE!');
+            addLog(`✅ Lane 1: Molecular custody secured for "${currentMolecule.moleculeName}"`);
+            addLog(`   🔬 SMILE ID: ${currentMolecule.smileId}`);
+            addLog(`   📄 PDF: ${currentMolecule.pdfName} validated & readable`);
+            addLog(`   🧠 ANT Score: ${state.antScore}% - Autonomous validation passed`);
+            addLog(`✅ Lane 2: Community validation achieved`);
+            addLog(`   💰 Community CURE pool: ${state.communityCureTotal.toLocaleString()} tokens`);
+            addLog(`   🏗️ Liquidity pool created from community contributions`);
+            addLog(`   🎯 Disease focus: ${currentMolecule.cureTokenData.diseaseTarget}`);
+            addLog(`✅ Lane 3: Molecular marketplace now LIVE!`);
+            addLog(`   🏪 ${currentMolecule.moleculeName} available for direct investment`);
+            addLog(`   💎 $PDCure tokens enable shareholder participation`);
+            addLog(`   📈 Bonding curve pricing creates price discovery`);
+            addLog(`🧬 Complete autonomous pipeline: Molecular → Community → Marketplace!`);
+            addLog(`🚀 Aptos Ctrl+Move hackathon demo: Revolutionary DeFi for drug development!`);
+        }
+
+        function resetDemo() {
+            state = {
+                labBadges: 0,
+                labBadgeData: [],
+                cureBalance: 0,
+                communityCureTotal: 0,
+                cureThreshold: 100000,
+                curePhase: 1,
+                subDAOs: [],
+                antScore: 0,
+                totalCureSupply: 0,
+                contractAddress: state.contractAddress,
+                recentPurchases: [],
+                communityVoting: {
+                    isActive: false,
+                    currentMolecule: null,
+                    members: [],
+                    bullishVotes: 0,
+                    totalVotes: 0,
+                    thresholdMet: false
+                }
+            };
+
+            // Reset UI elements
+            document.getElementById('purchase-log').innerHTML = '<div style="color: #64748b; text-align: center; padding: 20px;">No purchases yet - Start building the community pool!</div>';
+            
+            // Reset button states
+            const communityBtn = document.getElementById('community-buy-btn');
+            communityBtn.disabled = true;
+            communityBtn.style.background = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
+            communityBtn.textContent = '🌍 Simulate Community Buys';
+            
+            document.getElementById('transaction-log').innerHTML = `
+                <div class="log-entry">🚀 Demo reset - Ready for new demonstration</div>
+            `;
+            
+            updateUI();
+        }
+
+        function showSystemStatus() {
+            const latestBadge = state.labBadgeData.length > 0 ? state.labBadgeData[state.labBadgeData.length - 1] : null;
+            
+            const status = `
+🔗 TRI-LANE SYSTEM STATUS
+
+📊 METRICS:
+• Lab Badges: ${state.labBadges}
+• CURE Supply: ${state.totalCureSupply.toLocaleString()}
+• CURE Staked: ${state.cureStaked.toLocaleString()}
+• Current Phase: ${state.curePhase}
+• ANT Score: ${state.antScore || 'Not scored'}%
+• Sub-DAOs: ${state.subDAOs.length}
+
+🧬 MOLECULAR DATA:
+${latestBadge ? `• Latest Molecule: ${latestBadge.moleculeName}
+• SMILE ID: ${latestBadge.smileId}
+• PDF Documentation: ${latestBadge.pdfName}
+• Custody Proof: ${latestBadge.custodyProof}` : '• No molecular data submitted yet'}
+
+🌊 TOKEN FLOW:
+Lane 1 → Lane 2 → Lane 3
+${state.labBadges > 0 ? '✅' : '⏳'} Lab Badges → ${state.curePhase === 2 ? '✅' : '⏳'} CURE Phase 2 → ${state.subDAOs.length > 0 ? '✅' : '⏳'} Sub-DAO Active
+
+⛓️ BLOCKCHAIN:
+• Network: Aptos Devnet
+• Contract: ${state.contractAddress}
+• Status: Ready for deployment
+
+🎯 NEXT STEPS:
+${state.labBadges === 0 ? '1. Issue Lab Badge (with SMILE ID & PDF)' : '✅ Lab Badge issued with molecular data'}
+${state.cureStaked < 10000 ? '2. Stake 10K+ CURE for validation' : '✅ Staking threshold met'}
+${state.antScore < 80 ? '3. Run ANT validation (need 80%+)' : '✅ ANT validation passed'}
+${state.subDAOs.length === 0 ? '4. Create Sub-DAO' : '✅ Sub-DAO created'}
+            `;
+            
+            alert(status);
+        }
+
+        // Community Voting System
+        function startCommunityVoting() {
+            if (state.labBadgeData.length === 0) {
+                alert('No molecular data available for voting. Submit a Lab Badge first!');
+                return;
+            }
+
+            if (state.cureStaked < 5000) {
+                alert('Need at least 5,000 CURE staked to initiate community voting!');
+                return;
+            }
+
+            const latestMolecule = state.labBadgeData[state.labBadgeData.length - 1];
+            
+            // Initialize voting
+            state.communityVoting.isActive = true;
+            state.communityVoting.currentMolecule = latestMolecule;
+            state.communityVoting.members = generateCommunityMembers();
+            state.communityVoting.bullishVotes = 0;
+            state.communityVoting.totalVotes = 0;
+            state.communityVoting.thresholdMet = false;
+
+            // Update voting modal with molecule data
+            document.getElementById('voting-molecule-name').textContent = latestMolecule.moleculeName;
+            document.getElementById('voting-smile-id').textContent = latestMolecule.smileId;
+            document.getElementById('voting-disease-target').textContent = latestMolecule.cureTokenData.diseaseTarget;
+
+            // Show voting modal
+            document.getElementById('voting-modal').style.display = 'flex';
+            
+            // Populate community members
+            populateCommunityMembers();
+            updateVotingProgress();
+
+            addLog(`🗳️ Community voting initiated for "${latestMolecule.moleculeName}"`);
+            addLog(`🎯 Need 80% bullish sentiment to proceed to Sub-DAO creation`);
+        }
+
+        function generateCommunityMembers() {
+            const memberTypes = [
+                { name: 'Dr. Sarah Johnson', title: 'Neurologist', expertise: 'high', bias: 0.8 },
+                { name: 'Prof. Michael Chen', title: 'Biochemist', expertise: 'high', bias: 0.9 },
+                { name: 'Dr. Lisa Zhang', title: 'Pharmacologist', expertise: 'high', bias: 0.85 },
+                { name: 'Research Institute X', title: 'Institution', expertise: 'high', bias: 0.9 },
+                { name: 'Biotech Investor A', title: 'Investor', expertise: 'medium', bias: 0.7 },
+                { name: 'Patient Advocate', title: 'Advocate', expertise: 'medium', bias: 0.6 },
+                { name: 'Regulatory Expert', title: 'Regulatory', expertise: 'high', bias: 0.5 },
+                { name: 'Community Member 1', title: 'CURE Holder', expertise: 'low', bias: 0.6 },
+                { name: 'Community Member 2', title: 'CURE Holder', expertise: 'low', bias: 0.7 },
+                { name: 'Independent Reviewer', title: 'Reviewer', expertise: 'medium', bias: 0.4 }
+            ];
+
+            return memberTypes.map((member, index) => ({
+                id: index + 1,
+                name: member.name,
+                title: member.title,
+                expertise: member.expertise,
+                bias: member.bias, // Probability of voting bullish
+                hasVoted: false,
+                vote: null // 'bullish', 'bearish', 'neutral'
+            }));
+        }
+
+        function populateCommunityMembers() {
+            const container = document.getElementById('community-members-list');
+            
+            container.innerHTML = state.communityVoting.members.map(member => `
+                <div class="community-member" id="member-${member.id}">
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc; margin-bottom: 4px;">${member.name}</div>
+                        <div style="font-size: 0.8rem; color: #94a3b8;">${member.title} • ${member.expertise.toUpperCase()} expertise</div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="vote-btn vote-bullish" onclick="castVote(${member.id}, 'bullish')" id="bullish-${member.id}">🚀 Bullish</button>
+                        <button class="vote-btn vote-neutral" onclick="castVote(${member.id}, 'neutral')" id="neutral-${member.id}">😐 Neutral</button>
+                        <button class="vote-btn vote-bearish" onclick="castVote(${member.id}, 'bearish')" id="bearish-${member.id}">📉 Bearish</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update counters
+            document.getElementById('total-community-count').textContent = state.communityVoting.members.length;
+        }
+
+        function castVote(memberId, voteType) {
+            const member = state.communityVoting.members.find(m => m.id === memberId);
+            if (member.hasVoted) return;
+
+            member.hasVoted = true;
+            member.vote = voteType;
+            state.communityVoting.totalVotes++;
+
+            if (voteType === 'bullish') {
+                state.communityVoting.bullishVotes++;
+            }
+
+            // Update member UI
+            const memberElement = document.getElementById(`member-${memberId}`);
+            memberElement.style.opacity = '0.7';
+            
+            ['bullish', 'neutral', 'bearish'].forEach(type => {
+                const btn = document.getElementById(`${type}-${memberId}`);
+                if (type === voteType) {
+                    btn.style.transform = 'scale(1.1)';
+                    btn.style.boxShadow = '0 0 12px rgba(59, 130, 246, 0.5)';
+                } else {
+                    btn.disabled = true;
+                    btn.classList.add('voted');
+                }
+            });
+
+            updateVotingProgress();
+            
+            addLog(`🗳️ ${member.name} voted: ${voteType.toUpperCase()}`);
+
+            // Check if threshold met
+            checkVotingThreshold();
+        }
+
+        function updateVotingProgress() {
+            const totalMembers = state.communityVoting.members.length;
+            const bullishCount = state.communityVoting.bullishVotes;
+            const percentage = totalMembers > 0 ? Math.round((bullishCount / totalMembers) * 100) : 0;
+
+            // Update progress circle
+            const degrees = (percentage / 100) * 360;
+            document.getElementById('vote-progress-circle').style.background = 
+                `conic-gradient(#10b981 ${degrees}deg, #1e293b ${degrees}deg)`;
+
+            // Update text
+            document.getElementById('vote-percentage').textContent = percentage + '%';
+            document.getElementById('current-bullish-count').textContent = bullishCount;
+
+            // Color coding based on progress
+            const progressColor = percentage >= 80 ? '#10b981' : percentage >= 60 ? '#f59e0b' : '#3b82f6';
+            document.getElementById('vote-percentage').style.color = progressColor;
+        }
+
+        function checkVotingThreshold() {
+            const percentage = (state.communityVoting.bullishVotes / state.communityVoting.members.length) * 100;
+            
+            if (percentage >= 80) {
+                state.communityVoting.thresholdMet = true;
+                
+                // Show success result
+                const resultDiv = document.getElementById('voting-result');
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = 'rgba(16, 185, 129, 0.1)';
+                resultDiv.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                resultDiv.innerHTML = `
+                    <div style="font-size: 2rem; margin-bottom: 12px;">🎉</div>
+                    <div style="color: #10b981; font-weight: 600; margin-bottom: 8px;">80% Threshold Achieved!</div>
+                    <div style="color: #94a3b8; font-size: 0.9rem;">Community consensus reached • Sub-DAO creation enabled</div>
+                `;
+
+                // Enable validation button
+                document.getElementById('validation-btn').disabled = false;
+                document.getElementById('validation-btn').style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                document.getElementById('validation-btn').textContent = '🧠 Run ANT Validation';
+
+                addLog(`🎉 80% community consensus achieved! (${Math.round(percentage)}% bullish)`);
+                addLog(`✅ Sub-DAO creation criteria met - ANT validation enabled`);
+                
+                setTimeout(() => {
+                    closeVotingModal();
+                }, 3000);
+            }
+        }
+
+        function simulatePositiveVoting() {
+            addLog(`🤖 Simulating community voting process...`);
+            
+            // Disable auto-vote button
+            document.getElementById('auto-vote-btn').disabled = true;
+            document.getElementById('auto-vote-btn').textContent = '⏳ Voting...';
+
+            let votingIndex = 0;
+            const votingInterval = setInterval(() => {
+                if (votingIndex >= state.communityVoting.members.length) {
+                    clearInterval(votingInterval);
+                    document.getElementById('auto-vote-btn').disabled = false;
+                    document.getElementById('auto-vote-btn').textContent = '🚀 Simulate Community Voting';
+                    return;
+                }
+
+                const member = state.communityVoting.members[votingIndex];
+                if (!member.hasVoted) {
+                    // Use member bias to determine vote
+                    const random = Math.random();
+                    let voteType;
+                    
+                    if (random < member.bias) {
+                        voteType = 'bullish';
+                    } else if (random < member.bias + 0.2) {
+                        voteType = 'neutral';
+                    } else {
+                        voteType = 'bearish';
+                    }
+
+                    castVote(member.id, voteType);
+                }
+                
+                votingIndex++;
+            }, 800); // Vote every 800ms
+        }
+
+        function resetVoting() {
+            state.communityVoting.bullishVotes = 0;
+            state.communityVoting.totalVotes = 0;
+            state.communityVoting.thresholdMet = false;
+            
+            // Reset all members
+            state.communityVoting.members.forEach(member => {
+                member.hasVoted = false;
+                member.vote = null;
+            });
+
+            // Repopulate UI
+            populateCommunityMembers();
+            updateVotingProgress();
+            
+            // Hide result
+            document.getElementById('voting-result').style.display = 'none';
+            
+            addLog(`🔄 Community voting reset - Ready for new vote`);
+        }
+
+        function closeVotingModal() {
+            document.getElementById('voting-modal').style.display = 'none';
+        }
+
+        // Autonomous Smart Contract Validation
+        async function triggerAutonomousSubDAOCreation() {
+            addLog(`🤖 AUTONOMOUS SMART CONTRACT VALIDATION`);
+            addLog(`⚡ Powered by Aptos Move - No human intervention required!`);
+            
+            await sleep(1000);
+            
+            // Smart contract validation criteria
+            addLog(`🔍 Validating smart contract criteria:`);
+            await sleep(800);
+            
+            addLog(`   ✅ ANT Score: ${state.antScore}% (≥80% required) - PASSED`);
+            await sleep(800);
+            
+            addLog(`   ✅ Community CURE: ${state.communityCureTotal.toLocaleString()} tokens (≥80,000 required) - PASSED`);
+            await sleep(800);
+            
+            addLog(`   ✅ Molecular validation: SMILE ID verified & PDF validated - PASSED`);
+            await sleep(800);
+            
+            addLog(`   ✅ Disease target: ${state.labBadgeData[0].cureTokenData.diseaseTarget} identified - PASSED`);
+            await sleep(1000);
+            
+            addLog(`🎉 ALL SMART CONTRACT CRITERIA MET!`);
+            addLog(`💰 Creating liquidity pool for ${state.labBadgeData[0].moleculeName}...`);
+            
+            await sleep(1500);
+            
+            addLog(`🏪 Molecule now LIVE in marketplace!`);
+            addLog(`🏛️ Creating SubDAO with $PDCure tokens for direct investment...`);
+            addLog(`📈 Shareholders can now invest directly in this molecule's future!`);
+            
+            await sleep(1000);
+            
+            // Auto-create marketplace listing and SubDAO
+            await createMolecularMarketplace();
+            
+            // Make it recursive - call the original create function
+            document.getElementById('create-dao-btn').disabled = false;
+            document.getElementById('create-dao-btn').style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            document.getElementById('create-dao-btn').textContent = '🏛️ View Marketplace';
+        }
+
+        function enableCommunityPhase(badgeData) {
+            // Show that Lane 2 is now active for this molecule
+            addLog(`💎 Lane 2 activated for "${badgeData.moleculeName}"`);
+            addLog(`🏗️ Community can now purchase CURE tokens to support this molecule`);
+            addLog(`🎯 Target: ${state.cureThreshold.toLocaleString()} CURE tokens (80% threshold)`);
+            addLog(`💡 Each purchase moves closer to Sub-DAO creation eligibility`);
+            
+            // Enable the simulate community buys button with special styling
+            const communityBtn = document.getElementById('community-buy-btn');
+            communityBtn.disabled = false;
+            communityBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            communityBtn.textContent = '🚀 Start Community Building';
+            
+            // Add visual indicator that Lane 2 is now active
+            const lane2Card = document.querySelector('.lane-2');
+            lane2Card.style.border = '2px solid #3b82f6';
+            lane2Card.style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.3)';
+            
+            setTimeout(() => {
+                lane2Card.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+                lane2Card.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(255, 255, 255, 0.05)';
+            }, 3000);
+        }
+
+        function downloadMolecularData() {
+            if (state.labBadgeData.length === 0) {
+                alert('No molecular data to export. Submit a Lab Badge first!');
+                return;
+            }
+
+            const exportData = {
+                timestamp: new Date().toISOString(),
+                system: 'ANT Tri-Lane Tokenomics',
+                network: 'Aptos Devnet',
+                contract: state.contractAddress,
+                data: {
+                    labBadges: state.labBadgeData,
+                    cureMetrics: {
+                        totalSupply: state.totalCureSupply,
+                        communityStaked: state.cureStaked,
+                        currentPhase: state.curePhase
+                    },
+                    subDAOs: state.subDAOs,
+                    antScore: state.antScore
+                }
+            };
+
+            const jsonData = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ant-tri-lane-data-${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            addLog('💾 Molecular and tokenomics data exported successfully');
+        }
+
+        // Individual actions  
+        async function buyCURETokens() { await buyCURETokens(); }
+        async function checkValidation() { await checkValidation(); }
+        async function createSubDAO() { await createSubDAO(); }
+        async function buyDAOTokens() { await buyDAOTokens(); }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Initialize - Remove duplicate initialization
+        // This is now handled by the Lab Badge form initialization above
+    </script>
+</body>
+</html>

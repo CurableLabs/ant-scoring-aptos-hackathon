@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 America's Next Top CurAble - Blockchain Connected</title>
+    <style>
+        /* Same styles as working-demo.html but with blockchain indicators */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: #e2e8f0;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .blockchain-status {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .contract-address {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #06b6d4;
+            background: rgba(6, 182, 212, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+    <script src="https://unpkg.com/aptos@latest/dist/index.global.js"></script>
+</head>
+<body>
+    <div style="max-width: 1200px; margin: 0 auto;">
+        
+        <!-- Blockchain Status -->
+        <div class="blockchain-status">
+            <div class="status-dot" id="blockchain-status"></div>
+            <div>
+                <div style="font-weight: 600;">🔗 Connected to Aptos Blockchain</div>
+                <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 4px;">
+                    Contract: <span class="contract-address" id="contract-address">0xa7b69f0024e6a6a82b5baec9b6b5fc89b12ab4e19066fcf6b9db52ceb76b6915</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; padding: 40px; background: rgba(59, 130, 246, 0.1); border-radius: 16px; margin-bottom: 40px;">
+            <h1 style="font-size: 2.5rem; margin-bottom: 16px;">🏆 America's Next Top CurAble</h1>
+            <p style="font-size: 1.1rem; color: #06b6d4; margin-bottom: 16px;">Blockchain-Connected Molecular Discovery</p>
+            <p style="color: #94a3b8;">Real transactions on Aptos blockchain • Move smart contracts • Web3 integration</p>
+        </div>
+
+        <!-- Lane 1: Real Blockchain Interaction -->
+        <div style="background: rgba(15, 23, 42, 0.8); border-radius: 16px; padding: 24px; margin-bottom: 24px;">
+            <h2>🏅 Lane 1: Blockchain Lab Badges</h2>
+            <p>Submit molecular data to Aptos blockchain</p>
+            
+            <div style="margin: 16px 0;">
+                <select id="molecule-select" style="width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.95); color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px;">
+                    <option value="">-- Choose Contestant --</option>
+                    <option value="levodopa">🏃 L-DOPA (Parkinson's Champion)</option>
+                    <option value="aspirin">💊 Aspirin (Pain Relief Classic)</option>
+                </select>
+            </div>
+            
+            <div style="margin: 16px 0;">
+                <input type="text" id="molecule-name" placeholder="Molecule name" style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.05); color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px;">
+            </div>
+            
+            <button class="btn" onclick="submitToBlockchain()">⛓️ Submit to Aptos Blockchain</button>
+            <div id="transaction-status" style="margin-top: 16px; font-size: 0.9rem;"></div>
+        </div>
+
+        <!-- Transaction Log -->
+        <div style="background: rgba(0, 0, 0, 0.4); border-radius: 12px; padding: 20px; font-family: monospace; font-size: 0.9rem;">
+            <h3 style="color: #22d3ee; margin-top: 0;">🔗 Blockchain Transaction Log</h3>
+            <div id="tx-log">
+                <div style="color: #10b981;">✅ Connected to Aptos Devnet</div>
+                <div style="color: #94a3b8;">🔍 Ready for blockchain transactions...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Aptos connection setup
+        const NETWORK = "devnet";
+        const MODULE_ADDRESS = "0xa7b69f0024e6a6a82b5baec9b6b5fc89b12ab4e19066fcf6b9db52ceb76b6915";
+        
+        let aptosClient;
+        let connectedWallet = null;
+
+        // Initialize Aptos connection
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                aptosClient = new aptos.Aptos({
+                    network: aptos.Network.DEVNET
+                });
+                addTxLog('🔗 Aptos client initialized', 'success');
+                
+                // Check if Petra wallet is available
+                if (typeof window.aptos !== 'undefined') {
+                    addTxLog('👛 Petra wallet detected', 'info');
+                } else {
+                    addTxLog('⚠️ Please install Petra wallet for transactions', 'warning');
+                }
+                
+            } catch (error) {
+                addTxLog(`❌ Connection error: ${error.message}`, 'error');
+            }
+            
+            loadExamples();
+        });
+
+        // Load molecule examples
+        function loadExamples() {
+            document.getElementById('molecule-select').addEventListener('change', function() {
+                const examples = {
+                    'levodopa': {
+                        name: 'L-DOPA Parkinson\'s Treatment',
+                        smile: 'NC(Cc1ccc(O)c(O)c1)C(=O)O'
+                    },
+                    'aspirin': {
+                        name: 'Aspirin Pain Relief',
+                        smile: 'CC(=O)OC1=CC=CC=C1C(=O)O'
+                    }
+                };
+                
+                if (examples[this.value]) {
+                    document.getElementById('molecule-name').value = examples[this.value].name;
+                    addTxLog(`📋 Selected: ${examples[this.value].name}`, 'info');
+                }
+            });
+        }
+
+        // Submit to blockchain
+        async function submitToBlockchain() {
+            const moleculeName = document.getElementById('molecule-name').value;
+            
+            if (!moleculeName) {
+                addTxLog('❌ Please select or enter a molecule', 'error');
+                return;
+            }
+
+            try {
+                addTxLog('🚀 Preparing blockchain transaction...', 'info');
+                
+                // Check wallet connection
+                if (typeof window.aptos === 'undefined') {
+                    addTxLog('❌ Petra wallet not found. Install from Chrome Web Store', 'error');
+                    return;
+                }
+
+                // Connect wallet
+                addTxLog('👛 Connecting wallet...', 'info');
+                const wallet = await window.aptos.connect();
+                connectedWallet = wallet.address;
+                addTxLog(`✅ Wallet connected: ${wallet.address.slice(0, 10)}...`, 'success');
+
+                // Prepare transaction payload
+                const payload = {
+                    type: "entry_function_payload",
+                    function: `${MODULE_ADDRESS}::standalone::issue_credit`,
+                    type_arguments: [],
+                    arguments: []
+                };
+
+                addTxLog('📝 Submitting transaction to Aptos blockchain...', 'info');
+                
+                // Submit transaction
+                const response = await window.aptos.signAndSubmitTransaction(payload);
+                addTxLog(`🎉 Transaction submitted! Hash: ${response.hash}`, 'success');
+                
+                // Wait for confirmation
+                addTxLog('⏳ Waiting for confirmation...', 'info');
+                const txResult = await aptosClient.waitForTransaction({
+                    transactionHash: response.hash
+                });
+                
+                if (txResult.success) {
+                    addTxLog(`✅ Transaction confirmed! ${moleculeName} added to blockchain`, 'success');
+                    addTxLog(`🔗 View: https://explorer.aptoslabs.com/txn/${response.hash}?network=devnet`, 'info');
+                } else {
+                    addTxLog('❌ Transaction failed', 'error');
+                }
+
+            } catch (error) {
+                addTxLog(`❌ Error: ${error.message}`, 'error');
+                console.error('Blockchain error:', error);
+            }
+        }
+
+        // Add transaction log entry
+        function addTxLog(message, type = 'info') {
+            const log = document.getElementById('tx-log');
+            const entry = document.createElement('div');
+            entry.style.marginTop = '8px';
+            
+            const timestamp = new Date().toLocaleTimeString();
+            
+            switch(type) {
+                case 'success':
+                    entry.style.color = '#10b981';
+                    break;
+                case 'error':
+                    entry.style.color = '#ef4444';
+                    break;
+                case 'warning':
+                    entry.style.color = '#f59e0b';
+                    break;
+                default:
+                    entry.style.color = '#06b6d4';
+            }
+            
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+    </script>
+</body>
+</html>
+

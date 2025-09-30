@@ -1,0 +1,77 @@
+{
+    "name": "ant-scoring-aptos",
+    "version": "1.0.0",
+    "description": "ANT (Algorithmic Network Triage) Scoring System for Aptos - CurableDAO's Decentralized Research Evaluation Platform",
+    "main": "deploy.ts",
+    "scripts": {
+        "build": "tsc",
+        "compile": "aptos move compile",
+        "deploy": "ts-node deploy.ts",
+        "deploy:devnet": "ts-node deploy.ts devnet",
+        "deploy:testnet": "ts-node deploy.ts testnet",
+        "deploy:mainnet": "ts-node deploy.ts mainnet",
+        "test": "aptos move test",
+        "demo": "node simple-demo.js",
+        "demo:cli": "node simple-demo.js",
+        "demo:blockchain": "ts-node demo.ts",
+        "demo:quick": "node -e \"console.log('🚀 ANT Scoring Demo: Algorithmic research evaluation with 80% excellence threshold!\\n\\n📊 3 proposals → Expert scoring → Quality assessment\\n\\nRun: npm run demo')\"",
+        "start:system": "ts-node main-integration.ts",
+        "start:dev": "ts-node main-integration.ts development --demo",
+        "start:prod": "ts-node main-integration.ts production",
+        "api:dev": "ts-node api-gateway.ts",
+        "integration:test": "ts-node main-integration.ts development --demo",
+        "clean": "rm -rf build/ deployment-info.json",
+        "lint": "eslint . --ext .ts,.js",
+        "format": "prettier --write '**/*.{ts,js,json,md}'"
+    },
+    "keywords": [
+        "aptos",
+        "move",
+        "blockchain",
+        "smart-contracts",
+        "dao",
+        "curable",
+        "scoring",
+        "ant",
+        "research",
+        "proposals",
+        "defi",
+        "hackathon",
+        "ctrl+move"
+    ],
+    "author": "CurableDAO Team",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.3",
+        "@types/node": "^20.4.5",
+        "@types/ws": "^8.18.1",
+        "@typescript-eslint/eslint-plugin": "^6.2.1",
+        "@typescript-eslint/parser": "^6.2.1",
+        "eslint": "^8.46.0",
+        "prettier": "^3.0.0",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.1.6"
+    },
+    "dependencies": {
+        "@aptos-labs/ts-sdk": "^1.39.0",
+        "cors": "^2.8.5",
+        "express": "^5.1.0",
+        "ws": "^8.18.3"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/CurableDAO/ant-scoring-aptos"
+    },
+    "bugs": {
+        "url": "https://github.com/CurableDAO/ant-scoring-aptos/issues"
+    },
+    "homepage": "https://github.com/CurableDAO/ant-scoring-aptos#readme",
+    "funding": {
+        "type": "hackathon",
+        "url": "https://dorahacks.io/hackathon/aptos-ctrl-move"
+    }
+}
