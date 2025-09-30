@@ -1,4 +1,16 @@
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 /// ANT (Algorithmic Network Triage) Scoring System for Aptos
 /// A decentralized proposal evaluation and funding system for CurableDAO
 module ant_scoring::ant_scoring {
@@ -452,6 +464,10 @@ module ant_scoring::ant_scoring {
         state.proposal_counter
     }
 }
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
 /// ANT (Algorithmic Network Triage) Scoring System for Aptos
 /// A decentralized proposal evaluation and funding system for CurableDAO
@@ -907,3 +923,11 @@ module ant_scoring::ant_scoring {
     }
 }
 >>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
