@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [package]
 name = "ant_scoring"
 version = "1.0.0"
@@ -20,3 +21,26 @@ local = "framework/move-stdlib"
 
 
 
+=======
+[package]
+name = "ant_scoring"
+version = "1.0.0"
+authors = ["CurableDAO Team"]
+
+[addresses]
+ant_scoring = "_"
+
+[dependencies.AptosFramework]
+local = "framework/aptos-framework"
+
+[dependencies.AptosStdlib] 
+local = "framework/aptos-stdlib"
+
+[dependencies.MoveStdlib]
+local = "framework/move-stdlib"
+
+
+
+
+
+>>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a

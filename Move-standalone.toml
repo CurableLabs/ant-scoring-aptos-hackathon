@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [package]
 name = "ant_scoring"
 version = "1.0.0"
@@ -10,3 +11,16 @@ ant_scoring = "_"
 
 
 
+=======
+[package]
+name = "ant_scoring"
+version = "1.0.0"
+
+[addresses]
+ant_scoring = "_"
+
+
+
+
+
+>>>>>>> 261fc5d2fa7adefdf36e416d55fd7bef34e62b5a
