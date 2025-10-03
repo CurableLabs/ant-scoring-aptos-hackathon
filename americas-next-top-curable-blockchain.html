@@ -1142,7 +1142,7 @@
                         <h4>💎 Community CURE Pool</h4>
                         <div class="stat-item">
                             <span>Target Threshold:</span>
-                            <span id="cure-target">80,000 CURE</span>
+                            <span id="cure-target">100,000 CURE</span>
                         </div>
                         <div class="stat-item">
                             <span>Current Pool:</span>
@@ -1157,17 +1157,15 @@
                     </div>
 
                     <div id="community-actions" style="display: none;">
-                        <div class="input-group">
-                            <label>💰 Purchase CURE Tokens:</label>
-                            <input type="number" id="cure-amount" placeholder="Enter amount" min="100" step="100" value="500">
+                        <div class="lane-progress">
+                            <h4>🎯 Community Funding Target: 100,000 CURE</h4>
+                            <div class="progress-container">
+                                <div class="progress-bar low" id="cure-progress-bar" style="width: 0%"></div>
+                                <div class="progress-text"><span id="cure-progress">0</span> / 100,000 CURE</div>
+                            </div>
                         </div>
-
-                        <button class="btn" id="buy-cure-btn" onclick="buyCURETokens()" disabled>
-                            💰 Buy CURE Tokens
-                        </button>
-
-                        <button class="btn btn-warning" id="simulate-community-btn" onclick="simulateCommunityPurchases()" disabled>
-                            🌍 Simulate Community
+                        <button class="btn btn-warning" id="simulate-community-btn" onclick="simulateCommunityBuying()">
+                            🌍 Simulate Community Funding
                         </button>
                     </div>
 
@@ -1299,7 +1297,7 @@
             currentMolecule: null,
             antScore: 0,
             cureTokens: 0,
-            cureTarget: 100000, // Changed to 100,000 CURE fixed threshold
+            cureTarget: 100000, // Fixed 100,000 CURE threshold
             molecules: [],
             purchaseHistory: [],
             // Dynamic metrics for dashboard
@@ -2358,25 +2356,47 @@
             state.lanes[2].status = 'active';
             updateLaneStatus(2, 'active');
             
-            // Show Lane 2 actions
+            // Show Lane 2 actions and ALWAYS enable the button
             const actions = document.getElementById('community-actions');
             const simulateBtn = document.getElementById('simulate-community-btn');
             
             if (actions) {
                 actions.style.display = 'block';
                 console.log('✅ Lane 2 actions displayed');
-            } else {
-                console.error('❌ Could not find community-actions element');
             }
             
             if (simulateBtn) {
                 simulateBtn.disabled = false;
+                simulateBtn.style.display = 'block';
                 console.log('✅ Community simulation button enabled');
-            } else {
-                console.error('❌ Could not find simulate-community-btn element');
             }
             
             console.log('✅ Lane 2 unlocked - Ready for community funding!');
+            
+            // Also ensure Lane 3 placeholder is ready
+            enableLane3Placeholder();
+        }
+        
+        // Enable Lane 3 placeholder
+        function enableLane3Placeholder() {
+            const lane3 = document.getElementById('lane3');
+            if (lane3) {
+                lane3.innerHTML = `
+                    <div class="lane-status pending" id="lane3-status">Waiting for Funding</div>
+                    <div class="lane-header">
+                        <div class="lane-icon">🏪</div>
+                        <div>
+                            <h3 class="lane-title">Lane 3: Molecular Marketplace</h3>
+                            <p class="lane-description">Token creation & trading platform</p>
+                        </div>
+                    </div>
+                    <div class="lane-content">
+                        <p style="color: #94a3b8; text-align: center; margin: 20px 0;">
+                            Complete Lane 2 community funding to unlock marketplace creation.
+                        </p>
+                    </div>
+                `;
+            }
         }
 
         // Show Buy CURE modal
