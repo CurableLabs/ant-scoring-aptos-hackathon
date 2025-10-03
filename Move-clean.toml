@@ -1,0 +1,17 @@
+[package]
+name = "ant_scoring"
+version = "1.0.0"
+authors = ["CurableDAO Team"]
+
+[addresses]
+ant_scoring = "_"
+
+[dev-addresses]
+ant_scoring = "0x1"
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-core.git"
+rev = "mainnet"
+subdir = "aptos-move/framework/aptos-framework"
+
+[dev-dependencies]
