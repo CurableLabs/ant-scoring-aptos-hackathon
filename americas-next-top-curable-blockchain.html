@@ -2178,23 +2178,36 @@
             }
         }
 
-        // Simulate ANT Score Test with visual scoring
+        // Simulate ANT Score Test - FIXED VERSION
         async function simulateANTScoreTest() {
+            console.log('🧬 Starting ANT Score Test...');
+            
             const btn = document.getElementById('lab-badge-btn');
             btn.disabled = true;
             btn.textContent = '🔬 Running ANT Analysis...';
             
-            // Clear previous results
-            clearPreviousScores();
-            
-            // Show the scoring modal
-            showScoreModal();
-            
-            // Animate scoring with visual breakdown
-            await animateANTScoring();
-            
-            btn.disabled = false;
-            btn.textContent = '🧬 Simulate ANT Score Test';
+            try {
+                // Clear previous results
+                clearPreviousScores();
+                
+                // Show the scoring modal
+                showScoreModal();
+                
+                // Wait a moment for modal to appear
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Animate scoring with visual breakdown
+                await animateANTScoring();
+                
+                console.log('✅ ANT Score Test completed successfully');
+                
+            } catch (error) {
+                console.error('❌ ANT Score Test failed:', error);
+                alert('ANT scoring failed: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🧬 Simulate ANT Score Test';
+            }
         }
 
         // Clear previous modal scores
@@ -2296,24 +2309,45 @@
 
         // Show pass/fail result
         function showPassFailResult(score) {
+            console.log(`📊 Showing pass/fail result for score: ${score}`);
+            
             const resultDiv = document.getElementById('score-result');
             const continueBtn = document.getElementById('continue-btn');
+            
+            if (!resultDiv || !continueBtn) {
+                console.error('❌ Missing modal elements');
+                // Fallback: directly enable Lane 2
+                if (score >= 80) {
+                    closeScoreModal();
+                    enableLane2();
+                }
+                return;
+            }
             
             if (score >= 80) {
                 resultDiv.innerHTML = '<div style="color: #10b981; font-size: 1.2rem; font-weight: bold;">✅ ANT VALIDATION PASSED!</div>';
                 continueBtn.textContent = 'Continue to Lane 2';
-                continueBtn.onclick = () => { closeScoreModal(); enableLane2(); };
+                continueBtn.onclick = () => { 
+                    console.log('🎯 Continuing to Lane 2...');
+                    closeScoreModal(); 
+                    enableLane2(); 
+                };
                 continueBtn.style.display = 'block';
             } else {
                 resultDiv.innerHTML = '<div style="color: #ef4444; font-size: 1.2rem; font-weight: bold;">❌ Score Too Low - Try Another Molecule</div>';
                 continueBtn.textContent = 'Try Another Molecule';
-                continueBtn.onclick = () => closeScoreModal();
+                continueBtn.onclick = () => {
+                    console.log('🔄 Retrying ANT test...');
+                    closeScoreModal();
+                };
                 continueBtn.style.display = 'block';
             }
         }
 
         // Enable Lane 2 after successful ANT test
         function enableLane2() {
+            console.log('🎯 Enabling Lane 2...');
+            
             state.lanes[2].status = 'active';
             updateLaneStatus(2, 'active');
             
@@ -2321,10 +2355,21 @@
             const actions = document.getElementById('community-actions');
             const simulateBtn = document.getElementById('simulate-community-btn');
             
-            actions.style.display = 'block';
-            simulateBtn.disabled = false;
+            if (actions) {
+                actions.style.display = 'block';
+                console.log('✅ Lane 2 actions displayed');
+            } else {
+                console.error('❌ Could not find community-actions element');
+            }
             
-            console.log('🎯 Lane 2 unlocked - Ready for community funding!');
+            if (simulateBtn) {
+                simulateBtn.disabled = false;
+                console.log('✅ Community simulation button enabled');
+            } else {
+                console.error('❌ Could not find simulate-community-btn element');
+            }
+            
+            console.log('✅ Lane 2 unlocked - Ready for community funding!');
         }
 
         // Show Buy CURE modal
