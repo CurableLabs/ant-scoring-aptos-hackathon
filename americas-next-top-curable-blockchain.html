@@ -1255,26 +1255,40 @@
     </div>
 
     <!-- ANT Score Modal -->
+    <!-- ANT Score Modal - RESTORED ONE-BY-ONE ANIMATION -->
     <div class="modal" id="score-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">🏆 ANT Score Breakdown</h3>
-                <button class="modal-close" onclick="closeScoreModal()">&times;</button>
+        <div class="modal-content" style="width: 600px;">
+            <span class="close" onclick="closeScoreModal()" style="position: absolute; top: 15px; right: 25px; font-size: 28px; cursor: pointer; color: #aaa;">&times;</span>
+            <h2 style="text-align: center; color: #10b981; margin-bottom: 30px;">🧬 ANT Scoring Analysis</h2>
+            
+            <div class="scoring-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+                <div class="score-component" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="score-label" style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px;">Therapeutic Potential (40%)</div>
+                    <div class="score-value" id="therapeutic-score" style="font-size: 2rem; font-weight: bold; color: #06b6d4;">--</div>
+                </div>
+                <div class="score-component" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="score-label" style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px;">Drug-likeness (25%)</div>
+                    <div class="score-value" id="drug-score" style="font-size: 2rem; font-weight: bold; color: #06b6d4;">--</div>
+                </div>
+                <div class="score-component" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="score-label" style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px;">Disease Specificity (20%)</div>
+                    <div class="score-value" id="disease-score" style="font-size: 2rem; font-weight: bold; color: #06b6d4;">--</div>
+                </div>
+                <div class="score-component" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="score-label" style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px;">Innovation (10%)</div>
+                    <div class="score-value" id="innovation-score" style="font-size: 2rem; font-weight: bold; color: #06b6d4;">--</div>
+                </div>
+                <div class="score-component" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); grid-column: span 2;">
+                    <div class="score-label" style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px; text-align: center;">Safety/Regulatory (5%)</div>
+                    <div class="score-value" id="safety-score" style="font-size: 2rem; font-weight: bold; color: #06b6d4; text-align: center;">--</div>
+                </div>
             </div>
             
-            <div class="score-breakdown" id="score-breakdown">
-                <!-- Score details will be populated here -->
-            </div>
-
-            <div class="score-final">
-                <div class="score-number" id="final-score">0%</div>
-                <div class="score-status" id="score-status">Calculating...</div>
-            </div>
-
-            <div style="text-align: center; margin-top: 24px;">
-                <button class="btn btn-success" onclick="processLane2()">
-                    🚀 Continue to Lane 2
-                </button>
+            <div class="final-score-section" style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <h3 style="color: #f8fafc; margin-bottom: 15px;">🎯 Final ANT Score</h3>
+                <div class="final-score" id="final-score" style="font-size: 3rem; font-weight: bold; color: #10b981; margin: 15px 0;">--</div>
+                <div id="score-result" style="margin: 20px 0;"></div>
+                <button id="continue-btn" class="btn btn-success" style="display: none; padding: 12px 24px; border: none; border-radius: 8px; background: #10b981; color: white; font-weight: 600; cursor: pointer;">Continue</button>
             </div>
         </div>
     </div>
