@@ -805,6 +805,135 @@
             box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
             animation: pulse 2s infinite;
         }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #475569;
+            transition: 0.4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #10b981;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            margin: 15% auto;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            width: 400px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        /* Progress bar styles */
+        .progress-container {
+            position: relative;
+            width: 100%;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 600;
+            color: white;
+            z-index: 2;
+            font-size: 0.9rem;
+        }
+
+        /* Trading buttons */
+        .trading-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .trading-buttons .btn {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
@@ -816,13 +945,23 @@
     </div>
 
     <div class="container">
-        <!-- Blockchain Status -->
+        <!-- Blockchain Status with Toggle -->
         <div class="blockchain-status">
             <div class="status-dot"></div>
-            <div>
-                <strong>⛓️ Aptos Blockchain:</strong> Simulation Mode Active | 
+            <div style="flex: 1;">
+                <strong>⛓️ Aptos Blockchain:</strong> <span id="blockchain-mode">Simulation Mode</span> Active | 
                 <strong>🏗️ Move Contracts:</strong> Ready for Deployment | 
                 <strong>🎯 Demo:</strong> Fully Functional
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary btn-sm" onclick="showBuyCUREModal()">💎 Buy CURE Tokens</button>
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="blockchain-toggle" onchange="toggleBlockchainMode()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span style="margin-left: 10px; font-size: 0.9rem;">Testnet</span>
+                </div>
             </div>
         </div>
 
@@ -911,8 +1050,8 @@
                         <input type="text" id="pdf-input" placeholder="Research paper reference" readonly>
                     </div>
 
-                    <button type="button" class="btn btn-success" id="lab-badge-btn" onclick="issueLabBadge()">
-                        🎬 Begin Competition Audition
+                    <button type="button" class="btn btn-success" id="lab-badge-btn" onclick="simulateANTScoreTest()">
+                        🧬 Simulate ANT Score Test
                     </button>
                 </form>
 
@@ -1731,16 +1870,12 @@
                         </div>
                     </div>
                     
-                    <div class="investment-actions">
-                        <h5>💰 Quick Investment</h5>
-                        <div class="investment-buttons">
-                            <button class="btn btn-primary btn-sm" onclick="investInMolecule(1000)">$1K</button>
-                            <button class="btn btn-primary btn-sm" onclick="investInMolecule(5000)">$5K</button>
-                            <button class="btn btn-primary btn-sm" onclick="investInMolecule(10000)">$10K</button>
+                    <div class="trading-actions">
+                        <div class="trading-buttons">
+                            <button class="btn btn-primary" onclick="showBuyCUREModal()">💎 Buy with CURE Tokens</button>
+                            <button class="btn btn-info" onclick="viewAvailableMolecules()">🔍 View Available Molecules</button>
                         </div>
-                        <input type="number" id="custom-investment" placeholder="Custom amount" style="margin: 10px 0; padding: 8px; width: 100%; border-radius: 6px; border: 1px solid #444; background: rgba(255,255,255,0.1); color: white;">
-                        <button class="btn btn-success" onclick="investCustomAmount()" style="width: 100%; margin-bottom: 15px;">💎 Invest Custom Amount</button>
-                        <button class="btn btn-warning" id="bonding-btn" onclick="simulateBondingCurve()" style="width: 100%;">📈 Simulate Trading</button>
+                        <button class="btn btn-warning" id="bonding-btn" onclick="simulateBondingCurve()" style="width: 100%; margin-top: 15px;">📈 Simulate Trading</button>
                     </div>
                     
                     <div class="price-chart-container" style="margin-top: 20px;">
@@ -1950,25 +2085,315 @@
             ctx.fillText(`$${currentPrice.toFixed(4)}`, width - 60, 20);
         }
                 
+        // Toggle blockchain mode
+        function toggleBlockchainMode() {
+            const toggle = document.getElementById('blockchain-toggle');
+            const modeText = document.getElementById('blockchain-mode');
+            
+            if (toggle.checked) {
+                modeText.textContent = 'Aptos Testnet';
+                console.log('🔗 Switched to Aptos Testnet mode');
+            } else {
+                modeText.textContent = 'Simulation Mode';
+                console.log('🎭 Switched to Simulation mode');
+            }
+        }
+
+        // Simulate ANT Score Test with visual scoring
+        async function simulateANTScoreTest() {
+            const btn = document.getElementById('lab-badge-btn');
+            btn.disabled = true;
+            btn.textContent = '🔬 Running ANT Analysis...';
+            
+            // Clear previous results
+            clearPreviousScores();
+            
+            // Show the scoring modal
+            showScoreModal();
+            
+            // Animate scoring with visual breakdown
+            await animateANTScoring();
+            
+            btn.disabled = false;
+            btn.textContent = '🧬 Simulate ANT Score Test';
+        }
+
+        // Clear previous modal scores
+        function clearPreviousScores() {
+            const scoreElements = [
+                'therapeutic-score', 'drug-score', 'disease-score', 
+                'innovation-score', 'safety-score', 'final-score'
+            ];
+            scoreElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = '--';
+            });
+        }
+
+        // Animate ANT scoring with visual breakdown
+        async function animateANTScoring() {
+            const scores = calculateDetailedANTScore();
+            
+            // Animate each component
+            await animateScore('therapeutic-score', scores.therapeutic, 1000);
+            await animateScore('drug-score', scores.drugLikeness, 1200);
+            await animateScore('disease-score', scores.diseaseSpecificity, 1400);
+            await animateScore('innovation-score', scores.innovation, 1600);
+            await animateScore('safety-score', scores.safety, 1800);
+            
+            // Calculate and show final score
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await animateScore('final-score', scores.total, 2000);
+            
+            // Update state and dashboard
+            state.antScore = scores.total;
+            state.totalBadges += 1;
+            state.recentAntScore = `${scores.total}%`;
+            updateDashboard();
+            
+            // Show pass/fail and next steps
+            setTimeout(() => {
+                showPassFailResult(scores.total);
+            }, 1000);
+        }
+
+        // Calculate detailed ANT scores
+        function calculateDetailedANTScore() {
+            const name = document.getElementById('molecule-name').value;
+            
+            let therapeutic = 85 + Math.random() * 10; // 85-95
+            let drugLikeness = 80 + Math.random() * 15; // 80-95
+            let diseaseSpecificity = 82 + Math.random() * 13; // 82-95
+            let innovation = 75 + Math.random() * 20; // 75-95
+            let safety = 78 + Math.random() * 17; // 78-95
+            
+            // Enhanced scoring for specific molecules
+            if (name.toLowerCase().includes('tozadenant')) {
+                therapeutic = 92; diseaseSpecificity = 95; innovation = 88;
+            } else if (name.toLowerCase().includes('metformin')) {
+                drugLikeness = 95; safety = 92; therapeutic = 88;
+            }
+            
+            // Calculate weighted total
+            const total = Math.round(
+                therapeutic * 0.40 + 
+                drugLikeness * 0.25 + 
+                diseaseSpecificity * 0.20 + 
+                innovation * 0.10 + 
+                safety * 0.05
+            );
+            
+            return {
+                therapeutic: Math.round(therapeutic),
+                drugLikeness: Math.round(drugLikeness),
+                diseaseSpecificity: Math.round(diseaseSpecificity),
+                innovation: Math.round(innovation),
+                safety: Math.round(safety),
+                total: total
+            };
+        }
+
+        // Animate individual score
+        async function animateScore(elementId, targetScore, duration) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const startTime = Date.now();
+            const animate = () => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentScore = Math.round(targetScore * progress);
+                
+                element.textContent = currentScore;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            };
+            
+            animate();
+            return new Promise(resolve => setTimeout(resolve, duration));
+        }
+
+        // Show pass/fail result
+        function showPassFailResult(score) {
+            const resultDiv = document.getElementById('score-result');
+            const continueBtn = document.getElementById('continue-btn');
+            
+            if (score >= 80) {
+                resultDiv.innerHTML = '<div style="color: #10b981; font-size: 1.2rem; font-weight: bold;">✅ ANT VALIDATION PASSED!</div>';
+                continueBtn.textContent = 'Continue to Lane 2';
+                continueBtn.onclick = () => { closeScoreModal(); enableLane2(); };
+                continueBtn.style.display = 'block';
+            } else {
+                resultDiv.innerHTML = '<div style="color: #ef4444; font-size: 1.2rem; font-weight: bold;">❌ Score Too Low - Try Another Molecule</div>';
+                continueBtn.textContent = 'Try Another Molecule';
+                continueBtn.onclick = () => closeScoreModal();
+                continueBtn.style.display = 'block';
+            }
+        }
+
+        // Enable Lane 2 after successful ANT test
+        function enableLane2() {
+            state.lanes[2].status = 'active';
+            updateLaneStatus(2, 'active');
+            
+            // Show Lane 2 actions
+            const actions = document.getElementById('community-actions');
+            const simulateBtn = document.getElementById('simulate-community-btn');
+            
+            actions.style.display = 'block';
+            simulateBtn.disabled = false;
+            
+            console.log('🎯 Lane 2 unlocked - Ready for community funding!');
+        }
+
+        // Show Buy CURE modal
+        function showBuyCUREModal() {
+            const modal = document.getElementById('cure-modal');
+            if (!modal) {
+                createBuyCUREModal();
+            }
+            document.getElementById('cure-modal').style.display = 'block';
+        }
+
+        // Create Buy CURE modal
+        function createBuyCUREModal() {
+            const modalHTML = `
+                <div id="cure-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeBuyCUREModal()">&times;</span>
+                        <h2>💎 Buy CURE Tokens</h2>
+                        <p style="margin: 20px 0; color: #94a3b8;">This is a simulation demo.</p>
+                        <p style="margin: 20px 0; color: #f59e0b; font-weight: bold;">A wallet connection would be needed for real transactions.</p>
+                        <button class="btn btn-primary" onclick="closeBuyCUREModal()">Got it!</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        // Close Buy CURE modal
+        function closeBuyCUREModal() {
+            document.getElementById('cure-modal').style.display = 'none';
+        }
+
+        // View available molecules
+        function viewAvailableMolecules() {
+            const molecules = Object.keys(moleculeExamples).map(key => 
+                `• ${moleculeExamples[key].name} (${moleculeExamples[key].disease})`
+            ).join('\n');
+            
+            alert(`🧬 Available Molecules in Market:\n\n${molecules}\n\nSelect from Lane 1 dropdown to begin analysis!`);
+        }
+
+        // Community buying simulation (renamed and enhanced)
+        function simulateCommunityBuying() {
+            const btn = document.getElementById('simulate-community-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Simulating Community...';
+            
+            const progressBar = document.getElementById('cure-progress-bar');
+            const progressText = document.getElementById('cure-progress');
+            
+            console.log('🌍 Starting community funding simulation...');
+            
+            const buyers = [
+                { name: "Stanford Research Lab", amount: 15000 },
+                { name: "Dr. Sarah Wilson", amount: 9500 },
+                { name: "Biotech Accelerator Fund", amount: 18000 },
+                { name: "Children's Hospital", amount: 12000 },
+                { name: "Parkinson's Foundation", amount: 14500 },
+                { name: "Innovation Capital", amount: 16000 },
+                { name: "MIT Medical Lab", amount: 15000 }
+            ];
+            
+            let totalFunded = 0;
+            let buyerIndex = 0;
+            
+            const fundingInterval = setInterval(() => {
+                if (totalFunded >= 100000 || buyerIndex >= buyers.length) {
+                    clearInterval(fundingInterval);
+                    
+                    if (totalFunded >= 100000) {
+                        btn.textContent = '✅ Funding Complete';
+                        btn.className = 'btn btn-success';
+                        
+                        // Update dashboard
+                        state.cureDeployed += totalFunded;
+                        updateDashboard();
+                        
+                        console.log(`🎉 100,000 CURE threshold reached! Total: ${totalFunded.toLocaleString()}`);
+                        
+                        // Enable Lane 3
+                        setTimeout(() => enableLane3(), 2000);
+                    }
+                    return;
+                }
+                
+                const buyer = buyers[buyerIndex];
+                totalFunded += buyer.amount;
+                
+                // Update progress
+                const percentage = Math.min((totalFunded / 100000) * 100, 100);
+                progressBar.style.width = `${percentage}%`;
+                progressText.textContent = totalFunded.toLocaleString();
+                
+                // Color progress bar
+                if (percentage < 30) {
+                    progressBar.className = 'progress-bar low';
+                } else if (percentage < 70) {
+                    progressBar.className = 'progress-bar medium';
+                } else if (percentage < 100) {
+                    progressBar.className = 'progress-bar high';
+                } else {
+                    progressBar.className = 'progress-bar complete';
+                }
+                
+                console.log(`💰 ${buyer.name}: ${buyer.amount.toLocaleString()} CURE → Total: ${totalFunded.toLocaleString()}`);
+                
+                buyerIndex++;
+            }, 1000);
+        }
+
+        // Enable Lane 3 after successful funding
+        function enableLane3() {
+            console.log('🏪 LANE 3: Creating molecular marketplace...');
+            processLane3();
+        }
+
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', function() {
             updateDashboard();
             console.log('🎯 Curable Labs: Trial by Molecule initialized!');
         });
+        
+        // Legacy functions (keeping for compatibility)
+        function buyCURETokens() {
+            const amount = parseInt(document.getElementById('cure-amount').value) || 500;
+            
+            state.cureTokens += amount;
+            state.purchaseHistory.push({
+                buyer: "You",
+                amount: amount,
+                time: new Date().toLocaleTimeString()
+            });
+            
+            updatePurchaseLog();
+            updateUI();
+            
+            console.log(`💎 Purchased ${amount} CURE tokens`);
+            
+            // Check threshold
+            if (state.cureTokens >= state.cureTarget) {
+                console.log('🎉 100,000 CURE threshold reached!');
                 
-                console.log(`💎 ${buyer} purchased ${amount} CURE tokens`);
-                
-                // Check threshold
-                if (state.cureTokens >= state.cureTarget) {
-                    clearInterval(purchaseInterval);
-                    btn.disabled = false;
-                    btn.textContent = '🎉 Threshold Reached!';
-                    
-                    setTimeout(() => {
-                        triggerAutonomousSubDAOCreation();
-                    }, 2000);
-                }
-            }, 1500);
+                setTimeout(() => {
+                    if (typeof processLane3 === 'function') {
+                        processLane3();
+                    }
+                }, 2000);
+            }
         }
 
         // Update purchase log
