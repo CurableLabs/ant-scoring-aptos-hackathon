@@ -1045,43 +1045,6 @@
             </div>
         </div>
 
-        <!-- ANT Score Modal -->
-        <div id="score-modal" class="modal">
-            <div class="modal-content" style="width: 600px;">
-                <span class="close" onclick="closeScoreModal()">&times;</span>
-                <h2>🧬 ANT Scoring Analysis</h2>
-                
-                <div class="scoring-grid" style="margin: 20px 0;">
-                    <div class="score-component">
-                        <div class="score-label">Therapeutic Potential (40%)</div>
-                        <div class="score-value" id="therapeutic-score">--</div>
-                    </div>
-                    <div class="score-component">
-                        <div class="score-label">Drug-likeness (25%)</div>
-                        <div class="score-value" id="drug-score">--</div>
-                    </div>
-                    <div class="score-component">
-                        <div class="score-label">Disease Specificity (20%)</div>
-                        <div class="score-value" id="disease-score">--</div>
-                    </div>
-                    <div class="score-component">
-                        <div class="score-label">Innovation (10%)</div>
-                        <div class="score-value" id="innovation-score">--</div>
-                    </div>
-                    <div class="score-component">
-                        <div class="score-label">Safety/Regulatory (5%)</div>
-                        <div class="score-value" id="safety-score">--</div>
-                    </div>
-                </div>
-                
-                <div class="final-score-section">
-                    <h3>🎯 Final ANT Score</h3>
-                    <div class="final-score" id="final-score">--</div>
-                    <div id="score-result" style="margin: 20px 0;"></div>
-                    <button id="continue-btn" class="btn btn-success" style="display: none;">Continue</button>
-                </div>
-            </div>
-        </div>
 
         <!-- Tri-Lane Grid -->
         <div class="tri-lane-grid">
@@ -2222,19 +2185,37 @@
             });
         }
 
-        // Animate ANT scoring with visual breakdown
+        // Animate ANT scoring with visual breakdown - RESTORED VERSION
         async function animateANTScoring() {
+            console.log('🎬 Starting ANT scoring animation...');
+            
             const scores = calculateDetailedANTScore();
+            console.log('📊 Calculated scores:', scores);
             
-            // Animate each component
-            await animateScore('therapeutic-score', scores.therapeutic, 1000);
-            await animateScore('drug-score', scores.drugLikeness, 1200);
-            await animateScore('disease-score', scores.diseaseSpecificity, 1400);
-            await animateScore('innovation-score', scores.innovation, 1600);
-            await animateScore('safety-score', scores.safety, 1800);
+            // Animate each component ONE BY ONE with delays
+            console.log('🎯 Animating Therapeutic Potential...');
+            await animateScore('therapeutic-score', scores.therapeutic, 1500);
+            await new Promise(resolve => setTimeout(resolve, 300));
             
-            // Calculate and show final score
+            console.log('💊 Animating Drug-likeness...');
+            await animateScore('drug-score', scores.drugLikeness, 1500);
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            console.log('🎯 Animating Disease Specificity...');
+            await animateScore('disease-score', scores.diseaseSpecificity, 1500);
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            console.log('💡 Animating Innovation...');
+            await animateScore('innovation-score', scores.innovation, 1500);
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            console.log('🛡️ Animating Safety/Regulatory...');
+            await animateScore('safety-score', scores.safety, 1500);
             await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Big pause before final score
+            console.log('🏆 Calculating final ANT score...');
+            await new Promise(resolve => setTimeout(resolve, 800));
             await animateScore('final-score', scores.total, 2000);
             
             // Update state and dashboard
@@ -2242,6 +2223,8 @@
             state.totalBadges += 1;
             state.recentAntScore = `${scores.total}%`;
             updateDashboard();
+            
+            console.log(`✅ ANT scoring complete! Final score: ${scores.total}%`);
             
             // Show pass/fail and next steps
             setTimeout(() => {
@@ -2285,10 +2268,15 @@
             };
         }
 
-        // Animate individual score
+        // Animate individual score - ENHANCED VERSION
         async function animateScore(elementId, targetScore, duration) {
             const element = document.getElementById(elementId);
-            if (!element) return;
+            if (!element) {
+                console.error(`❌ Score element not found: ${elementId}`);
+                return;
+            }
+            
+            console.log(`🎬 Animating ${elementId} to ${targetScore}`);
             
             const startTime = Date.now();
             const animate = () => {
@@ -2298,8 +2286,13 @@
                 
                 element.textContent = currentScore;
                 
+                // Add visual feedback
                 if (progress < 1) {
+                    element.style.color = '#f59e0b'; // Orange while animating
                     requestAnimationFrame(animate);
+                } else {
+                    element.style.color = '#10b981'; // Green when complete
+                    console.log(`✅ ${elementId} animation complete: ${targetScore}`);
                 }
             };
             
