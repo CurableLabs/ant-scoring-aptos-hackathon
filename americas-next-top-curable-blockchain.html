@@ -494,14 +494,12 @@
 </head>
 <body>
     <div class="container">
-<<<<<<< HEAD
         <div class="header">
             <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 16px;">
                 <div style="font-size: 4rem;">🏆</div>
                 <div style="text-align: left;">
                     <h1 style="margin: 0; font-size: 2.8rem; background: linear-gradient(135deg, #3b82f6, #06b6d4, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Curable Labs: Trial by Molecule</h1>
                     <p style="margin: 4px 0 0 0; font-size: 1.1rem; color: #06b6d4;">Advanced DeFi-Powered Drug Discovery Platform</p>
-=======
         <!-- Blockchain Status with Toggle -->
         <div class="blockchain-status">
             <div class="status-dot"></div>
@@ -536,7 +534,6 @@
                 </div>
                 <div class="molecule-section">
                     <div class="molecule-icon">🧬</div>
->>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
                 </div>
                 <div style="font-size: 4rem;">🧬</div>
             </div>
@@ -566,7 +563,6 @@
             </div>
         </div>
 
-<<<<<<< HEAD
         <!-- Lanes -->
         <div class="lane-grid">
             <!-- Lane 1 -->
@@ -609,7 +605,6 @@
                     <div style="color: #f8fafc; font-weight: 600; margin: 16px 0;">🧠 ANT Scoring Progress:</div>
                     <div class="progress-bar">
                         <div class="progress-fill" id="ant-progress"></div>
-=======
 
         <!-- Tri-Lane Grid -->
         <div class="tri-lane-grid">
@@ -673,7 +668,6 @@
                             <span>Status:</span>
                             <span id="validation-status">Pending</span>
                         </div>
->>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
                     </div>
                     <div id="scoring-details" style="font-size: 0.8rem; color: #94a3b8;"></div>
                 </div>
@@ -732,8 +726,6 @@
                             </div>
                         </div>
                     </div>
-<<<<<<< HEAD
-=======
 
                     <div class="community-stats">
                         <h4>💎 Community CURE Pool</h4>
@@ -772,7 +764,6 @@
                             <!-- Community purchases will appear here -->
                         </div>
                     </div>
->>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
                 </div>
                 
                 <div id="bonding-curve-display" style="display: none;">
@@ -791,7 +782,6 @@
         </div>
     </div>
 
-<<<<<<< HEAD
     <!-- ANT Scoring Modal -->
     <div class="modal-overlay" id="scoring-modal">
         <div class="modal-content">
@@ -852,7 +842,6 @@
 
             <div class="modal-footer">
                 <button class="btn" onclick="enableLane2AndClose()" id="close-score-btn">Continue to Lane 2</button>
-=======
     <!-- Progress Overlay Modal -->
     <div class="progress-overlay" id="progress-overlay">
         <div class="progress-content">
@@ -914,7 +903,6 @@
                 <div class="final-score" id="final-score" style="font-size: 3rem; font-weight: bold; color: #10b981; margin: 15px 0;">--</div>
                 <div id="score-result" style="margin: 20px 0;"></div>
                 <button id="continue-btn" class="btn btn-success" style="display: none; padding: 12px 24px; border: none; border-radius: 8px; background: #10b981; color: white; font-weight: 600; cursor: pointer;">Continue</button>
->>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
             </div>
         </div>
     </div>
@@ -925,16 +913,13 @@
             labBadges: 0,
             antScore: 0,
             cureTokens: 0,
-<<<<<<< HEAD
             currentMolecule: null,
             antPassed: false,
             // Dynamic metrics for meaningful dashboard
-=======
             cureTarget: 100000, // Fixed 100,000 CURE threshold
             molecules: [],
             purchaseHistory: [],
             // Dynamic metrics for dashboard
->>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
             totalBadges: 0,
             recentAntScore: '--',
             cureDeployed: 0,
@@ -1458,7 +1443,6 @@
             document.getElementById('molecule-listing').style.display = 'block';
             document.getElementById('bonding-curve-display').style.display = 'block';
             
-<<<<<<< HEAD
             // Update marketplace UI
             document.getElementById('live-molecule-name').textContent = state.currentMolecule.name;
             document.getElementById('live-token-symbol').textContent = tokenSymbol;
@@ -1470,7 +1454,6 @@
             addLog(`📈 Initial price: $${initialPrice.toFixed(4)}`);
             addLog(`💰 Market cap: $${marketCap.toLocaleString()}`);
             addLog('🚀 Marketplace is LIVE! Try investing or simulating trading.');
-=======
             // Create enhanced Lane 3 content
             const marketplaceHTML = `
                 <div class="marketplace-info">
@@ -1508,7 +1491,6 @@
                     </div>
                 </div>
             `;
->>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
             
             // Update dashboard - new molecule is active on market
             state.activeMolecules += 1;
@@ -1626,8 +1608,6 @@
             addLog('✅ Bonding curve simulation complete!');
             addLog('🎉 FULL TRI-LANE PIPELINE DEMONSTRATION SUCCESSFUL!');
             
-<<<<<<< HEAD
-=======
             priceHistory.forEach((point, index) => {
                 const x = (index / (priceHistory.length - 1)) * width;
                 const y = height - ((point.price - minPrice) / priceRange) * height;
@@ -2467,7 +2447,6 @@
             const btn = document.getElementById('create-marketplace-btn');
             
             actions.style.display = 'block';
->>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
             btn.disabled = false;
             btn.textContent = '📈 Simulate Trading';
         }
