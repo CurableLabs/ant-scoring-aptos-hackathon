@@ -133,3 +133,4 @@ aptos move publish --named-addresses ant_scoring=default
 **🧬 Advancing pharmaceutical research through decentralized science and DeFi innovation**
 
 *Built with ❤️ for the Aptos ecosystem*
+

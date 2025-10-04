@@ -80,3 +80,4 @@ Perfect for Aptos Ctrl+MOVE hackathon with:
 3. Check that all your demo files are present
 
 **Ready to submit to the hackathon!** 🚀
+

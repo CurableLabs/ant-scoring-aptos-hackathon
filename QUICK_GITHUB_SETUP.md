@@ -60,3 +60,4 @@ Your demo showcases:
 - **Aptos blockchain integration**
 
 **You're all set for the hackathon! 🚀**
+
