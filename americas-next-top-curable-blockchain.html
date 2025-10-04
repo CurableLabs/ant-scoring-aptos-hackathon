@@ -955,18 +955,28 @@
                     addLog('✅ Community validation COMPLETE!');
                     addLog('🏪 Molecular marketplace creation unlocked!');
                     
+                    // Reset button and enable Lane 3
+                    btn.disabled = false;
+                    btn.textContent = '✅ Funding Complete';
+                    btn.className = 'btn btn-success';
+                    
+                    // Update dashboard with CURE deployed
+                    state.cureDeployed += state.cureTokens;
+                    updateDashboard();
+                    console.log(`📊 CURE Deployed updated: ${state.cureDeployed.toLocaleString()}`);
+                    
                     // Enable Lane 3
-                    document.getElementById('lane3-btn').disabled = false;
-                    document.getElementById('lane3-btn').style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
-                    document.getElementById('invest-btn').disabled = false;
-                    document.getElementById('bonding-btn').disabled = false;
+                    const lane3Btn = document.getElementById('lane3-btn');
+                    if (lane3Btn) {
+                        lane3Btn.disabled = false;
+                        lane3Btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+                    }
                     
-                    // Visual indicator
-                    const lane3 = document.querySelector('.lane-card:nth-child(3)');
-                    lane3.style.border = '2px solid #8b5cf6';
-                    setTimeout(() => { lane3.style.border = '1px solid rgba(255, 255, 255, 0.1)'; }, 3000);
+                    setTimeout(() => {
+                        processLane3();
+                    }, 2000);
                     
-                    break;
+                    return; // Exit function when threshold reached
                 }
             }
             
