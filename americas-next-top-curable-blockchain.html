@@ -2642,18 +2642,8 @@
                         </div>
                     </div>
                     
-                    <div class="investment-actions">
-                        <h5>💰 Quick Investment</h5>
-                        <div class="investment-buttons" style="display: flex; gap: 8px; margin: 10px 0;">
-                            <button class="btn btn-primary btn-sm" onclick="investInMolecule(1000)">$1K</button>
-                            <button class="btn btn-primary btn-sm" onclick="investInMolecule(5000)">$5K</button>
-                            <button class="btn btn-primary btn-sm" onclick="investInMolecule(10000)">$10K</button>
-                        </div>
-                        <div style="display: flex; gap: 8px; margin: 10px 0;">
-                            <input type="number" id="custom-investment" placeholder="$100-$100,000" min="100" max="100000" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #444; background: rgba(255,255,255,0.1); color: white;">
-                            <button class="btn btn-success" onclick="investCustomAmount()">💎 Invest</button>
-                        </div>
-                        <button class="btn btn-warning" id="bonding-btn" onclick="simulateBondingCurve()" style="width: 100%; margin-top: 10px;">📈 Simulate Trading</button>
+                    <div class="trading-actions">
+                        <button class="btn btn-warning" id="bonding-btn" onclick="simulateBondingCurve()" style="width: 100%; margin: 15px 0;">📈 Simulate Trading</button>
                     </div>
                     
                     <div class="trading-feed" id="trading-feed" style="margin-top: 15px; max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 6px; padding: 10px;">
@@ -2689,51 +2679,6 @@
             modal.style.display = 'none';
         }
 
-        // Investment functions - FULLY RESTORED
-        function investInMolecule(amount) {
-            if (!state.marketData) {
-                console.log('❌ No marketplace created yet');
-                return;
-            }
-            
-            console.log(`💰 Investing $${amount.toLocaleString()} in ${state.marketData.tokenSymbol}`);
-            
-            // Simple bonding curve calculation
-            const tokensReceived = amount / state.marketData.price;
-            const priceImpact = amount / 15000; // Price impact calculation
-            
-            const oldPrice = state.marketData.price;
-            state.marketData.price += priceImpact;
-            state.marketData.volume24h += amount;
-            state.marketData.marketCap = Math.round(state.marketData.price * state.marketData.totalSupply);
-            
-            // Add to price history
-            state.marketData.priceHistory.push({
-                price: state.marketData.price,
-                time: Date.now(),
-                type: 'buy',
-                amount: amount
-            });
-            
-            console.log(`📈 Received ${tokensReceived.toFixed(2)} tokens at $${state.marketData.price.toFixed(4)}`);
-            
-            // Update activity feed
-            addTradingActivity(`🟢 BUY $${amount.toLocaleString()} → Price: $${state.marketData.price.toFixed(4)} (+${(((state.marketData.price - oldPrice) / oldPrice) * 100).toFixed(2)}%)`);
-            
-            // Update display and chart
-            updateMarketDisplay();
-            updatePriceChart();
-        }
-
-        function investCustomAmount() {
-            const amount = parseInt(document.getElementById('custom-investment').value);
-            if (amount && amount >= 100 && amount <= 100000) {
-                investInMolecule(amount);
-                document.getElementById('custom-investment').value = '';
-            } else {
-                alert('Please enter a valid investment amount ($100-$100,000)');
-            }
-        }
 
         // Bonding curve simulation - FULLY RESTORED
         function simulateBondingCurve() {
