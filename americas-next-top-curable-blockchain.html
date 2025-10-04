@@ -969,7 +969,10 @@
                         state.cureDeployed += state.cureTokens;
                         updateDashboard();
                         
-                        setTimeout(() => processLane3(), 2000);
+                        setTimeout(() => {
+                            console.log('🎯 Auto-triggering Lane 3 setup...');
+                            processLane3();
+                        }, 2000);
                     } else {
                         btn.disabled = false;
                         btn.textContent = '🌍 Simulate Community';
