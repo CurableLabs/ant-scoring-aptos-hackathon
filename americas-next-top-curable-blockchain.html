@@ -949,7 +949,7 @@
             const diseaseCode = diseaseMap[state.currentMolecule.name.split(' ')[0]] || 'GM'; // General Medicine
             const tokenSymbol = `$PDCure-${diseaseCode}`;
             const initialPrice = 0.008 + Math.random() * 0.020; // $0.008-$0.028
-            const marketCap = Math.round(80000 * initialPrice);
+            const marketCap = Math.round(100000 * initialPrice);
 
             // Store marketplace data
             state.marketplace = {
