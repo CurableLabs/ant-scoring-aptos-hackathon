@@ -864,7 +864,7 @@
             transform: translateX(26px);
         }
 
-        /* Modal Styles */
+        /* Modal Styles - Enhanced */
         .modal {
             display: none;
             position: fixed;
@@ -873,8 +873,18 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
@@ -2288,8 +2298,8 @@
             };
         }
 
-        // Animate individual score - ENHANCED VERSION
-        async function animateScore(elementId, targetScore, duration) {
+        // Animate individual score - ENHANCED POPUP VERSION
+        function animateScore(elementId, targetScore, duration) {
             const element = document.getElementById(elementId);
             if (!element) {
                 console.error(`❌ Score element not found: ${elementId}`);
@@ -2298,26 +2308,22 @@
             
             console.log(`🎬 Animating ${elementId} to ${targetScore}`);
             
-            const startTime = Date.now();
-            const animate = () => {
-                const elapsed = Date.now() - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const currentScore = Math.round(targetScore * progress);
-                
-                element.textContent = currentScore;
-                
-                // Add visual feedback
-                if (progress < 1) {
-                    element.style.color = '#f59e0b'; // Orange while animating
-                    requestAnimationFrame(animate);
-                } else {
+            let currentValue = 0;
+            const increment = targetScore / (duration / 50); // 50ms intervals
+            
+            const animationInterval = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= targetScore) {
+                    currentValue = targetScore;
+                    clearInterval(animationInterval);
                     element.style.color = '#10b981'; // Green when complete
                     console.log(`✅ ${elementId} animation complete: ${targetScore}`);
+                } else {
+                    element.style.color = '#f59e0b'; // Orange while animating
                 }
-            };
-            
-            animate();
-            return new Promise(resolve => setTimeout(resolve, duration));
+                
+                element.textContent = Math.round(currentValue);
+            }, 50);
         }
 
         // Show pass/fail result
@@ -2675,13 +2681,17 @@
             }, 100);
         }
 
-        // Show/Hide ANT Score Modal - CLEANED UP
+        // Show/Hide ANT Score Modal - ENHANCED POPUP
         function showScoreModal() {
             console.log('📱 Opening ANT Score Modal...');
             const modal = document.getElementById('score-modal');
             if (modal) {
+                modal.classList.add('show');
                 modal.style.display = 'block';
-                console.log('✅ Modal displayed');
+                console.log('✅ Enhanced modal displayed');
+                
+                // Clear previous scores
+                clearPreviousScores();
             } else {
                 console.error('❌ Modal not found!');
             }
@@ -2691,7 +2701,10 @@
             console.log('📱 Closing ANT Score Modal...');
             const modal = document.getElementById('score-modal');
             if (modal) {
-                modal.style.display = 'none';
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300);
                 console.log('✅ Modal hidden');
             }
         }
