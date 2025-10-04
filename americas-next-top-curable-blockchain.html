@@ -972,36 +972,7 @@
                 
                 addLog(`💰 ${buyer.name}: ${amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`);
                 
-                // This section is now handled by setInterval above
-                    
-                    // Reset button and enable Lane 3
-                    btn.disabled = false;
-                    btn.textContent = '✅ Funding Complete';
-                    btn.className = 'btn btn-success';
-                    
-                    // Update dashboard with CURE deployed
-                    state.cureDeployed += state.cureTokens;
-                    updateDashboard();
-                    console.log(`📊 CURE Deployed updated: ${state.cureDeployed.toLocaleString()}`);
-                    
-                    // Enable Lane 3
-                    const lane3Btn = document.getElementById('lane3-btn');
-                    if (lane3Btn) {
-                        lane3Btn.disabled = false;
-                        lane3Btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
-                    }
-                    
-                    setTimeout(() => {
-                        processLane3();
-                    }, 2000);
-                    
-                    return; // Exit function when threshold reached
-                }
-            }
-            
-            // Reset button
-            btn.disabled = false;
-            btn.textContent = '🌍 Simulate Community';
+        // Function completed - setInterval handles everything above
         }
 
         // Update Community Progress Visual
