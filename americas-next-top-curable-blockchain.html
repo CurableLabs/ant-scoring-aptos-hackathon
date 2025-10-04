@@ -2154,36 +2154,38 @@
             }
         }
 
-        // Simulate ANT Score Test - FIXED VERSION
-        async function simulateANTScoreTest() {
+        // Simulate ANT Score Test - SIMPLIFIED AND WORKING
+        function simulateANTScoreTest() {
             console.log('🧬 Starting ANT Score Test...');
             
+            // Find the button and molecule name
             const btn = document.getElementById('lab-badge-btn');
+            const moleculeName = document.getElementById('molecule-name').value;
+            
+            if (!moleculeName) {
+                alert('Please select a molecule first!');
+                return;
+            }
+            
+            console.log(`🧪 Testing molecule: ${moleculeName}`);
+            
+            // Update button state
             btn.disabled = true;
             btn.textContent = '🔬 Running ANT Analysis...';
             
-            try {
-                // Clear previous results
-                clearPreviousScores();
-                
-                // Show the scoring modal
-                showScoreModal();
-                
-                // Wait a moment for modal to appear
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                // Animate scoring with visual breakdown
-                await animateANTScoring();
-                
-                console.log('✅ ANT Score Test completed successfully');
-                
-            } catch (error) {
-                console.error('❌ ANT Score Test failed:', error);
-                alert('ANT scoring failed: ' + error.message);
-            } finally {
+            // Show modal immediately
+            showScoreModal();
+            
+            // Start scoring animation
+            setTimeout(() => {
+                animateANTScoring();
+            }, 500);
+            
+            // Re-enable button
+            setTimeout(() => {
                 btn.disabled = false;
                 btn.textContent = '🧬 Simulate ANT Score Test';
-            }
+            }, 8000);
         }
 
         // Clear previous modal scores
@@ -2198,51 +2200,56 @@
             });
         }
 
-        // Animate ANT scoring with visual breakdown - RESTORED VERSION
-        async function animateANTScoring() {
+        // Animate ANT scoring with visual breakdown - SIMPLIFIED
+        function animateANTScoring() {
             console.log('🎬 Starting ANT scoring animation...');
             
             const scores = calculateDetailedANTScore();
             console.log('📊 Calculated scores:', scores);
             
-            // Animate each component ONE BY ONE with delays
-            console.log('🎯 Animating Therapeutic Potential...');
-            await animateScore('therapeutic-score', scores.therapeutic, 1500);
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            console.log('💊 Animating Drug-likeness...');
-            await animateScore('drug-score', scores.drugLikeness, 1500);
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            console.log('🎯 Animating Disease Specificity...');
-            await animateScore('disease-score', scores.diseaseSpecificity, 1500);
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            console.log('💡 Animating Innovation...');
-            await animateScore('innovation-score', scores.innovation, 1500);
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            console.log('🛡️ Animating Safety/Regulatory...');
-            await animateScore('safety-score', scores.safety, 1500);
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // Big pause before final score
-            console.log('🏆 Calculating final ANT score...');
-            await new Promise(resolve => setTimeout(resolve, 800));
-            await animateScore('final-score', scores.total, 2000);
-            
-            // Update state and dashboard
-            state.antScore = scores.total;
-            state.totalBadges += 1;
-            state.recentAntScore = `${scores.total}%`;
-            updateDashboard();
-            
-            console.log(`✅ ANT scoring complete! Final score: ${scores.total}%`);
-            
-            // Show pass/fail and next steps
+            // Animate each component with simple timeouts
             setTimeout(() => {
-                showPassFailResult(scores.total);
-            }, 1000);
+                console.log('🎯 Animating Therapeutic Potential...');
+                animateScore('therapeutic-score', scores.therapeutic, 1000);
+            }, 200);
+            
+            setTimeout(() => {
+                console.log('💊 Animating Drug-likeness...');
+                animateScore('drug-score', scores.drugLikeness, 1000);
+            }, 1400);
+            
+            setTimeout(() => {
+                console.log('🎯 Animating Disease Specificity...');
+                animateScore('disease-score', scores.diseaseSpecificity, 1000);
+            }, 2600);
+            
+            setTimeout(() => {
+                console.log('💡 Animating Innovation...');
+                animateScore('innovation-score', scores.innovation, 1000);
+            }, 3800);
+            
+            setTimeout(() => {
+                console.log('🛡️ Animating Safety/Regulatory...');
+                animateScore('safety-score', scores.safety, 1000);
+            }, 5000);
+            
+            setTimeout(() => {
+                console.log('🏆 Calculating final ANT score...');
+                animateScore('final-score', scores.total, 1500);
+                
+                // Update state and dashboard
+                state.antScore = scores.total;
+                state.totalBadges += 1;
+                state.recentAntScore = `${scores.total}%`;
+                updateDashboard();
+                
+                console.log(`✅ ANT scoring complete! Final score: ${scores.total}%`);
+                
+                // Show pass/fail result
+                setTimeout(() => {
+                    showPassFailResult(scores.total);
+                }, 2000);
+            }, 6500);
         }
 
         // Calculate detailed ANT scores
@@ -2668,15 +2675,25 @@
             }, 100);
         }
 
-        // Show/Hide ANT Score Modal
+        // Show/Hide ANT Score Modal - CLEANED UP
         function showScoreModal() {
+            console.log('📱 Opening ANT Score Modal...');
             const modal = document.getElementById('score-modal');
-            modal.style.display = 'block';
+            if (modal) {
+                modal.style.display = 'block';
+                console.log('✅ Modal displayed');
+            } else {
+                console.error('❌ Modal not found!');
+            }
         }
 
         function closeScoreModal() {
+            console.log('📱 Closing ANT Score Modal...');
             const modal = document.getElementById('score-modal');
-            modal.style.display = 'none';
+            if (modal) {
+                modal.style.display = 'none';
+                console.log('✅ Modal hidden');
+            }
         }
 
 
