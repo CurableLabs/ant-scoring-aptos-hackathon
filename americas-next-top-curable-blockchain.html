@@ -795,22 +795,41 @@
             }
         }
 
-        // Lane 2 Processing - Setup phase
+        // Lane 2 Processing - Setup phase - ENHANCED
         async function processLane2() {
             addLog('💎 LANE 2: Initializing community building...');
             addLog(`🧬 Target molecule: ${state.currentMolecule.name}`);
             addLog(`🎯 Community funding goal: 100,000 CURE tokens`);
             
             // Show progress section
-            document.getElementById('community-progress').style.display = 'block';
-            document.getElementById('purchase-feed').style.display = 'block';
+            const progressElement = document.getElementById('community-progress');
+            const feedElement = document.getElementById('purchase-feed');
+            
+            if (progressElement) {
+                progressElement.style.display = 'block';
+                console.log('✅ Community progress section shown');
+            }
+            
+            if (feedElement) {
+                feedElement.style.display = 'block';
+                console.log('✅ Purchase feed section shown');
+            }
             
             // Reset progress
             state.cureTokens = 0;
             updateCommunityProgress();
             
+            // Ensure community simulation button is enabled
+            const communityBtn = document.getElementById('community-sim-btn');
+            if (communityBtn) {
+                communityBtn.disabled = false;
+                communityBtn.style.opacity = '1';
+                console.log('✅ Community simulation button fully enabled');
+            }
+            
             addLog('🌍 Community building initialized - Click "Simulate Community" for automatic funding');
             addLog('💡 Watch real-time community purchases build toward the 100,000 CURE threshold');
+            console.log('🎯 Lane 2 setup complete - ready for community simulation');
         }
 
         // Simulate Community Buying with Visual Feedback
