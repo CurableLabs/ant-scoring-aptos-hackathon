@@ -1080,9 +1080,31 @@
             updateDashboard();
             console.log(`📊 Active Molecules updated: ${state.activeMolecules}`);
 
-            // Reset button
-            btn.disabled = false;
-            btn.textContent = '🚀 Create Marketplace';
+            // Enable ALL Lane 3 buttons after marketplace creation
+            const lane3Buttons = [
+                { id: 'lane3-btn', text: '✅ Marketplace Created', class: 'btn btn-success' },
+                { id: 'invest-btn', text: '💰 Invest', class: 'btn btn-warning' },
+                { id: 'bonding-btn', text: '📈 Simulate Trading', class: 'btn btn-success' }
+            ];
+            
+            console.log('🔧 Enabling all Lane 3 buttons after marketplace creation...');
+            
+            lane3Buttons.forEach(btnConfig => {
+                const button = document.getElementById(btnConfig.id);
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = btnConfig.text;
+                    button.className = btnConfig.class;
+                    button.style.opacity = '1';
+                    button.style.pointerEvents = 'auto';
+                    button.style.cursor = 'pointer';
+                    console.log(`✅ ${btnConfig.id} enabled and functional`);
+                } else {
+                    console.error(`❌ Button not found: ${btnConfig.id}`);
+                }
+            });
+            
+            console.log('🎉 Lane 3 marketplace fully functional - Simulate Trading button ready!');
         }
 
         // Invest in Molecule - User Interaction
