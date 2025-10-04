@@ -771,85 +771,95 @@
             updateCommunityProgress();
             
             addLog('🌍 Community building initialized - Click "Simulate Community" for automatic funding');
-            addLog('💡 Watch real-time community purchases build toward the 80% threshold');
+            addLog('💡 Watch real-time community purchases build toward the 100,000 CURE threshold');
         }
 
-        // Simulate Community Buying with Visual Feedback
-        async function simulateCommunityBuying() {
+        // Simulate Community Buying - FIXED WITH PROPER ENDING
+        function simulateCommunityBuying() {
             addLog('🌍 Starting community purchase simulation...');
             
             const btn = document.getElementById('community-sim-btn');
             btn.disabled = true;
             btn.textContent = '⏳ Simulating...';
             
-            // Community purchase scenarios
-            const communityPurchases = [
-                { buyer: 'Stanford Research Lab', amount: 15000, type: 'Institution' },
-                { buyer: 'Dr. Sarah Wilson', amount: 8500, type: 'Individual' },
-                { buyer: 'Biotech Accelerator Fund', amount: 18000, type: 'Investment' },
-                { buyer: 'Children\'s Hospital', amount: 12000, type: 'Healthcare' },
-                { buyer: 'Parkinson\'s Foundation', amount: 14500, type: 'Foundation' },
-                { buyer: 'Innovation Capital', amount: 16000, type: 'Investment' },
-                { buyer: 'Community Pool', amount: 7000, type: 'Community' },
-                { buyer: 'Research Consortium', amount: 9000, type: 'Institution' }
+            // Enhanced randomized community buyers
+            const communityBuyers = [
+                { name: 'Stanford Research Lab', range: [12000, 18000], emoji: '🏛️' },
+                { name: 'Dr. Sarah Wilson', range: [7000, 12000], emoji: '👩‍⚕️' },
+                { name: 'Biotech Accelerator Fund', range: [15000, 22000], emoji: '🚀' },
+                { name: 'Children\'s Hospital', range: [8000, 15000], emoji: '🏥' },
+                { name: 'Parkinson\'s Foundation', range: [10000, 16000], emoji: '🧠' },
+                { name: 'Innovation Capital', range: [14000, 20000], emoji: '💰' },
+                { name: 'MIT Medical Lab', range: [9000, 14000], emoji: '🧪' }
             ];
 
             let totalCure = state.cureTokens;
+            let buyerIndex = 0;
             
-            for (let i = 0; i < communityPurchases.length; i++) {
-                const purchase = communityPurchases[i];
-                await sleep(1000);
+            // Use setInterval to ensure proper completion
+            const purchaseInterval = setInterval(() => {
+                if (totalCure >= 100000 || buyerIndex >= communityBuyers.length) {
+                    clearInterval(purchaseInterval);
+                    
+                    if (totalCure >= 100000) {
+                        // CRITICAL FIX: Reset button properly
+                        btn.disabled = false;
+                        btn.textContent = '✅ Funding Complete';
+                        btn.className = 'btn btn-success';
+                        
+                        // Show threshold achieved popup
+                        addLog(`🎉 100,000 CURE THRESHOLD REACHED! (${totalCure.toLocaleString()}/100,000 CURE)`);
+                        addLog('🔄 Autonomous smart contract validation triggered!');
+                        addLog('✅ Community validation COMPLETE!');
+                        addLog('🏪 Molecular marketplace creation unlocked!');
+                        
+                        // Update dashboard
+                        state.cureDeployed += state.cureTokens;
+                        updateDashboard();
+                        
+                        // Enable Lane 3 after delay
+                        setTimeout(() => {
+                            processLane3(); // Auto-create marketplace
+                        }, 2000);
+                    } else {
+                        btn.disabled = false;
+                        btn.textContent = '🌍 Simulate Community';
+                    }
+                    return;
+                }
                 
-                totalCure += purchase.amount;
+                const buyer = communityBuyers[buyerIndex];
+                const amount = Math.floor(Math.random() * (buyer.range[1] - buyer.range[0]) + buyer.range[0]);
+                
+                totalCure += amount;
                 state.cureTokens = totalCure;
                 
-                // Add to purchase feed
+                // Add to live purchase feed
                 const purchaseElement = document.createElement('div');
                 purchaseElement.style.fontSize = '0.75rem';
                 purchaseElement.style.marginBottom = '4px';
                 purchaseElement.style.color = '#06b6d4';
-                purchaseElement.innerHTML = `🏦 ${purchase.buyer}: +${purchase.amount.toLocaleString()} CURE (${purchase.type})`;
+                purchaseElement.innerHTML = `${buyer.emoji} ${buyer.name}: +${amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`;
                 document.getElementById('purchase-list').appendChild(purchaseElement);
+                
+                // Auto-scroll
+                const purchaseList = document.getElementById('purchase-list');
+                purchaseList.scrollTop = purchaseList.scrollHeight;
                 
                 // Update progress
                 updateCommunityProgress();
                 updateMetrics();
                 
-                addLog(`💰 ${purchase.buyer}: ${purchase.amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`);
+                addLog(`💰 ${buyer.name}: ${amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`);
                 
-                // Check if threshold reached
-                if (totalCure >= 100000) {
-                    addLog(`🎉 100,000 CURE THRESHOLD REACHED! (${totalCure.toLocaleString()}/100,000 CURE)`);
-                    addLog('🔄 Autonomous smart contract validation triggered!');
-                    
-                    await sleep(1500);
-                    
-                    addLog('✅ Community validation COMPLETE!');
-                    addLog('🏪 Molecular marketplace creation unlocked!');
-                    
-                    // Enable Lane 3
-                    document.getElementById('lane3-btn').disabled = false;
-                    document.getElementById('lane3-btn').style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
-                    document.getElementById('invest-btn').disabled = false;
-                    document.getElementById('bonding-btn').disabled = false;
-                    
-                    // Visual indicator
-                    const lane3 = document.querySelector('.lane-card:nth-child(3)');
-                    lane3.style.border = '2px solid #8b5cf6';
-                    setTimeout(() => { lane3.style.border = '1px solid rgba(255, 255, 255, 0.1)'; }, 3000);
-                    
-                    break;
-                }
-            }
-            
-            // Reset button
-            btn.disabled = false;
-            btn.textContent = '🌍 Simulate Community';
+                buyerIndex++;
+                
+            }, 1500); // 1.5 seconds between purchases
         }
 
         // Update Community Progress Visual
         function updateCommunityProgress() {
-            const percentage = Math.min(100, (state.cureTokens / 80000) * 100);
+            const percentage = Math.min(100, (state.cureTokens / 100000) * 100);
             document.getElementById('cure-progress').style.width = percentage + '%';
             document.getElementById('cure-percentage').textContent = Math.round(percentage) + '%';
             
@@ -862,20 +872,35 @@
             }
         }
 
-        // Marketplace Upload - Upload molecule to live trading platform  
+        // Marketplace Upload - FIXED FUNCTIONALITY
         function uploadToMarketplace() {
+            if (!state.marketplace) {
+                addLog('❌ No marketplace data available - creating first...');
+                return;
+            }
+            
             addLog('🌐 Uploading molecule to live marketplace...');
-            addLog(`📡 Deploying ${state.currentMolecule.name} to trading platform...`);
+            addLog(`📡 Deploying ${state.marketplace.tokenSymbol} to trading platform...`);
             addLog('🔗 Connecting to liquidity pools...');
             addLog('📊 Initializing price discovery mechanism...');
             addLog(`✅ ${state.currentMolecule.name} successfully uploaded to marketplace!`);
             addLog('🎯 Ready for live trading and investment!');
             
             const btn = document.getElementById('lane3-btn');
+            const tradingBtn = document.getElementById('bonding-btn');
+            
             if (btn) {
                 btn.textContent = '✅ Uploaded to Market';
                 btn.className = 'btn btn-success';
                 btn.disabled = true;
+            }
+            
+            // Enable trading simulation
+            if (tradingBtn) {
+                tradingBtn.disabled = false;
+                tradingBtn.style.opacity = '1';
+                tradingBtn.style.pointerEvents = 'auto';
+                console.log('✅ Trading simulation enabled after upload');
             }
         }
 
