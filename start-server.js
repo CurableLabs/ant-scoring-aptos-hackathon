@@ -5,7 +5,7 @@ const path = require('path');
 const server = http.createServer((req, res) => {
     console.log('Request received for:', req.url);
     
-    let filePath = req.url === '/' ? './complete-tri-lane-demo.html' : ('.' + req.url);
+    let filePath = req.url === '/' ? './americas-next-top-curable-blockchain.html' : ('.' + req.url);
     
     try {
         const content = fs.readFileSync(filePath, 'utf8');
