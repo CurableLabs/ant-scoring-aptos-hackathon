@@ -850,10 +850,8 @@
             addLog(`🔄 Proceeding to Lane 2: Community validation...`);
             addLog('💎 Lane 2 unlocked! Click "Start Community Building" or "Simulate Community"');
             
-            // Auto-start Lane 2 setup
-            setTimeout(() => {
-                processLane2();
-            }, 1000);
+            // DON'T auto-start Lane 2 - wait for user to click button
+            console.log('🎯 Lane 2 ready - waiting for user to click Start Community Building');
             
             console.log('🎉 Lane 2 SHOULD BE ENABLED NOW!');
         }
