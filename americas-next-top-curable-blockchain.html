@@ -782,7 +782,7 @@
             btn.disabled = true;
             btn.textContent = '⏳ Simulating...';
             
-            // Enhanced randomized community buyers
+            // Enhanced randomized community buyers with MORE buyers to ensure 100k
             const communityBuyers = [
                 { name: 'Stanford Research Lab', range: [12000, 18000], emoji: '🏛️' },
                 { name: 'Dr. Sarah Wilson', range: [7000, 12000], emoji: '👩‍⚕️' },
@@ -790,7 +790,10 @@
                 { name: 'Children\'s Hospital', range: [8000, 15000], emoji: '🏥' },
                 { name: 'Parkinson\'s Foundation', range: [10000, 16000], emoji: '🧠' },
                 { name: 'Innovation Capital', range: [14000, 20000], emoji: '💰' },
-                { name: 'MIT Medical Lab', range: [9000, 14000], emoji: '🧪' }
+                { name: 'MIT Medical Lab', range: [9000, 14000], emoji: '🧪' },
+                { name: 'Dr. Rodriguez Research', range: [6000, 11000], emoji: '👨‍⚕️' },
+                { name: 'HealthTech Ventures', range: [11000, 17000], emoji: '🏢' },
+                { name: 'Cambridge Bio Fund', range: [13000, 19000], emoji: '🎓' }
             ];
 
             let totalCure = state.cureTokens;
@@ -817,9 +820,29 @@
                         state.cureDeployed += state.cureTokens;
                         updateDashboard();
                         
-                        // Enable Lane 3 after delay
+                        // Enable Lane 3 with proper button setup
                         setTimeout(() => {
                             processLane3(); // Auto-create marketplace
+                            
+                            // FORCE enable Lane 3 buttons
+                            setTimeout(() => {
+                                const uploadBtn = document.getElementById('lane3-btn');
+                                const tradingBtn = document.getElementById('bonding-btn');
+                                
+                                if (uploadBtn) {
+                                    uploadBtn.disabled = false;
+                                    uploadBtn.style.opacity = '1';
+                                    uploadBtn.style.pointerEvents = 'auto';
+                                    console.log('✅ Upload button force-enabled');
+                                }
+                                
+                                if (tradingBtn) {
+                                    tradingBtn.disabled = false;
+                                    tradingBtn.style.opacity = '1';
+                                    tradingBtn.style.pointerEvents = 'auto';
+                                    console.log('✅ Trading button force-enabled');
+                                }
+                            }, 500);
                         }, 2000);
                     } else {
                         btn.disabled = false;
