@@ -304,8 +304,8 @@
             <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 16px;">
                 <div style="font-size: 4rem;">🏆</div>
                 <div style="text-align: left;">
-                    <h1 style="margin: 0; font-size: 2.8rem; background: linear-gradient(135deg, #3b82f6, #06b6d4, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">America's Next Top CurAble</h1>
-                    <p style="margin: 4px 0 0 0; font-size: 1.1rem; color: #06b6d4;">The Ultimate Molecular Discovery Competition</p>
+                    <h1 style="margin: 0; font-size: 2.8rem; background: linear-gradient(135deg, #3b82f6, #06b6d4, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Curable Labs: Trial by Molecule</h1>
+                    <p style="margin: 4px 0 0 0; font-size: 1.1rem; color: #06b6d4;">Advanced DeFi-Powered Drug Discovery Platform</p>
                 </div>
                 <div style="font-size: 4rem;">🧬</div>
             </div>
@@ -722,7 +722,7 @@
         async function processLane2() {
             addLog('💎 LANE 2: Initializing community building...');
             addLog(`🧬 Target molecule: ${state.currentMolecule.name}`);
-            addLog(`🎯 Community funding goal: 80,000 CURE tokens`);
+            addLog(`🎯 Community funding goal: 100,000 CURE tokens`);
             
             // Show progress section
             document.getElementById('community-progress').style.display = 'block';
@@ -780,7 +780,7 @@
                 addLog(`💰 ${purchase.buyer}: ${purchase.amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`);
                 
                 // Check if threshold reached
-                if (totalCure >= 80000) {
+                if (totalCure >= 100000) {
                     addLog(`🎉 80% THRESHOLD REACHED! (${totalCure.toLocaleString()}/100,000 CURE)`);
                     addLog('🔄 Autonomous smart contract validation triggered!');
                     
@@ -811,7 +811,7 @@
 
         // Update Community Progress Visual
         function updateCommunityProgress() {
-            const percentage = Math.min(100, (state.cureTokens / 80000) * 100);
+            const percentage = Math.min(100, (state.cureTokens / 100000) * 100);
             document.getElementById('cure-progress').style.width = percentage + '%';
             document.getElementById('cure-percentage').textContent = Math.round(percentage) + '%';
             
@@ -846,14 +846,14 @@
             const diseaseCode = diseaseMap[state.currentMolecule.name.split(' ')[0]] || 'GM'; // General Medicine
             const tokenSymbol = `$PDCure-${diseaseCode}`;
             const initialPrice = 0.008 + Math.random() * 0.020; // $0.008-$0.028
-            const marketCap = Math.round(80000 * initialPrice);
+            const marketCap = Math.round(100000 * initialPrice);
 
             // Store marketplace data
             state.marketplace = {
                 tokenSymbol: tokenSymbol,
                 price: initialPrice,
                 marketCap: marketCap,
-                totalSupply: 80000,
+                totalSupply: 100000,
                 bondingCurveMultiplier: 1.0
             };
 
