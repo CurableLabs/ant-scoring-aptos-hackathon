@@ -770,7 +770,7 @@
             
             if (state.antPassed) {
                 addLog(`🎯 FINAL ANT SCORE: ${state.antScore}/100`);
-                addLog(`✅ ANT VALIDATION PASSED! (≥80% threshold)`);
+                addLog(`✅ ANT VALIDATION PASSED! (≥80 score threshold)`);
                 addLog(`🔄 Proceeding to Lane 2: Community validation...`);
                 
                 // Update metrics
@@ -790,7 +790,7 @@
                 
             } else {
                 addLog(`🎯 FINAL ANT SCORE: ${state.antScore}/100`);
-                addLog(`❌ ANT VALIDATION FAILED: ${state.antScore}% below 80% threshold`);
+                addLog(`❌ ANT VALIDATION FAILED: ${state.antScore} below 80 score threshold`);
                 addLog(`📝 Try selecting a different molecule for better results`);
             }
         }
