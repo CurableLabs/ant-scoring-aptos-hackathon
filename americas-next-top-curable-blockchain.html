@@ -679,11 +679,14 @@
             
             const moleculeName = document.getElementById('molecule-name').value;
             const smileId = document.getElementById('smile-id').value;
+            const pdfRef = document.getElementById('pdf-input').value;
             
             if (!moleculeName || !smileId) {
                 alert('Please select an example molecule or fill in all fields!');
                 return;
             }
+            
+            console.log(`🧬 Starting Lane 1 with: ${moleculeName}, SMILE: ${smileId}, PDF: ${pdfRef}`);
 
             addLog('🎬 LANE 1: Starting contestant audition...');
             addLog(`🏆 Contestant: ${moleculeName}`);
@@ -816,7 +819,7 @@
                 addLog(`🔄 Proceeding to Lane 2: Community validation...`);
                 
                 // Update metrics
-                updateMetrics();
+                updateDashboard();
                 
                 // Enable Lane 2
                 document.getElementById('lane2-btn').disabled = false;
@@ -996,11 +999,13 @@
                 
                 // Update progress
                 updateCommunityProgress();
-                updateMetrics();
+                updateDashboard();
                 
                 addLog(`💰 ${buyer.name}: ${amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`);
                 
-        // Function completed - setInterval handles everything above
+                buyerIndex++;
+                
+            }, 1500); // 1.5 seconds between each purchase
         }
 
         // Update Community Progress Visual
@@ -1157,12 +1162,7 @@
             btn.textContent = '📈 Simulate Trading';
         }
 
-        // Helper functions
-        function updateMetrics() {
-            document.getElementById('lab-badges').textContent = state.labBadges;
-            document.getElementById('ant-score').textContent = state.antScore > 0 ? state.antScore + '%' : '--';
-            document.getElementById('cure-total').textContent = state.cureTokens.toLocaleString();
-        }
+        // REMOVED DUPLICATE - using updateDashboard() instead
 
         function addLog(message) {
             const log = document.getElementById('log');
