@@ -341,6 +341,11 @@
                     <label>🎭 Contestant Molecules:</label>
                     <select id="molecule-select" onchange="loadExample()">
                         <option value="">-- Choose Your Contestant --</option>
+                        <option value="tozadenant">🚀 Tozadenant (Parkinson's Innovation) - NEW!</option>
+                        <option value="metformin">💎 Metformin (Diabetes Guardian) - NEW!</option>
+                        <option value="adalimumab">🛡️ Adalimumab (Arthritis Fighter) - NEW!</option>
+                        <option value="remdesivir">⚡ Remdesivir (Viral Warrior) - NEW!</option>
+                        <option value="paxlovid">🏆 Paxlovid (COVID Crusher) - NEW!</option>
                         <option value="levodopa">🏃 L-DOPA (Parkinson's Champion)</option>
                         <option value="aspirin">💊 Aspirin (Pain Relief Classic)</option>
                         <option value="morphine">🎯 Morphine (Heavy Duty Pain Fighter)</option>
@@ -357,6 +362,11 @@
                 <div class="input-group">
                     <label>🔬 Molecular Signature (SMILE ID):</label>
                     <input type="text" id="smile-id" placeholder="Auto-filled from contestants">
+                </div>
+                
+                <div class="input-group">
+                    <label>📄 Research Document (PDF):</label>
+                    <input type="text" id="pdf-input" placeholder="Research paper reference" readonly>
                 </div>
 
                 <div id="lane1-progress" style="display: none;">
@@ -510,9 +520,23 @@
             labBadges: 0,
             antScore: 0,
             cureTokens: 0,
+            cureTarget: 100000,
             currentMolecule: null,
-            antPassed: false
+            antPassed: false,
+            // Dynamic metrics for meaningful dashboard
+            totalBadges: 0,
+            recentAntScore: '--',
+            cureDeployed: 0,
+            activeMolecules: 0
         };
+
+        // Update dynamic dashboard metrics
+        function updateDashboard() {
+            document.getElementById('total-badges').textContent = state.totalBadges;
+            document.getElementById('recent-ant-score').textContent = state.recentAntScore;
+            document.getElementById('cure-deployed').textContent = state.cureDeployed.toLocaleString();
+            document.getElementById('active-molecules').textContent = state.activeMolecules;
+        }
 
         // Test button functionality
         function testButton() {
@@ -550,14 +574,21 @@
             };
             
             if (examples[value]) {
+                // Enhanced auto-population with PDF
                 document.getElementById('molecule-name').value = examples[value].name;
                 document.getElementById('smile-id').value = examples[value].smile;
+                document.getElementById('pdf-input').value = examples[value].pdf;
+                
+                state.currentMolecule = examples[value];
                 addLog(`🎭 Contestant selected: ${examples[value].name}`);
                 addLog(`🔬 Molecular signature: ${examples[value].smile}`);
+                addLog(`📄 Research document: ${examples[value].pdf}`);
+                addLog(`🎯 Disease target: ${examples[value].disease}`);
                 addLog(`🎬 Ready for audition - Click "Begin Competition Audition"`);
             } else if (value === '') {
                 document.getElementById('molecule-name').value = '';
                 document.getElementById('smile-id').value = '';
+                document.getElementById('pdf-input').value = '';
             }
         }
 
@@ -620,12 +651,13 @@
             document.getElementById('scoring-modal').style.display = 'flex';
             
             // Define scoring components
+            // Enhanced scoring for 90%+ pass rate
             const scoringComponents = [
-                { id: 'therapeutic', name: 'Therapeutic Potential', weight: 0.4, base: 75 },
-                { id: 'druglike', name: 'Drug-likeness', weight: 0.25, base: 80 },
-                { id: 'disease', name: 'Disease Specificity', weight: 0.2, base: 85 },
-                { id: 'innovation', name: 'Innovation', weight: 0.1, base: 70 },
-                { id: 'safety', name: 'Safety/Regulatory', weight: 0.05, base: 78 }
+                { id: 'therapeutic', name: 'Therapeutic Potential', weight: 0.4, base: 88 },
+                { id: 'druglike', name: 'Drug-likeness', weight: 0.25, base: 90 },
+                { id: 'disease', name: 'Disease Specificity', weight: 0.2, base: 92 },
+                { id: 'innovation', name: 'Innovation', weight: 0.1, base: 85 },
+                { id: 'safety', name: 'Safety/Regulatory', weight: 0.05, base: 88 }
             ];
 
             let totalWeightedScore = 0;
@@ -636,8 +668,8 @@
                 await sleep(800);
                 
                 // Calculate score for this component
-                const variance = Math.floor(Math.random() * 20) - 10; // ±10 variance
-                const componentScore = Math.max(60, Math.min(95, component.base + variance));
+                const variance = Math.floor(Math.random() * 10) - 5; // ±5 variance (reduced for better pass rate)
+                const componentScore = Math.max(80, Math.min(98, component.base + variance)); // Higher minimum
                 const weightedPoints = Math.round(componentScore * component.weight);
                 totalWeightedScore += weightedPoints;
                 
@@ -670,11 +702,18 @@
                 closeBtn.textContent = '🚀 Continue to Lane 2';
                 closeBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
                 
-                // Store successful result
+                // Store successful result and update dashboard
                 state.antScore = finalANTScore;
                 state.labBadges = 1;
                 state.currentMolecule = { name: moleculeName, smile: smileId };
                 state.antPassed = true;
+                
+                // Update dynamic dashboard metrics
+                state.totalBadges += 1;
+                state.recentAntScore = `${finalANTScore}%`;
+                updateDashboard();
+                
+                console.log(`📊 Dashboard updated: Badges: ${state.totalBadges}, ANT Score: ${state.recentAntScore}`);
                 
             } else {
                 passFailIndicator.className = 'pass-fail-indicator fail';
@@ -853,7 +892,7 @@
                 tokenSymbol: tokenSymbol,
                 price: initialPrice,
                 marketCap: marketCap,
-                totalSupply: 80000,
+                totalSupply: 100000,
                 bondingCurveMultiplier: 1.0
             };
 
@@ -872,6 +911,11 @@
             addLog(`📈 Initial price: $${initialPrice.toFixed(4)}`);
             addLog(`💰 Market cap: $${marketCap.toLocaleString()}`);
             addLog('🚀 Marketplace is LIVE! Try investing or simulating trading.');
+            
+            // Update dashboard - new molecule is active on market
+            state.activeMolecules += 1;
+            updateDashboard();
+            console.log(`📊 Active Molecules updated: ${state.activeMolecules}`);
 
             // Reset button
             btn.disabled = false;
@@ -977,11 +1021,11 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        // Initialize
+        // Initialize with dashboard
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded');
-            updateMetrics();
-            addLog('🌐 Simplified tri-lane system ready');
+            console.log('🎯 Curable Labs: Trial by Molecule loaded');
+            updateDashboard(); // Initialize dynamic dashboard
+            addLog('🌐 Curable Labs: Trial by Molecule ready');
         });
     </script>
 </body>
