@@ -1015,6 +1015,7 @@
                 <div>
                     <h1>🧬 Curable Labs: Trial by Molecule</h1>
                     <div class="subtitle">Advanced DeFi-Powered Drug Discovery Platform</div>
+                    <div class="description">🧪 Scientific validation → 🌍 Community funding → 💰 Market deployment</div>
                     <div class="description">Tri-Lane Tokenomics Pipeline • Powered by Aptos & Move</div>
                 </div>
                 <div class="molecule-section">
@@ -2438,7 +2439,7 @@
             alert(`🧬 Available Molecules in Market:\n\n${molecules}\n\nSelect from Lane 1 dropdown to begin analysis!`);
         }
 
-        // Community buying simulation (renamed and enhanced)
+        // Community buying simulation - FULLY RESTORED VERSION
         function simulateCommunityBuying() {
             const btn = document.getElementById('simulate-community-btn');
             btn.disabled = true;
@@ -2449,25 +2450,32 @@
             
             console.log('🌍 Starting community funding simulation...');
             
-            const buyers = [
-                { name: "Stanford Research Lab", amount: 15000 },
-                { name: "Dr. Sarah Wilson", amount: 9500 },
-                { name: "Biotech Accelerator Fund", amount: 18000 },
-                { name: "Children's Hospital", amount: 12000 },
-                { name: "Parkinson's Foundation", amount: 14500 },
-                { name: "Innovation Capital", amount: 16000 },
-                { name: "MIT Medical Lab", amount: 15000 }
+            // Enhanced realistic buyers with varied amounts
+            const realisticBuyers = [
+                { name: "Stanford Research Lab", amount: 15000, emoji: "🏛️" },
+                { name: "Dr. Sarah Wilson", amount: 9500, emoji: "👩‍⚕️" },
+                { name: "Biotech Accelerator Fund", amount: 18000, emoji: "🚀" },
+                { name: "Children's Hospital", amount: 12000, emoji: "🏥" },
+                { name: "Parkinson's Foundation", amount: 14500, emoji: "🧠" },
+                { name: "Innovation Capital", amount: 16000, emoji: "💰" },
+                { name: "MIT Medical Lab", amount: 11000, emoji: "🧪" },
+                { name: "Dr. Rodriguez Research", amount: 8500, emoji: "👨‍⚕️" }
             ];
             
             let totalFunded = 0;
             let buyerIndex = 0;
             
             const fundingInterval = setInterval(() => {
-                if (totalFunded >= 100000 || buyerIndex >= buyers.length) {
+                if (totalFunded >= 100000 || buyerIndex >= realisticBuyers.length) {
                     clearInterval(fundingInterval);
                     
                     if (totalFunded >= 100000) {
-                        btn.textContent = '✅ Funding Complete';
+                        // Final celebration effect
+                        progressBar.className = 'progress-bar complete';
+                        progressBar.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.6)';
+                        progressBar.style.animation = 'pulse 2s infinite';
+                        
+                        btn.textContent = '🎉 100K CURE REACHED!';
                         btn.className = 'btn btn-success';
                         
                         // Update dashboard
@@ -2475,42 +2483,199 @@
                         updateDashboard();
                         
                         console.log(`🎉 100,000 CURE threshold reached! Total: ${totalFunded.toLocaleString()}`);
+                        console.log('🔄 Autonomous smart contract validation triggered!');
+                        console.log('🏪 Molecular marketplace creation unlocked!');
                         
-                        // Enable Lane 3
+                        // Enable Lane 3 with delay
                         setTimeout(() => enableLane3(), 2000);
                     }
                     return;
                 }
                 
-                const buyer = buyers[buyerIndex];
+                const buyer = realisticBuyers[buyerIndex];
                 totalFunded += buyer.amount;
                 
-                // Update progress
+                // Enhanced progress updates with color transitions
                 const percentage = Math.min((totalFunded / 100000) * 100, 100);
                 progressBar.style.width = `${percentage}%`;
                 progressText.textContent = totalFunded.toLocaleString();
                 
-                // Color progress bar
-                if (percentage < 30) {
-                    progressBar.className = 'progress-bar low';
-                } else if (percentage < 70) {
-                    progressBar.className = 'progress-bar medium';
-                } else if (percentage < 100) {
-                    progressBar.className = 'progress-bar high';
+                // Dynamic color-changing progress bar
+                if (percentage < 40) {
+                    progressBar.className = 'progress-bar';
+                    progressBar.style.background = 'linear-gradient(90deg, #3b82f6, #06b6d4)';
+                } else if (percentage < 60) {
+                    progressBar.className = 'progress-bar';
+                    progressBar.style.background = 'linear-gradient(90deg, #f59e0b, #ef4444)';
+                } else if (percentage < 80) {
+                    progressBar.className = 'progress-bar';
+                    progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+                } else if (percentage < 95) {
+                    progressBar.className = 'progress-bar';
+                    progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+                    progressBar.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.4)';
                 } else {
                     progressBar.className = 'progress-bar complete';
+                    progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+                    progressBar.style.boxShadow = '0 0 25px rgba(16, 185, 129, 0.6)';
                 }
                 
-                console.log(`💰 ${buyer.name}: ${buyer.amount.toLocaleString()} CURE → Total: ${totalFunded.toLocaleString()}`);
+                // Milestone logging
+                if (percentage >= 25 && percentage < 50) {
+                    console.log(`📊 Milestone: 25% funding reached`);
+                } else if (percentage >= 50 && percentage < 75) {
+                    console.log(`📊 Milestone: 50% funding reached`);
+                } else if (percentage >= 75 && percentage < 95) {
+                    console.log(`📊 Milestone: 75% funding reached`);
+                }
+                
+                console.log(`${buyer.emoji} ${buyer.name}: ${buyer.amount.toLocaleString()} CURE → Total: ${totalFunded.toLocaleString()} (${percentage.toFixed(1)}%)`);
                 
                 buyerIndex++;
-            }, 1000);
+            }, 1500); // Slightly slower for better visual effect
         }
 
         // Enable Lane 3 after successful funding
         function enableLane3() {
             console.log('🏪 LANE 3: Creating molecular marketplace...');
             processLane3();
+        }
+
+        // Process Lane 3 - Create Molecular Marketplace - FULLY RESTORED
+        function processLane3() {
+            console.log('🏪 LANE 3: Creating molecular marketplace...');
+            
+            const moleculeName = state.currentMolecule?.name || document.getElementById('molecule-name').value;
+            const disease = state.currentMolecule?.disease || "Unknown";
+            
+            setTimeout(() => {
+                console.log(`🏛️ SubDAO created: ${moleculeName} Molecular DAO`);
+                
+                // Create disease-specific token symbol
+                let tokenSymbol;
+                if (disease.toLowerCase().includes('parkinson')) {
+                    tokenSymbol = '$PDCure-PD';
+                } else if (disease.toLowerCase().includes('cardiovascular') || disease.toLowerCase().includes('heart')) {
+                    tokenSymbol = '$PDCure-CV';
+                } else if (disease.toLowerCase().includes('diabetes')) {
+                    tokenSymbol = '$PDCure-DM';
+                } else if (disease.toLowerCase().includes('covid') || disease.toLowerCase().includes('viral')) {
+                    tokenSymbol = '$PDCure-VR';
+                } else if (disease.toLowerCase().includes('arthritis') || disease.toLowerCase().includes('inflammation')) {
+                    tokenSymbol = '$PDCure-AI';
+                } else {
+                    tokenSymbol = '$PDCure-GN';
+                }
+                
+                // Initialize market data
+                const initialPrice = 0.015 + Math.random() * 0.025; // $0.015-0.040
+                const totalSupply = 1000000;
+                
+                state.marketData = {
+                    tokenSymbol: tokenSymbol,
+                    price: initialPrice,
+                    marketCap: Math.round(initialPrice * totalSupply),
+                    totalSupply: totalSupply,
+                    volume24h: 0,
+                    priceHistory: [{ price: initialPrice, time: Date.now(), type: 'launch', amount: 0 }]
+                };
+                
+                // Update dashboard
+                state.activeMolecules += 1;
+                updateDashboard();
+                
+                console.log(`💎 Token launched: ${tokenSymbol}`);
+                console.log(`📈 Initial price: $${initialPrice.toFixed(4)}`);
+                console.log(`💰 Market cap: $${state.marketData.marketCap.toLocaleString()}`);
+                console.log('🚀 Marketplace is LIVE! Try investing or simulating trading.');
+                
+                // Enable Lane 3 UI
+                enableLane3Trading();
+                
+            }, 2000);
+        }
+
+        // Enable Lane 3 trading interface - FULLY RESTORED
+        function enableLane3Trading() {
+            state.lanes[3].status = 'active';
+            updateLaneStatus(3, 'active');
+            
+            // Update Lane 3 content with full marketplace
+            updateLane3Display();
+        }
+
+        // Update Lane 3 display with market data - FULLY RESTORED
+        function updateLane3Display() {
+            const lane3Card = document.getElementById('lane3');
+            
+            if (!state.marketData) return;
+            
+            // Create enhanced Lane 3 content with all features
+            const marketplaceHTML = `
+                <div class="lane-status active" id="lane3-status">🟢 LIVE</div>
+                <div class="lane-header">
+                    <div class="lane-icon">🏪</div>
+                    <div>
+                        <h3 class="lane-title">Lane 3: Molecular Marketplace</h3>
+                        <p class="lane-description">Live token trading & investment platform</p>
+                    </div>
+                </div>
+                
+                <div class="marketplace-info">
+                    <h4>🏛️ ${state.currentMolecule?.name || 'Molecular'} DAO</h4>
+                    <div class="market-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
+                        <div class="stat-item">
+                            <span>Token:</span>
+                            <span style="color: #10b981; font-weight: bold;">${state.marketData.tokenSymbol}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Price:</span>
+                            <span id="current-price" style="color: #06b6d4; font-weight: bold;">$${state.marketData.price.toFixed(4)}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Market Cap:</span>
+                            <span id="market-cap">$${state.marketData.marketCap.toLocaleString()}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>24h Volume:</span>
+                            <span id="volume-24h">$${state.marketData.volume24h.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="investment-actions">
+                        <h5>💰 Quick Investment</h5>
+                        <div class="investment-buttons" style="display: flex; gap: 8px; margin: 10px 0;">
+                            <button class="btn btn-primary btn-sm" onclick="investInMolecule(1000)">$1K</button>
+                            <button class="btn btn-primary btn-sm" onclick="investInMolecule(5000)">$5K</button>
+                            <button class="btn btn-primary btn-sm" onclick="investInMolecule(10000)">$10K</button>
+                        </div>
+                        <div style="display: flex; gap: 8px; margin: 10px 0;">
+                            <input type="number" id="custom-investment" placeholder="$100-$100,000" min="100" max="100000" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #444; background: rgba(255,255,255,0.1); color: white;">
+                            <button class="btn btn-success" onclick="investCustomAmount()">💎 Invest</button>
+                        </div>
+                        <button class="btn btn-warning" id="bonding-btn" onclick="simulateBondingCurve()" style="width: 100%; margin-top: 10px;">📈 Simulate Trading</button>
+                    </div>
+                    
+                    <div class="trading-feed" id="trading-feed" style="margin-top: 15px; max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 6px; padding: 10px;">
+                        <h6 style="margin: 0 0 8px 0; color: #94a3b8;">📊 Live Trading Activity</h6>
+                        <div id="activity-log" style="font-size: 0.8rem;">
+                            <div style="color: #10b981;">🚀 ${state.marketData.tokenSymbol} marketplace launched!</div>
+                        </div>
+                    </div>
+                    
+                    <div class="price-chart-container" style="margin-top: 15px;">
+                        <h6 style="color: #94a3b8; margin-bottom: 8px;">📈 Price Chart</h6>
+                        <canvas id="price-chart" width="400" height="120" style="width: 100%; height: 120px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; background: rgba(0,0,0,0.3);"></canvas>
+                    </div>
+                </div>
+            `;
+            
+            lane3Card.innerHTML = marketplaceHTML;
+            
+            // Initialize the price chart
+            setTimeout(() => {
+                initializePriceChart();
+            }, 100);
         }
 
         // Show/Hide ANT Score Modal
@@ -2522,6 +2687,239 @@
         function closeScoreModal() {
             const modal = document.getElementById('score-modal');
             modal.style.display = 'none';
+        }
+
+        // Investment functions - FULLY RESTORED
+        function investInMolecule(amount) {
+            if (!state.marketData) {
+                console.log('❌ No marketplace created yet');
+                return;
+            }
+            
+            console.log(`💰 Investing $${amount.toLocaleString()} in ${state.marketData.tokenSymbol}`);
+            
+            // Simple bonding curve calculation
+            const tokensReceived = amount / state.marketData.price;
+            const priceImpact = amount / 15000; // Price impact calculation
+            
+            const oldPrice = state.marketData.price;
+            state.marketData.price += priceImpact;
+            state.marketData.volume24h += amount;
+            state.marketData.marketCap = Math.round(state.marketData.price * state.marketData.totalSupply);
+            
+            // Add to price history
+            state.marketData.priceHistory.push({
+                price: state.marketData.price,
+                time: Date.now(),
+                type: 'buy',
+                amount: amount
+            });
+            
+            console.log(`📈 Received ${tokensReceived.toFixed(2)} tokens at $${state.marketData.price.toFixed(4)}`);
+            
+            // Update activity feed
+            addTradingActivity(`🟢 BUY $${amount.toLocaleString()} → Price: $${state.marketData.price.toFixed(4)} (+${(((state.marketData.price - oldPrice) / oldPrice) * 100).toFixed(2)}%)`);
+            
+            // Update display and chart
+            updateMarketDisplay();
+            updatePriceChart();
+        }
+
+        function investCustomAmount() {
+            const amount = parseInt(document.getElementById('custom-investment').value);
+            if (amount && amount >= 100 && amount <= 100000) {
+                investInMolecule(amount);
+                document.getElementById('custom-investment').value = '';
+            } else {
+                alert('Please enter a valid investment amount ($100-$100,000)');
+            }
+        }
+
+        // Bonding curve simulation - FULLY RESTORED
+        function simulateBondingCurve() {
+            if (!state.marketData) {
+                console.log('❌ No marketplace created yet');
+                return;
+            }
+            
+            console.log('📈 Starting bonding curve simulation...');
+            
+            const btn = document.getElementById('bonding-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Simulating Trading...';
+            
+            const traders = [
+                { name: "Hedge Fund Alpha", type: "buy", range: [3000, 8000] },
+                { name: "Retail Investor", type: "buy", range: [500, 2000] },
+                { name: "Institutional Buyer", type: "buy", range: [5000, 15000] },
+                { name: "Early Investor", type: "sell", range: [1000, 4000] },
+                { name: "DAO Treasury", type: "buy", range: [8000, 20000] },
+                { name: "Liquidity Provider", type: "buy", range: [2000, 5000] }
+            ];
+            
+            let tradeIndex = 0;
+            const tradingInterval = setInterval(() => {
+                if (tradeIndex >= traders.length) {
+                    clearInterval(tradingInterval);
+                    btn.disabled = false;
+                    btn.textContent = '📈 Simulate Trading';
+                    console.log('✅ Bonding curve simulation complete!');
+                    return;
+                }
+                
+                const trader = traders[tradeIndex];
+                const amount = Math.floor(Math.random() * (trader.range[1] - trader.range[0]) + trader.range[0]);
+                
+                let priceChange;
+                if (trader.type === 'buy') {
+                    priceChange = amount / 20000; // Buy pressure increases price
+                    state.marketData.volume24h += amount;
+                } else {
+                    priceChange = -amount / 25000; // Sell pressure decreases price
+                }
+                
+                const oldPrice = state.marketData.price;
+                state.marketData.price = Math.max(0.001, state.marketData.price + priceChange);
+                state.marketData.marketCap = Math.round(state.marketData.price * state.marketData.totalSupply);
+                
+                // Add to price history
+                state.marketData.priceHistory.push({
+                    price: state.marketData.price,
+                    time: Date.now(),
+                    type: trader.type,
+                    amount: amount
+                });
+                
+                const changePercent = (((state.marketData.price - oldPrice) / oldPrice) * 100).toFixed(2);
+                const changeColor = trader.type === 'buy' ? '🟢' : '🔴';
+                const changeSymbol = trader.type === 'buy' ? '+' : '';
+                
+                console.log(`📊 ${trader.name}: ${trader.type.toUpperCase()} $${amount.toLocaleString()} → Price: $${state.marketData.price.toFixed(4)}`);
+                
+                // Update activity feed
+                addTradingActivity(`${changeColor} ${trader.type.toUpperCase()} $${amount.toLocaleString()} by ${trader.name} → $${state.marketData.price.toFixed(4)} (${changeSymbol}${changePercent}%)`);
+                
+                // Update display and chart in real-time
+                updateMarketDisplay();
+                updatePriceChart();
+                
+                tradeIndex++;
+                
+            }, 1200); // 1.2 seconds between trades
+        }
+
+        // Update market display
+        function updateMarketDisplay() {
+            if (!state.marketData) return;
+            
+            const priceEl = document.getElementById('current-price');
+            const marketCapEl = document.getElementById('market-cap');
+            const volumeEl = document.getElementById('volume-24h');
+            
+            if (priceEl) priceEl.textContent = `$${state.marketData.price.toFixed(4)}`;
+            if (marketCapEl) marketCapEl.textContent = `$${state.marketData.marketCap.toLocaleString()}`;
+            if (volumeEl) volumeEl.textContent = `$${state.marketData.volume24h.toLocaleString()}`;
+        }
+
+        // Add trading activity to feed
+        function addTradingActivity(activity) {
+            const activityLog = document.getElementById('activity-log');
+            if (activityLog) {
+                const activityDiv = document.createElement('div');
+                activityDiv.style.marginBottom = '4px';
+                activityDiv.style.fontSize = '0.75rem';
+                activityDiv.innerHTML = `<span style="color: #64748b;">${new Date().toLocaleTimeString()}</span> ${activity}`;
+                activityLog.appendChild(activityDiv);
+                
+                // Keep only last 8 activities
+                if (activityLog.children.length > 9) {
+                    activityLog.removeChild(activityLog.children[1]); // Keep the header
+                }
+                
+                // Auto-scroll to bottom
+                activityLog.scrollTop = activityLog.scrollHeight;
+            }
+        }
+
+        // Initialize price chart - RESTORED
+        function initializePriceChart() {
+            const canvas = document.getElementById('price-chart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth * 2; // High DPI
+            canvas.height = canvas.offsetHeight * 2;
+            ctx.scale(2, 2);
+            
+            updatePriceChart();
+        }
+
+        // Update price chart with current data - RESTORED
+        function updatePriceChart() {
+            const canvas = document.getElementById('price-chart');
+            if (!canvas || !state.marketData) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.offsetWidth;
+            const height = canvas.offsetHeight;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            const priceHistory = state.marketData.priceHistory;
+            if (priceHistory.length < 2) return;
+            
+            // Calculate price range for scaling
+            const prices = priceHistory.map(p => p.price);
+            const minPrice = Math.min(...prices) * 0.98;
+            const maxPrice = Math.max(...prices) * 1.02;
+            const priceRange = maxPrice - minPrice;
+            
+            if (priceRange === 0) return;
+            
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 4; i++) {
+                const y = (height / 3) * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+            
+            // Draw price line
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            priceHistory.forEach((point, index) => {
+                const x = (index / (priceHistory.length - 1)) * width;
+                const y = height - ((point.price - minPrice) / priceRange) * height;
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+                
+                // Add buy/sell markers
+                if (point.type === 'buy') {
+                    ctx.fillStyle = '#10b981';
+                    ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
+                } else if (point.type === 'sell') {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
+                }
+            });
+            
+            ctx.stroke();
+            
+            // Add current price label
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = '10px Arial';
+            const currentPrice = priceHistory[priceHistory.length - 1].price;
+            ctx.fillText(`$${currentPrice.toFixed(4)}`, width - 50, 15);
         }
 
         // Initialize dashboard on page load
