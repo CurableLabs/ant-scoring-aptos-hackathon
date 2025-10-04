@@ -972,15 +972,7 @@
                 
                 addLog(`💰 ${buyer.name}: ${amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`);
                 
-                // Check if threshold reached
-                if (totalCure >= 100000) {
-                    addLog(`🎉 100,000 CURE THRESHOLD REACHED! (${totalCure.toLocaleString()}/100,000 CURE)`);
-                    addLog('🔄 Autonomous smart contract validation triggered!');
-                    
-                    await sleep(1500);
-                    
-                    addLog('✅ Community validation COMPLETE!');
-                    addLog('🏪 Molecular marketplace creation unlocked!');
+                // This section is now handled by setInterval above
                     
                     // Reset button and enable Lane 3
                     btn.disabled = false;
