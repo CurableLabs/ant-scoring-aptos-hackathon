@@ -516,8 +516,21 @@
             antScore: 0,
             cureTokens: 0,
             currentMolecule: null,
-            antPassed: false
+            antPassed: false,
+            // Dynamic metrics for meaningful dashboard
+            totalBadges: 0,
+            recentAntScore: '--',
+            cureDeployed: 0,
+            activeMolecules: 0
         };
+
+        // Update dynamic dashboard metrics
+        function updateDashboard() {
+            document.getElementById('total-badges').textContent = state.totalBadges;
+            document.getElementById('recent-ant-score').textContent = state.recentAntScore;
+            document.getElementById('cure-deployed').textContent = state.cureDeployed.toLocaleString();
+            document.getElementById('active-molecules').textContent = state.activeMolecules;
+        }
 
         // Test button functionality
         function testButton() {
@@ -574,8 +587,9 @@
 
         // Clear ANT scores when changing molecules
         function clearANTScores() {
-            // Reset metric displays
-            document.getElementById('ant-score').textContent = '--';
+            // Reset recent ANT score display
+            state.recentAntScore = '--';
+            updateDashboard();
             
             // Clear any modal scores if they exist
             const scoreElements = ['therapeutic-score', 'drug-score', 'disease-score', 'innovation-score', 'safety-score'];
@@ -701,6 +715,13 @@
                 state.labBadges = 1;
                 state.currentMolecule = { name: moleculeName, smile: smileId };
                 state.antPassed = true;
+                
+                // Update dynamic dashboard metrics
+                state.totalBadges += 1;
+                state.recentAntScore = `${finalANTScore}%`;
+                updateDashboard();
+                
+                console.log(`📊 Dashboard updated: Badges: ${state.totalBadges}, ANT Score: ${state.recentAntScore}`);
                 
             } else {
                 passFailIndicator.className = 'pass-fail-indicator fail';
@@ -898,6 +919,11 @@
             addLog(`📈 Initial price: $${initialPrice.toFixed(4)}`);
             addLog(`💰 Market cap: $${marketCap.toLocaleString()}`);
             addLog('🚀 Marketplace is LIVE! Try investing or simulating trading.');
+            
+            // Update dashboard - new molecule is active on market
+            state.activeMolecules += 1;
+            updateDashboard();
+            console.log(`📊 Active Molecules updated: ${state.activeMolecules}`);
 
             // Reset button
             btn.disabled = false;
