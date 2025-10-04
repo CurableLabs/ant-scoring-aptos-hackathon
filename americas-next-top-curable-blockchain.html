@@ -894,7 +894,7 @@
         }
 
         // Simulate Community Buying with Visual Feedback
-        async function simulateCommunityBuying() {
+        function simulateCommunityBuying() {
             addLog('🌍 Starting community purchase simulation...');
             
             const btn = document.getElementById('community-sim-btn');
@@ -917,9 +917,36 @@
 
             let totalCure = state.cureTokens;
             
-            for (let i = 0; i < communityBuyers.length && totalCure < 100000; i++) {
-                const buyer = communityBuyers[i];
-                await sleep(1000);
+            let buyerIndex = 0;
+            
+            // Use setInterval to ensure all buyers are processed
+            const purchaseInterval = setInterval(() => {
+                if (totalCure >= 100000 || buyerIndex >= communityBuyers.length) {
+                    clearInterval(purchaseInterval);
+                    
+                    if (totalCure >= 100000) {
+                        btn.disabled = false;
+                        btn.textContent = '✅ Funding Complete';
+                        btn.className = 'btn btn-success';
+                        
+                        addLog(`🎉 100,000 CURE THRESHOLD REACHED! (${totalCure.toLocaleString()}/100,000 CURE)`);
+                        addLog('🔄 Autonomous smart contract validation triggered!');
+                        addLog('✅ Community validation COMPLETE!');
+                        addLog('🏪 Molecular marketplace creation unlocked!');
+                        
+                        // Update dashboard
+                        state.cureDeployed += state.cureTokens;
+                        updateDashboard();
+                        
+                        setTimeout(() => processLane3(), 2000);
+                    } else {
+                        btn.disabled = false;
+                        btn.textContent = '🌍 Simulate Community';
+                    }
+                    return;
+                }
+                
+                const buyer = communityBuyers[buyerIndex];
                 
                 // Generate randomized purchase amount within buyer's range
                 const amount = Math.floor(Math.random() * (buyer.range[1] - buyer.range[0]) + buyer.range[0]);
