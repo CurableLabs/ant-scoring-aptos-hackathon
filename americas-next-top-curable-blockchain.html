@@ -985,28 +985,21 @@
             console.log('✅ Marketplace upload complete');
         }
 
-        // Lane 3 Processing - Marketplace Creation (called automatically after Lane 2)
-        async function processLane3() {
+        // Lane 3 Processing - DEBUG AND FIX
+        function processLane3() {
+            console.log('🏪 LANE 3: Creating molecular marketplace...');
             addLog('🏪 LANE 3: Creating molecular marketplace...');
             
-            const btn = document.getElementById('lane3-btn');
-            btn.disabled = true;
-            btn.textContent = '⏳ Creating...';
-
-            await sleep(1500);
-
-            // Generate disease-specific token
+            // Enhanced disease mapping for more molecules
             const diseaseMap = {
-                'L-DOPA': 'PD',    // Parkinson's Disease  
-                'Aspirin': 'CV',   // Cardiovascular
-                'Morphine': 'PM',  // Pain Management
-                'Penicillin': 'ID', // Infectious Disease
-                'Ibuprofen': 'IM'  // Inflammation
+                'Tozadenant': 'PD', 'L-DOPA': 'PD', 'Metformin': 'DM', 'Adalimumab': 'RA',
+                'Remdesivir': 'VR', 'Paxlovid': 'VR', 'Aspirin': 'CV', 'Morphine': 'PM',
+                'Penicillin': 'AI', 'Ibuprofen': 'IF'
             };
             
-            const diseaseCode = diseaseMap[state.currentMolecule.name.split(' ')[0]] || 'GM'; // General Medicine
+            const diseaseCode = diseaseMap[state.currentMolecule.name.split(' ')[0]] || 'GM';
             const tokenSymbol = `$PDCure-${diseaseCode}`;
-            const initialPrice = 0.008 + Math.random() * 0.020; // $0.008-$0.028
+            const initialPrice = 0.015 + Math.random() * 0.025; // $0.015-$0.040
             const marketCap = Math.round(100000 * initialPrice);
 
             // Store marketplace data
@@ -1018,44 +1011,85 @@
                 bondingCurveMultiplier: 1.0
             };
 
-            // Show marketplace display
-            document.getElementById('molecule-listing').style.display = 'block';
-            document.getElementById('bonding-curve-display').style.display = 'block';
+            console.log('✅ Marketplace data created:', state.marketplace);
+
+            // Show marketplace display sections
+            const moleculeListing = document.getElementById('molecule-listing');
+            const bondingDisplay = document.getElementById('bonding-curve-display');
             
-            // Update marketplace UI
-            document.getElementById('live-molecule-name').textContent = state.currentMolecule.name;
-            document.getElementById('live-token-symbol').textContent = tokenSymbol;
-            document.getElementById('live-token-price').textContent = `$${initialPrice.toFixed(4)}`;
-            document.getElementById('live-market-cap').textContent = `$${marketCap.toLocaleString()}`;
+            if (moleculeListing) {
+                moleculeListing.style.display = 'block';
+                console.log('✅ Molecule listing displayed');
+            }
+            
+            if (bondingDisplay) {
+                bondingDisplay.style.display = 'block';
+                console.log('✅ Bonding curve display shown');
+            }
+
+            // Update marketplace UI safely
+            const updates = {
+                'live-molecule-name': state.currentMolecule.name,
+                'live-token-symbol': tokenSymbol,
+                'live-token-price': `$${initialPrice.toFixed(4)}`,
+                'live-market-cap': `$${marketCap.toLocaleString()}`
+            };
+            
+            Object.entries(updates).forEach(([id, value]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = value;
+                    console.log(`✅ Updated ${id}: ${value}`);
+                } else {
+                    console.warn(`⚠️ Element not found: ${id}`);
+                }
+            });
 
             addLog(`🏛️ SubDAO created: ${state.currentMolecule.name} Molecular DAO`);
             addLog(`💎 Token launched: ${tokenSymbol}`);
             addLog(`📈 Initial price: $${initialPrice.toFixed(4)}`);
             addLog(`💰 Market cap: $${marketCap.toLocaleString()}`);
-            addLog('🚀 Marketplace is LIVE! Try investing or simulating trading.');
+            addLog('🚀 Marketplace is LIVE! Upload and trading ready.');
             
-            // Update dashboard - new molecule is active on market
+            // Update dashboard
             state.activeMolecules += 1;
             updateDashboard();
-            console.log(`📊 Active Molecules updated: ${state.activeMolecules}`);
 
-            // Enable Lane 3 buttons after marketplace creation
+            // AGGRESSIVE button enablement with multiple approaches
+            console.log('🔧 AGGRESSIVELY enabling Lane 3 buttons...');
+            
             const uploadBtn = document.getElementById('lane3-btn');
             const tradingBtn = document.getElementById('bonding-btn');
             
             if (uploadBtn) {
                 uploadBtn.disabled = false;
+                uploadBtn.removeAttribute('disabled');
                 uploadBtn.textContent = '🌐 Marketplace Upload';
+                uploadBtn.className = 'btn btn-primary';
                 uploadBtn.style.opacity = '1';
+                uploadBtn.style.pointerEvents = 'auto';
+                uploadBtn.style.cursor = 'pointer';
+                uploadBtn.style.background = '#3b82f6';
+                console.log('✅ Upload button AGGRESSIVELY enabled');
+            } else {
+                console.error('❌ CRITICAL: lane3-btn not found in DOM');
             }
             
             if (tradingBtn) {
                 tradingBtn.disabled = false;
+                tradingBtn.removeAttribute('disabled');
                 tradingBtn.textContent = '📈 Simulate Trading';
+                tradingBtn.className = 'btn btn-success';
                 tradingBtn.style.opacity = '1';
+                tradingBtn.style.pointerEvents = 'auto';
+                tradingBtn.style.cursor = 'pointer';
+                tradingBtn.style.background = '#10b981';
+                console.log('✅ Trading button AGGRESSIVELY enabled');
+            } else {
+                console.error('❌ CRITICAL: bonding-btn not found in DOM');
             }
             
-            console.log('✅ Lane 3 Upload and Trading buttons enabled');
+            console.log('🎉 Lane 3 should now be COMPLETELY FUNCTIONAL!');
         }
 
         // INVEST FUNCTION REMOVED - Was confusing as requested
