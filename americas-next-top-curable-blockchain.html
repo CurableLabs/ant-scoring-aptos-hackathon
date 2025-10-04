@@ -341,6 +341,11 @@
                     <label>🎭 Contestant Molecules:</label>
                     <select id="molecule-select" onchange="loadExample()">
                         <option value="">-- Choose Your Contestant --</option>
+                        <option value="tozadenant">🚀 Tozadenant (Parkinson's Innovation) - NEW!</option>
+                        <option value="metformin">💎 Metformin (Diabetes Guardian) - NEW!</option>
+                        <option value="adalimumab">🛡️ Adalimumab (Arthritis Fighter) - NEW!</option>
+                        <option value="remdesivir">⚡ Remdesivir (Viral Warrior) - NEW!</option>
+                        <option value="paxlovid">🏆 Paxlovid (COVID Crusher) - NEW!</option>
                         <option value="levodopa">🏃 L-DOPA (Parkinson's Champion)</option>
                         <option value="aspirin">💊 Aspirin (Pain Relief Classic)</option>
                         <option value="morphine">🎯 Morphine (Heavy Duty Pain Fighter)</option>
@@ -549,16 +554,37 @@
                 }
             };
             
+            // Clear previous scores
+            clearANTScores();
+            
             if (examples[value]) {
                 document.getElementById('molecule-name').value = examples[value].name;
                 document.getElementById('smile-id').value = examples[value].smile;
+                
+                state.currentMolecule = examples[value];
                 addLog(`🎭 Contestant selected: ${examples[value].name}`);
                 addLog(`🔬 Molecular signature: ${examples[value].smile}`);
+                addLog(`🎯 Disease target: ${examples[value].disease}`);
                 addLog(`🎬 Ready for audition - Click "Begin Competition Audition"`);
             } else if (value === '') {
                 document.getElementById('molecule-name').value = '';
                 document.getElementById('smile-id').value = '';
             }
+        }
+
+        // Clear ANT scores when changing molecules
+        function clearANTScores() {
+            // Reset metric displays
+            document.getElementById('ant-score').textContent = '--';
+            
+            // Clear any modal scores if they exist
+            const scoreElements = ['therapeutic-score', 'drug-score', 'disease-score', 'innovation-score', 'safety-score'];
+            scoreElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = '--';
+            });
+            
+            console.log('🧹 Previous ANT scores cleared for new molecule');
         }
 
         // Lane 1 Processing with Visual Scoring
