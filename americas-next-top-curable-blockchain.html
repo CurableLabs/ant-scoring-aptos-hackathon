@@ -456,8 +456,7 @@
                     <div id="investment-feed" style="font-size: 0.8rem; max-height: 100px; overflow-y: auto;"></div>
                 </div>
                 
-                <button class="btn" onclick="processLane3()" id="lane3-btn" disabled>🚀 Create Marketplace</button>
-                <button class="btn btn-warning" onclick="investInMolecule()" id="invest-btn" disabled>💰 Invest</button>
+                <button class="btn" onclick="uploadToMarketplace()" id="lane3-btn" disabled>🌐 Marketplace Upload</button>
                 <button class="btn btn-success" onclick="simulateBondingCurve()" id="bonding-btn" disabled>📈 Simulate Trading</button>
             </div>
         </div>
@@ -969,9 +968,10 @@
                         state.cureDeployed += state.cureTokens;
                         updateDashboard();
                         
+                        // Enable Lane 3 directly instead of auto-processing
                         setTimeout(() => {
-                            console.log('🎯 Auto-triggering Lane 3 setup...');
-                            processLane3();
+                            console.log('🎯 Enabling Lane 3 after funding complete...');
+                            enableLane3();
                         }, 2000);
                     } else {
                         btn.disabled = false;
@@ -1080,58 +1080,66 @@
             updateDashboard();
             console.log(`📊 Active Molecules updated: ${state.activeMolecules}`);
 
-            // Enable ALL Lane 3 buttons after marketplace creation
-            const lane3Buttons = [
-                { id: 'lane3-btn', text: '✅ Marketplace Created', class: 'btn btn-success' },
-                { id: 'invest-btn', text: '💰 Invest', class: 'btn btn-warning' },
-                { id: 'bonding-btn', text: '📈 Simulate Trading', class: 'btn btn-success' }
-            ];
+            // Enable Lane 3 buttons after marketplace creation - CLEANED UP
+            console.log('🔧 Enabling Lane 3 buttons after marketplace creation...');
             
-            console.log('🔧 Enabling all Lane 3 buttons after marketplace creation...');
+            const uploadBtn = document.getElementById('lane3-btn');
+            const tradingBtn = document.getElementById('bonding-btn');
             
-            lane3Buttons.forEach(btnConfig => {
-                const button = document.getElementById(btnConfig.id);
-                if (button) {
-                    button.disabled = false;
-                    button.textContent = btnConfig.text;
-                    button.className = btnConfig.class;
-                    button.style.opacity = '1';
-                    button.style.pointerEvents = 'auto';
-                    button.style.cursor = 'pointer';
-                    console.log(`✅ ${btnConfig.id} enabled and functional`);
-                } else {
-                    console.error(`❌ Button not found: ${btnConfig.id}`);
-                }
-            });
+            if (uploadBtn) {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '🌐 Marketplace Upload';
+                uploadBtn.className = 'btn btn-primary';
+                uploadBtn.style.opacity = '1';
+                uploadBtn.style.pointerEvents = 'auto';
+                console.log('✅ Marketplace Upload button enabled');
+            }
             
-            console.log('🎉 Lane 3 marketplace fully functional - Simulate Trading button ready!');
+            if (tradingBtn) {
+                tradingBtn.disabled = false;
+                tradingBtn.textContent = '📈 Simulate Trading';
+                tradingBtn.className = 'btn btn-success';
+                tradingBtn.style.opacity = '1';
+                tradingBtn.style.pointerEvents = 'auto';
+                console.log('✅ Simulate Trading button enabled and ready');
+            }
+            
+            console.log('🎉 Lane 3 marketplace created - Upload and Trading buttons ready!');
         }
 
-        // Invest in Molecule - User Interaction
-        async function investInMolecule() {
-            const investAmount = prompt('How much would you like to invest in USD?', '1000');
-            if (!investAmount || isNaN(investAmount)) return;
+        // Enable Lane 3 after funding complete - NEW FUNCTION
+        function enableLane3() {
+            console.log('🏪 Enabling Lane 3 after community funding...');
+            
+            // Auto-create marketplace data so Lane 3 is ready
+            processLane3();
+            
+            addLog('🏪 Lane 3 unlocked! Click "Marketplace Upload" to deploy your molecule.');
+        }
 
-            const amount = parseFloat(investAmount);
-            const tokensReceived = amount / state.marketplace.price;
+        // Marketplace Upload - Upload molecule to live trading platform
+        function uploadToMarketplace() {
+            if (!state.marketplace) {
+                console.error('❌ No marketplace data available');
+                return;
+            }
             
-            addLog(`💰 Investment: $${amount.toLocaleString()}`);
-            addLog(`🎯 Tokens received: ${tokensReceived.toFixed(2)} ${state.marketplace.tokenSymbol}`);
+            addLog('🌐 Uploading molecule to live marketplace...');
+            addLog(`📡 Deploying ${state.marketplace.tokenSymbol} to trading platform...`);
+            addLog('🔗 Connecting to liquidity pools...');
+            addLog('📊 Initializing price discovery mechanism...');
+            addLog(`✅ ${state.currentMolecule.name} successfully uploaded to marketplace!`);
+            addLog('🎯 Ready for live trading and investment!');
             
-            // Update price via bonding curve
-            state.marketplace.bondingCurveMultiplier += amount / 10000; // Price increases with investment
-            const newPrice = state.marketplace.price * state.marketplace.bondingCurveMultiplier;
-            const newMarketCap = state.marketplace.totalSupply * newPrice;
+            // Update button to show completion
+            const btn = document.getElementById('lane3-btn');
+            if (btn) {
+                btn.textContent = '✅ Uploaded to Market';
+                btn.className = 'btn btn-success';
+                btn.disabled = true; // No need to upload again
+            }
             
-            state.marketplace.price = newPrice;
-            state.marketplace.marketCap = newMarketCap;
-            
-            // Update UI
-            document.getElementById('live-token-price').textContent = `$${newPrice.toFixed(4)}`;
-            document.getElementById('live-market-cap').textContent = `$${newMarketCap.toLocaleString()}`;
-            
-            addLog(`📈 New price: $${newPrice.toFixed(4)} (+${((state.marketplace.bondingCurveMultiplier - 1) * 100).toFixed(1)}%)`);
-            addLog(`💼 Updated market cap: $${newMarketCap.toLocaleString()}`);
+            console.log('🌐 Molecule successfully uploaded to marketplace');
         }
 
         // Simulate Bonding Curve Trading
