@@ -964,9 +964,9 @@
             }
         }
 
-        // Marketplace Upload - FULLY FUNCTIONAL
+        // Marketplace Upload - ENHANCED USER-CONTROLLED FLOW
         function uploadToMarketplace() {
-            console.log('🌐 Marketplace Upload clicked');
+            console.log('🌐 Marketplace Upload clicked by user');
             
             if (!state.marketplace) {
                 addLog('❌ No marketplace data available');
@@ -977,17 +977,55 @@
             addLog(`📡 Deploying ${state.marketplace.tokenSymbol} to trading platform...`);
             addLog('🔗 Connecting to liquidity pools...');
             addLog('📊 Initializing price discovery mechanism...');
-            addLog(`✅ ${state.currentMolecule.name} successfully uploaded to marketplace!`);
-            addLog('🎯 Ready for live trading and investment!');
             
-            const btn = document.getElementById('lane3-btn');
-            if (btn) {
-                btn.textContent = '✅ Uploaded to Market';
-                btn.className = 'btn btn-success';
-                btn.disabled = true;
-            }
-            
-            console.log('✅ Marketplace upload complete');
+            // NOW show the marketplace data after user clicks upload
+            setTimeout(() => {
+                // Show marketplace display sections
+                const moleculeListing = document.getElementById('molecule-listing');
+                const bondingDisplay = document.getElementById('bonding-curve-display');
+                
+                if (moleculeListing) {
+                    moleculeListing.style.display = 'block';
+                    console.log('✅ Live molecule data displayed after upload');
+                }
+                
+                if (bondingDisplay) {
+                    bondingDisplay.style.display = 'block';
+                    console.log('✅ Trading interface displayed after upload');
+                }
+
+                // Update live molecule UI
+                const updates = {
+                    'live-molecule-name': state.currentMolecule.name,
+                    'live-token-symbol': state.marketplace.tokenSymbol,
+                    'live-token-price': `$${state.marketplace.price.toFixed(4)}`,
+                    'live-market-cap': `$${state.marketplace.marketCap.toLocaleString()}`
+                };
+                
+                Object.entries(updates).forEach(([id, value]) => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = value;
+                        console.log(`✅ Updated ${id}: ${value}`);
+                    }
+                });
+
+                addLog(`✅ ${state.currentMolecule.name} successfully uploaded to marketplace!`);
+                addLog(`💎 Live molecule: ${state.marketplace.tokenSymbol}`);
+                addLog(`📈 Current price: $${state.marketplace.price.toFixed(4)}`);
+                addLog('🎯 Ready for live trading simulation!');
+                
+                // Update upload button
+                const btn = document.getElementById('lane3-btn');
+                if (btn) {
+                    btn.textContent = '✅ Uploaded to Market';
+                    btn.className = 'btn btn-success';
+                    btn.disabled = true;
+                }
+                
+                console.log('🎉 Live molecule data now visible - Trading simulation ready!');
+                
+            }, 1500); // 1.5 second delay for upload animation
         }
 
         // Lane 3 Processing - DEBUG AND FIX
@@ -1018,37 +1056,8 @@
 
             console.log('✅ Marketplace data created:', state.marketplace);
 
-            // Show marketplace display sections
-            const moleculeListing = document.getElementById('molecule-listing');
-            const bondingDisplay = document.getElementById('bonding-curve-display');
-            
-            if (moleculeListing) {
-                moleculeListing.style.display = 'block';
-                console.log('✅ Molecule listing displayed');
-            }
-            
-            if (bondingDisplay) {
-                bondingDisplay.style.display = 'block';
-                console.log('✅ Bonding curve display shown');
-            }
-
-            // Update marketplace UI safely
-            const updates = {
-                'live-molecule-name': state.currentMolecule.name,
-                'live-token-symbol': tokenSymbol,
-                'live-token-price': `$${initialPrice.toFixed(4)}`,
-                'live-market-cap': `$${marketCap.toLocaleString()}`
-            };
-            
-            Object.entries(updates).forEach(([id, value]) => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.textContent = value;
-                    console.log(`✅ Updated ${id}: ${value}`);
-                } else {
-                    console.warn(`⚠️ Element not found: ${id}`);
-                }
-            });
+            // DON'T show marketplace data yet - wait for user to click Upload
+            console.log('💡 Marketplace data created but hidden - waiting for user upload click');
 
             addLog(`🏛️ SubDAO created: ${state.currentMolecule.name} Molecular DAO`);
             addLog(`💎 Token launched: ${tokenSymbol}`);
