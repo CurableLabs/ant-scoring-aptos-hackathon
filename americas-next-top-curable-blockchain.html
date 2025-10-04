@@ -979,57 +979,74 @@
 
         // INVEST FUNCTION REMOVED - Was confusing as requested
 
-        // Simulate Bonding Curve Trading
-        async function simulateBondingCurve() {
+        // Simulate Bonding Curve Trading - FIXED WITH setInterval
+        function simulateBondingCurve() {
+            if (!state.marketplace) {
+                addLog('❌ No marketplace created yet');
+                return;
+            }
+            
             addLog('📈 Starting bonding curve simulation...');
             
             const btn = document.getElementById('bonding-btn');
             btn.disabled = true;
             btn.textContent = '⏳ Trading...';
             
-            const trades = [
-                { trader: 'Hedge Fund Alpha', action: 'BUY', amount: 5000 },
-                { trader: 'Retail Investor', action: 'BUY', amount: 1200 },
-                { trader: 'Institutional Buyer', action: 'BUY', amount: 8000 },
-                { trader: 'Early Investor', action: 'SELL', amount: -2500 },
-                { trader: 'DAO Treasury', action: 'BUY', amount: 15000 },
-                { trader: 'Liquidity Provider', action: 'BUY', amount: 3000 }
+            const traders = [
+                { name: 'Hedge Fund Alpha', type: 'BUY', amount: 5000 },
+                { name: 'Retail Investor', type: 'BUY', amount: 1200 },
+                { name: 'Institutional Buyer', type: 'BUY', amount: 8000 },
+                { name: 'Early Investor', type: 'SELL', amount: 2500 },
+                { name: 'DAO Treasury', type: 'BUY', amount: 15000 },
+                { name: 'Liquidity Provider', type: 'BUY', amount: 3000 }
             ];
 
-            for (let i = 0; i < trades.length; i++) {
-                const trade = trades[i];
-                await sleep(1000);
+            let tradeIndex = 0;
+            
+            const tradingInterval = setInterval(() => {
+                if (tradeIndex >= traders.length) {
+                    clearInterval(tradingInterval);
+                    btn.disabled = false;
+                    btn.textContent = '📈 Simulate Trading';
+                    addLog('✅ Bonding curve simulation complete!');
+                    addLog('🎉 FULL TRI-LANE PIPELINE DEMONSTRATION SUCCESSFUL!');
+                    return;
+                }
                 
-                // Update bonding curve
-                const priceImpact = trade.amount / 20000; // Price impact calculation
-                state.marketplace.bondingCurveMultiplier += priceImpact;
-                state.marketplace.bondingCurveMultiplier = Math.max(0.5, state.marketplace.bondingCurveMultiplier); // Floor at 50%
+                const trade = traders[tradeIndex];
                 
-                const newPrice = state.marketplace.price * (1 + priceImpact);
-                state.marketplace.price = newPrice;
-                
-                const tokensTraded = Math.abs(trade.amount) / newPrice;
+                // Update price based on trade
+                let priceChange;
+                if (trade.type === 'BUY') {
+                    priceChange = trade.amount / 20000;
+                    state.marketplace.price += priceChange;
+                } else {
+                    priceChange = trade.amount / 25000;
+                    state.marketplace.price = Math.max(0.001, state.marketplace.price - priceChange);
+                }
                 
                 // Add to investment feed
                 const tradeElement = document.createElement('div');
                 tradeElement.style.fontSize = '0.75rem';
                 tradeElement.style.marginBottom = '4px';
-                tradeElement.style.color = trade.action === 'BUY' ? '#10b981' : '#ef4444';
-                tradeElement.innerHTML = `${trade.action === 'BUY' ? '📈' : '📉'} ${trade.trader}: ${trade.action} ${tokensTraded.toFixed(1)} tokens`;
+                tradeElement.style.color = trade.type === 'BUY' ? '#10b981' : '#ef4444';
+                tradeElement.innerHTML = `${trade.type === 'BUY' ? '📈' : '📉'} ${trade.name}: ${trade.type} $${trade.amount.toLocaleString()} → $${state.marketplace.price.toFixed(4)}`;
                 document.getElementById('investment-feed').appendChild(tradeElement);
                 
+                // Auto-scroll feed
+                const investmentFeed = document.getElementById('investment-feed');
+                investmentFeed.scrollTop = investmentFeed.scrollHeight;
+
                 // Update UI
-                document.getElementById('live-token-price').textContent = `$${newPrice.toFixed(4)}`;
-                document.getElementById('live-market-cap').textContent = `$${(state.marketplace.totalSupply * newPrice).toLocaleString()}`;
+                document.getElementById('live-token-price').textContent = `$${state.marketplace.price.toFixed(4)}`;
+                const newMarketCap = state.marketplace.totalSupply * state.marketplace.price;
+                document.getElementById('live-market-cap').textContent = `$${newMarketCap.toLocaleString()}`;
                 
-                addLog(`📊 ${trade.trader}: ${trade.action} $${Math.abs(trade.amount).toLocaleString()} → Price: $${newPrice.toFixed(4)}`);
-            }
-            
-            addLog('✅ Bonding curve simulation complete!');
-            addLog('🎉 FULL TRI-LANE PIPELINE DEMONSTRATION SUCCESSFUL!');
-            
-            btn.disabled = false;
-            btn.textContent = '📈 Simulate Trading';
+                addLog(`📊 ${trade.name}: ${trade.type} $${trade.amount.toLocaleString()} → Price: $${state.marketplace.price.toFixed(4)}`);
+                
+                tradeIndex++;
+                
+            }, 1200); // 1.2 seconds between trades
         }
 
         // Helper functions
