@@ -1,0 +1,2497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧬 Curable Labs: Trial by Molecule</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: #e2e8f0;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: #f8fafc;
+        }
+        
+        .lane-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+        
+        .lane-card {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn:disabled {
+            background: rgba(100, 116, 139, 0.3) !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            opacity: 0.6 !important;
+            pointer-events: none !important;
+        }
+        
+        .btn:not(:disabled) {
+            opacity: 1 !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            transform: translateY(-2px) !important;
+        }
+        
+        .btn:not(:disabled):hover {
+            opacity: 1 !important;
+            transform: translateY(-4px) !important;
+        }
+        
+        .input-group {
+            margin-bottom: 16px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #f8fafc;
+        }
+
+        .input-group select {
+            background: rgba(15, 23, 42, 0.95);
+            color: #f8fafc;
+        }
+
+        .input-group select option {
+            background: rgba(15, 23, 42, 0.98);
+            color: #f8fafc;
+            padding: 8px 12px;
+            border: none;
+        }
+
+        .input-group select:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        
+        .log-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #22d3ee;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(34, 211, 238, 0.3);
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            height: 8px;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .score-display {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: #f8fafc;
+            margin-bottom: 8px;
+        }
+
+        .scoring-grid {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .score-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 16px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .score-component {
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        .score-value {
+            color: #3b82f6;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .score-weight {
+            color: #94a3b8;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .score-weighted {
+            color: #10b981;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .final-score {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .final-score-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #3b82f6;
+            margin-bottom: 8px;
+        }
+
+        .pass-fail-indicator {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 16px;
+        }
+
+        .pass {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .fail {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .modal-footer {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        
+        .metric-card {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3b82f6;
+            margin-bottom: 8px;
+        }
+        
+        .metric-label {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #475569;
+            transition: 0.4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #10b981;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Modal Styles - Enhanced */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            margin: 15% auto;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            width: 400px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        /* Progress bar styles */
+        .progress-container {
+            position: relative;
+            width: 100%;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 600;
+            color: white;
+            z-index: 2;
+            font-size: 0.9rem;
+        }
+
+        /* Trading buttons */
+        .trading-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .trading-buttons .btn {
+            flex: 1;
+        }
+
+        /* ANT Scoring Modal */
+        .scoring-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .score-component {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .score-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #06b6d4;
+        }
+
+        .final-score-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .final-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #10b981;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+<<<<<<< HEAD
+        <div class="header">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 16px;">
+                <div style="font-size: 4rem;">🏆</div>
+                <div style="text-align: left;">
+                    <h1 style="margin: 0; font-size: 2.8rem; background: linear-gradient(135deg, #3b82f6, #06b6d4, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Curable Labs: Trial by Molecule</h1>
+                    <p style="margin: 4px 0 0 0; font-size: 1.1rem; color: #06b6d4;">Advanced DeFi-Powered Drug Discovery Platform</p>
+=======
+        <!-- Blockchain Status with Toggle -->
+        <div class="blockchain-status">
+            <div class="status-dot"></div>
+            <div style="flex: 1;">
+                <strong>⛓️ Aptos Blockchain:</strong> <span id="blockchain-mode">Simulation Mode</span> Active | 
+                <strong>🏗️ Move Contracts:</strong> Ready for Deployment | 
+                <strong>🎯 Demo:</strong> Fully Functional
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary btn-sm" onclick="showBuyCUREModal()">💎 Buy CURE Tokens</button>
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="blockchain-toggle" onchange="toggleBlockchainMode()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span style="margin-left: 10px; font-size: 0.9rem;">Testnet</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="trophy-section">
+                    <div class="trophy-icon">🏆</div>
+                </div>
+                <div>
+                    <h1>🧬 Curable Labs: Trial by Molecule</h1>
+                    <div class="subtitle">Advanced DeFi-Powered Drug Discovery Platform</div>
+                    <div class="description">🧪 Scientific validation → 🌍 Community funding → 💰 Market deployment</div>
+                    <div class="description">Tri-Lane Tokenomics Pipeline • Powered by Aptos & Move</div>
+                </div>
+                <div class="molecule-section">
+                    <div class="molecule-icon">🧬</div>
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
+                </div>
+                <div style="font-size: 4rem;">🧬</div>
+            </div>
+            <p style="color: #94a3b8; font-size: 0.95rem; text-align: center;">Novel molecules compete through ANT scoring → Community validation → Marketplace launch</p>
+            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 0.9rem; color: #e2e8f0;">
+                <strong>🎯 Your Mission:</strong> Select a promising molecule, guide it through AI validation, build community support, and launch it to market!
+            </div>
+        </div>
+
+        <!-- Dynamic Metrics Dashboard -->
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-value" id="total-badges">0</div>
+                <div class="metric-label">Total Badges Achieved</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="recent-ant-score">--</div>
+                <div class="metric-label">Most Recent ANT Score</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="cure-deployed">0</div>
+                <div class="metric-label">Total CURE Tokens Deployed</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="active-molecules">0</div>
+                <div class="metric-label">Active Molecules on Market</div>
+            </div>
+        </div>
+
+<<<<<<< HEAD
+        <!-- Lanes -->
+        <div class="lane-grid">
+            <!-- Lane 1 -->
+            <div class="lane-card">
+                <h2>🏅 Lane 1: Lab Badges</h2>
+                
+                <div class="input-group">
+                    <label>🎭 Contestant Molecules:</label>
+                    <select id="molecule-select" onchange="loadExample()">
+                        <option value="">-- Choose Your Contestant --</option>
+                        <option value="tozadenant">🚀 Tozadenant (Parkinson's Innovation) - NEW!</option>
+                        <option value="metformin">💎 Metformin (Diabetes Guardian) - NEW!</option>
+                        <option value="adalimumab">🛡️ Adalimumab (Arthritis Fighter) - NEW!</option>
+                        <option value="remdesivir">⚡ Remdesivir (Viral Warrior) - NEW!</option>
+                        <option value="paxlovid">🏆 Paxlovid (COVID Crusher) - NEW!</option>
+                        <option value="levodopa">🏃 L-DOPA (Parkinson's Champion)</option>
+                        <option value="aspirin">💊 Aspirin (Pain Relief Classic)</option>
+                        <option value="morphine">🎯 Morphine (Heavy Duty Pain Fighter)</option>
+                        <option value="penicillin">🛡️ Penicillin (Infection Destroyer)</option>
+                        <option value="ibuprofen">🔥 Ibuprofen (Inflammation Crusher)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>🧬 Contestant Name:</label>
+                    <input type="text" id="molecule-name" placeholder="Select contestant or enter custom molecule">
+                </div>
+                
+                <div class="input-group">
+                    <label>🔬 Molecular Signature (SMILE ID):</label>
+                    <input type="text" id="smile-id" placeholder="Auto-filled from contestants">
+                </div>
+                
+                <div class="input-group">
+                    <label>📄 Research Document (PDF):</label>
+                    <input type="text" id="pdf-input" placeholder="Research paper reference" readonly>
+                </div>
+
+                <div id="lane1-progress" style="display: none;">
+                    <div style="color: #f8fafc; font-weight: 600; margin: 16px 0;">🧠 ANT Scoring Progress:</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="ant-progress"></div>
+=======
+
+        <!-- Tri-Lane Grid -->
+        <div class="tri-lane-grid">
+            <!-- Lane 1: Lab Badge (Molecular Analysis) -->
+            <div class="lane-card" id="lane1">
+                <div class="lane-status pending" id="lane1-status">Ready</div>
+                <div class="lane-header">
+                    <div class="lane-icon">🏅</div>
+                    <div>
+                        <h3 class="lane-title">Lane 1: Lab Badge</h3>
+                        <p class="lane-description">ANT molecular validation & scoring</p>
+                    </div>
+                </div>
+
+                <form id="lane1-form" onsubmit="return false;">
+                    <div class="input-group">
+                        <label>🎭 Select Contestant Molecule:</label>
+                        <select id="molecule-select" onchange="loadMoleculeExample()">
+                            <option value="">Choose a molecular contestant...</option>
+                            <option value="tozadenant">🚀 Tozadenant (Parkinson's Innovation) - NEW!</option>
+                            <option value="metformin">💎 Metformin (Diabetes Guardian)</option>
+                            <option value="adalimumab">🛡️ Adalimumab (Arthritis Fighter)</option>
+                            <option value="remdesivir">⚡ Remdesivir (Viral Warrior)</option>
+                            <option value="paxlovid">🏆 Paxlovid (COVID Crusher)</option>
+                            <option value="ldopa">🏃 L-DOPA (Parkinson's Champion)</option>
+                            <option value="aspirin">💊 Aspirin (Classic Contender)</option>
+                            <option value="morphine">🎯 Morphine (Complex Competitor)</option>
+                            <option value="penicillin">🛡️ Penicillin (Antibiotic Ace)</option>
+                            <option value="ibuprofen">🔥 Ibuprofen (Pain Relief Pro)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>🧪 Molecule Name:</label>
+                        <input type="text" id="molecule-name" placeholder="Enter molecule name">
+                    </div>
+
+                    <div class="input-group">
+                        <label>🧬 SMILE ID:</label>
+                        <input type="text" id="smile-input" placeholder="Enter molecular SMILE notation">
+                    </div>
+
+                    <div class="input-group">
+                        <label>📄 Research Document:</label>
+                        <input type="text" id="pdf-input" placeholder="Research paper reference" readonly>
+                    </div>
+
+                    <button type="button" class="btn btn-success" id="lab-badge-btn" onclick="simulateANTScoreTest()">
+                        🧬 Simulate ANT Score Test
+                    </button>
+                </form>
+
+                <div id="lane1-results" style="display: none;">
+                    <div class="community-stats">
+                        <h4>🏆 ANT Score Results</h4>
+                        <div class="stat-item">
+                            <span>Overall Score:</span>
+                            <span id="ant-score-display">0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Status:</span>
+                            <span id="validation-status">Pending</span>
+                        </div>
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
+                    </div>
+                    <div id="scoring-details" style="font-size: 0.8rem; color: #94a3b8;"></div>
+                </div>
+                
+                <button class="btn" onclick="processLane1()" id="lane1-btn">🎬 Begin Competition Audition</button>
+            </div>
+
+            <!-- Lane 2 -->
+            <div class="lane-card">
+                <h2>💎 Lane 2: CURE Community Building</h2>
+                
+                <div id="community-progress" style="display: none;">
+                    <div style="color: #f8fafc; font-weight: 600; margin: 16px 0;">
+                        🎯 Community CURE Progress: <span id="cure-percentage">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="cure-progress"></div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 8px;">
+                        Target: 100,000 CURE tokens
+                    </div>
+                </div>
+
+                <div id="purchase-feed" style="background: rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 12px; margin: 16px 0; max-height: 120px; overflow-y: auto; display: none;">
+                    <div style="font-weight: 600; color: #f8fafc; margin-bottom: 8px; font-size: 0.9rem;">🏦 Live Purchases</div>
+                    <div id="purchase-list"></div>
+                </div>
+                
+                <button class="btn" onclick="processLane2()" id="lane2-btn" disabled>💰 Start Community Building</button>
+                <button class="btn btn-success" onclick="simulateCommunityBuying()" id="community-sim-btn" disabled>🌍 Simulate Community</button>
+            </div>
+
+            <!-- Lane 3 -->
+            <div class="lane-card">
+                <h2>🏪 Lane 3: Molecular Marketplace</h2>
+                
+                <div id="molecule-listing" style="display: none;">
+                    <div class="score-display">
+                        <div style="font-weight: 600; color: #f8fafc; margin-bottom: 12px;">🧬 Live Molecule</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem;">
+                            <div>
+                                <div style="color: #94a3b8;">Molecule:</div>
+                                <div style="color: #3b82f6; font-weight: 600;" id="live-molecule-name">--</div>
+                            </div>
+                            <div>
+                                <div style="color: #94a3b8;">Token:</div>
+                                <div style="color: #10b981; font-weight: 600;" id="live-token-symbol">--</div>
+                            </div>
+                            <div>
+                                <div style="color: #94a3b8;">Price:</div>
+                                <div style="color: #f59e0b; font-weight: 600;" id="live-token-price">--</div>
+                            </div>
+                            <div>
+                                <div style="color: #94a3b8;">Market Cap:</div>
+                                <div style="color: #8b5cf6; font-weight: 600;" id="live-market-cap">--</div>
+                            </div>
+                        </div>
+                    </div>
+<<<<<<< HEAD
+=======
+
+                    <div class="community-stats">
+                        <h4>💎 Community CURE Pool</h4>
+                        <div class="stat-item">
+                            <span>Target Threshold:</span>
+                            <span id="cure-target">100,000 CURE</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Current Pool:</span>
+                            <span id="cure-current">0 CURE</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="threshold-progress-bar"></div>
+                        </div>
+                        <div style="text-align: center; margin-top: 8px; color: #94a3b8; font-size: 0.9rem;">
+                            <span id="threshold-percentage">0%</span> Threshold Progress
+                        </div>
+                    </div>
+
+                    <div id="community-actions" style="display: none;">
+                        <div class="lane-progress">
+                            <h4>🎯 Community Funding Target: 100,000 CURE</h4>
+                            <div class="progress-container">
+                                <div class="progress-bar low" id="cure-progress-bar" style="width: 0%"></div>
+                                <div class="progress-text"><span id="cure-progress">0</span> / 100,000 CURE</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-warning" id="simulate-community-btn" onclick="simulateCommunityBuying()">
+                            🌍 Simulate Community Funding
+                        </button>
+                    </div>
+
+                    <div id="purchase-log-section" style="display: none;">
+                        <h4>📊 Recent Community Activity</h4>
+                        <div class="purchase-log" id="purchase-log">
+                            <!-- Community purchases will appear here -->
+                        </div>
+                    </div>
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
+                </div>
+                
+                <div id="bonding-curve-display" style="display: none;">
+                    <div style="color: #f8fafc; font-weight: 600; margin: 16px 0;">📈 Bonding Curve Activity</div>
+                    <div id="investment-feed" style="font-size: 0.8rem; max-height: 100px; overflow-y: auto;"></div>
+                </div>
+                
+                <button class="btn" onclick="uploadToMarketplace()" id="lane3-btn" disabled>🌐 Marketplace Upload</button>
+                <button class="btn btn-success" onclick="simulateBondingCurve()" id="bonding-btn" disabled>📈 Simulate Trading</button>
+            </div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-container" id="log">
+            <div>🌐 System initialized - Ready for testing</div>
+        </div>
+    </div>
+
+<<<<<<< HEAD
+    <!-- ANT Scoring Modal -->
+    <div class="modal-overlay" id="scoring-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">🧠 ANT Scoring Analysis</div>
+                <div style="color: #94a3b8; font-size: 0.9rem;" id="molecule-being-scored">Molecular Assessment Report</div>
+            </div>
+
+            <div class="scoring-grid">
+                <div class="score-row" style="background: rgba(59, 130, 246, 0.1); font-weight: 600;">
+                    <div class="score-component">Component</div>
+                    <div class="score-value">Score</div>
+                    <div class="score-weight">Weight</div>
+                    <div class="score-weighted">Points</div>
+                </div>
+                <div class="score-row" id="therapeutic-row">
+                    <div class="score-component">🎯 Therapeutic Potential</div>
+                    <div class="score-value" id="therapeutic-score">--</div>
+                    <div class="score-weight">40%</div>
+                    <div class="score-weighted" id="therapeutic-points">--</div>
+                </div>
+                <div class="score-row" id="druglike-row">
+                    <div class="score-component">💊 Drug-likeness</div>
+                    <div class="score-value" id="druglike-score">--</div>
+                    <div class="score-weight">25%</div>
+                    <div class="score-weighted" id="druglike-points">--</div>
+                </div>
+                <div class="score-row" id="disease-row">
+                    <div class="score-component">🎪 Disease Specificity</div>
+                    <div class="score-value" id="disease-score">--</div>
+                    <div class="score-weight">20%</div>
+                    <div class="score-weighted" id="disease-points">--</div>
+                </div>
+                <div class="score-row" id="innovation-row">
+                    <div class="score-component">⚡ Innovation</div>
+                    <div class="score-value" id="innovation-score">--</div>
+                    <div class="score-weight">10%</div>
+                    <div class="score-weighted" id="innovation-points">--</div>
+                </div>
+                <div class="score-row" id="safety-row">
+                    <div class="score-component">🛡️ Safety/Regulatory</div>
+                    <div class="score-value" id="safety-score">--</div>
+                    <div class="score-weight">5%</div>
+                    <div class="score-weighted" id="safety-points">--</div>
+                </div>
+            </div>
+
+            <div class="final-score">
+                <div style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px;">FINAL ANT SCORE</div>
+                <div class="final-score-value" id="final-ant-score">--</div>
+                <div style="color: #94a3b8; font-size: 0.8rem;">out of 100</div>
+                
+                <div class="pass-fail-indicator" id="pass-fail-indicator">
+                    <div id="pass-fail-text">Calculating...</div>
+                    <div style="font-size: 0.9rem; margin-top: 8px;" id="pass-fail-detail">Threshold: 80 points for community validation</div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn" onclick="enableLane2AndClose()" id="close-score-btn">Continue to Lane 2</button>
+=======
+    <!-- Progress Overlay Modal -->
+    <div class="progress-overlay" id="progress-overlay">
+        <div class="progress-content">
+            <div class="progress-title">Molecular Analysis in Progress</div>
+            <div class="progress-steps" id="progress-steps">
+                <div class="progress-step" id="step-smile">
+                    <div class="step-icon">1</div>
+                    <div class="step-text">Validating SMILE notation</div>
+                </div>
+                <div class="progress-step" id="step-pdf">
+                    <div class="step-icon">2</div>
+                    <div class="step-text">Processing research document</div>
+                </div>
+                <div class="progress-step" id="step-analysis">
+                    <div class="step-icon">3</div>
+                    <div class="step-text">Running molecular analysis</div>
+                </div>
+            </div>
+            <div style="margin-top: 24px;">
+                <button class="btn" onclick="hideProgressOverlay()" id="progress-close-btn" style="display: none;">
+                    ✨ View Results
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANT Score Modal -->
+    <!-- ANT Score Modal - RESTORED ONE-BY-ONE ANIMATION -->
+    <div class="modal" id="score-modal">
+        <div class="modal-content" style="width: 600px;">
+            <span class="close" onclick="closeScoreModal()" style="position: absolute; top: 15px; right: 25px; font-size: 28px; cursor: pointer; color: #aaa;">&times;</span>
+            <h2 style="text-align: center; color: #10b981; margin-bottom: 30px;">🧬 ANT Scoring Analysis</h2>
+            
+            <div class="scoring-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+                <div class="score-component" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="score-label" style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px;">Therapeutic Potential (40%)</div>
+                    <div class="score-value" id="therapeutic-score" style="font-size: 2rem; font-weight: bold; color: #06b6d4;">--</div>
+                </div>
+                <div class="score-component" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="score-label" style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px;">Drug-likeness (25%)</div>
+                    <div class="score-value" id="drug-score" style="font-size: 2rem; font-weight: bold; color: #06b6d4;">--</div>
+                </div>
+                <div class="score-component" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="score-label" style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px;">Disease Specificity (20%)</div>
+                    <div class="score-value" id="disease-score" style="font-size: 2rem; font-weight: bold; color: #06b6d4;">--</div>
+                </div>
+                <div class="score-component" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="score-label" style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px;">Innovation (10%)</div>
+                    <div class="score-value" id="innovation-score" style="font-size: 2rem; font-weight: bold; color: #06b6d4;">--</div>
+                </div>
+                <div class="score-component" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); grid-column: span 2;">
+                    <div class="score-label" style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px; text-align: center;">Safety/Regulatory (5%)</div>
+                    <div class="score-value" id="safety-score" style="font-size: 2rem; font-weight: bold; color: #06b6d4; text-align: center;">--</div>
+                </div>
+            </div>
+            
+            <div class="final-score-section" style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <h3 style="color: #f8fafc; margin-bottom: 15px;">🎯 Final ANT Score</h3>
+                <div class="final-score" id="final-score" style="font-size: 3rem; font-weight: bold; color: #10b981; margin: 15px 0;">--</div>
+                <div id="score-result" style="margin: 20px 0;"></div>
+                <button id="continue-btn" class="btn btn-success" style="display: none; padding: 12px 24px; border: none; border-radius: 8px; background: #10b981; color: white; font-weight: 600; cursor: pointer;">Continue</button>
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple state
+        let state = {
+            labBadges: 0,
+            antScore: 0,
+            cureTokens: 0,
+<<<<<<< HEAD
+            currentMolecule: null,
+            antPassed: false,
+            // Dynamic metrics for meaningful dashboard
+=======
+            cureTarget: 100000, // Fixed 100,000 CURE threshold
+            molecules: [],
+            purchaseHistory: [],
+            // Dynamic metrics for dashboard
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
+            totalBadges: 0,
+            recentAntScore: '--',
+            cureDeployed: 0,
+            activeMolecules: 0
+        };
+
+        // Update dynamic dashboard metrics
+        function updateDashboard() {
+            document.getElementById('total-badges').textContent = state.totalBadges;
+            document.getElementById('recent-ant-score').textContent = state.recentAntScore;
+            document.getElementById('cure-deployed').textContent = state.cureDeployed.toLocaleString();
+            document.getElementById('active-molecules').textContent = state.activeMolecules;
+        }
+
+        // Test button functionality
+        function testButton() {
+            console.log('Test button clicked');
+            addLog('🧪 Button test successful - JavaScript is working!');
+            alert('✅ Buttons are working!\n\nSystem Status: Operational\nJavaScript: Loaded\nReady for demo!');
+        }
+
+        // Load examples with auto-population
+        function loadExample() {
+            const select = document.getElementById('molecule-select');
+            const value = select.value;
+            
+            const examples = {
+                'tozadenant': {
+                    name: 'Tozadenant Parkinson\'s Innovation',
+                    smile: 'C1=CN=C(N=C1N2CCN(CC2)C(=O)C3=CC4=C(C=C3)N=CN4C)N',
+                    disease: 'Parkinson\'s Disease',
+                    pdf: 'Tozadenant-Parkinsons-Innovation-2024.pdf'
+                },
+                'metformin': {
+                    name: 'Metformin Diabetes Guardian',
+                    smile: 'CN(C)C(=N)N=C(N)N',
+                    disease: 'Type 2 Diabetes',
+                    pdf: 'Metformin-Diabetes-Guardian-2024.pdf'
+                },
+                'adalimumab': {
+                    name: 'Adalimumab Arthritis Fighter',
+                    smile: 'Complex monoclonal antibody structure',
+                    disease: 'Rheumatoid Arthritis',
+                    pdf: 'Adalimumab-Arthritis-Fighter-2024.pdf'
+                },
+                'remdesivir': {
+                    name: 'Remdesivir Viral Warrior',
+                    smile: 'CCC(CC)COC(=O)[C@H](C)N[P@](=O)(OC[C@H]1O[C@H]([C@H]([C@H]1O)O)N2C=CC(=O)NC2=O)OC3=CC=CC=C3',
+                    disease: 'COVID-19',
+                    pdf: 'Remdesivir-Viral-Warrior-2024.pdf'
+                },
+                'paxlovid': {
+                    name: 'Paxlovid COVID Crusher',
+                    smile: 'CC1(C2C(C3C(C(=O)N3C(=O)[C@H]2NC(=O)OC)CC4=CC=CC=C4)N(C1=O)C)C',
+                    disease: 'COVID-19',
+                    pdf: 'Paxlovid-COVID-Crusher-2024.pdf'
+                },
+                'levodopa': {
+                    name: 'L-DOPA Parkinson\'s Treatment',
+                    smile: 'N[C@@H](CC1=CC=C(O)C(O)=C1)C(O)=O',
+                    disease: 'Parkinson\'s Disease',
+                    pdf: 'L-DOPA-Parkinsons-Research-2024.pdf'
+                },
+                'aspirin': {
+                    name: 'Aspirin Pain Relief',
+                    smile: 'CC(=O)OC1=CC=CC=C1C(=O)O',
+                    disease: 'Cardiovascular',
+                    pdf: 'Aspirin-Cardiovascular-Study-2024.pdf'
+                },
+                'morphine': {
+                    name: 'Morphine Pain Management',
+                    smile: 'CN1CC[C@]23C4=C5CC[C@@H](N1C2)C(C)(C=CC5=C(O)C=C4)O3',
+                    disease: 'Pain Management',
+                    pdf: 'Morphine-Pain-Management-Research.pdf'
+                },
+                'penicillin': {
+                    name: 'Penicillin G Antibiotic',
+                    smile: 'CC1([C@@H](N2[C@H](S1)[C@@H](C2=O)NC(=O)CC3=CC=CC=C3)C(=O)O)C',
+                    disease: 'Bacterial Infections',
+                    pdf: 'Penicillin-Antibiotic-Efficacy-Study.pdf'
+                },
+                'ibuprofen': {
+                    name: 'Ibuprofen Anti-inflammatory',
+                    smile: 'CC(C)CC1=CC=C(C=C1)C(C)C(=O)O',
+                    disease: 'Inflammation',
+                    pdf: 'Ibuprofen-Anti-Inflammatory-Research.pdf'
+                }
+            };
+            
+            // Clear previous scores
+            clearANTScores();
+            
+            if (examples[value]) {
+                // Auto-populate ALL fields including PDF
+                document.getElementById('molecule-name').value = examples[value].name;
+                document.getElementById('smile-id').value = examples[value].smile;
+                document.getElementById('pdf-input').value = examples[value].pdf;
+                
+                state.currentMolecule = examples[value];
+                console.log(`✅ Auto-populated: ${examples[value].name}`);
+                console.log(`✅ SMILE: ${examples[value].smile}`);
+                console.log(`✅ PDF: ${examples[value].pdf}`);
+                
+                addLog(`🎭 Contestant selected: ${examples[value].name}`);
+                addLog(`🔬 Molecular signature: ${examples[value].smile}`);
+                addLog(`📄 Research document: ${examples[value].pdf}`);
+                addLog(`🎯 Disease target: ${examples[value].disease}`);
+                addLog(`🎬 Ready for audition - Click "Begin Competition Audition"`);
+            } else if (value === '') {
+                document.getElementById('molecule-name').value = '';
+                document.getElementById('smile-id').value = '';
+                document.getElementById('pdf-input').value = '';
+                state.currentMolecule = null;
+            }
+        }
+
+        // Clear ANT scores when changing molecules
+        function clearANTScores() {
+            // Reset recent ANT score display
+            state.recentAntScore = '--';
+            updateDashboard();
+            
+            // Clear any modal scores if they exist
+            const scoreElements = ['therapeutic-score', 'drug-score', 'disease-score', 'innovation-score', 'safety-score'];
+            scoreElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = '--';
+            });
+            
+            console.log('🧹 Previous ANT scores cleared for new molecule');
+        }
+
+        // Lane 1 Processing with Visual Scoring
+        async function processLane1() {
+            console.log('🏅 Lane 1 processing started');
+            
+            const moleculeName = document.getElementById('molecule-name').value;
+            const smileId = document.getElementById('smile-id').value;
+            const pdfRef = document.getElementById('pdf-input').value;
+            
+            if (!moleculeName || !smileId) {
+                alert('Please select an example molecule or fill in all fields!');
+                return;
+            }
+            
+            console.log(`🧬 Starting Lane 1 with: ${moleculeName}, SMILE: ${smileId}, PDF: ${pdfRef}`);
+
+            addLog('🎬 LANE 1: Starting contestant audition...');
+            addLog(`🏆 Contestant: ${moleculeName}`);
+            addLog(`🔬 Signature: ${smileId}`);
+
+            // Disable button and show progress
+            const btn = document.getElementById('lane1-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Processing...';
+            
+            // Show progress section
+            document.getElementById('lane1-progress').style.display = 'block';
+
+            // Animate scoring process
+            await animateANTScoring(moleculeName, smileId);
+
+            // Reset button
+            btn.disabled = false;
+            btn.textContent = '🎬 Begin Competition Audition';
+        }
+
+        // Visual ANT Scoring with Modal
+        async function animateANTScoring(moleculeName, smileId) {
+            addLog('🧠 Starting ANT scoring analysis...');
+            addLog('📊 Analyzing molecular components...');
+            
+            // Show progress animation
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 2;
+                document.getElementById('ant-progress').style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    // Show modal after progress completes
+                    setTimeout(() => showScoreModal(moleculeName, smileId), 500);
+                }
+            }, 50);
+        }
+
+        // Show ANT Scoring Modal
+        async function showScoreModal(moleculeName, smileId) {
+            // Set molecule name in modal
+            document.getElementById('molecule-being-scored').textContent = `Analysis: ${moleculeName}`;
+            
+            // Show modal
+            document.getElementById('scoring-modal').style.display = 'flex';
+            
+            // Define scoring components
+            const scoringComponents = [
+                { id: 'therapeutic', name: 'Therapeutic Potential', weight: 0.4, base: 88 }, // Increased from 75
+                { id: 'druglike', name: 'Drug-likeness', weight: 0.25, base: 90 }, // Increased from 80
+                { id: 'disease', name: 'Disease Specificity', weight: 0.2, base: 92 }, // Increased from 85
+                { id: 'innovation', name: 'Innovation', weight: 0.1, base: 85 }, // Increased from 70
+                { id: 'safety', name: 'Safety/Regulatory', weight: 0.05, base: 88 } // Increased from 78
+            ];
+
+            let totalWeightedScore = 0;
+            
+            // Animate each score appearing
+            for (let i = 0; i < scoringComponents.length; i++) {
+                const component = scoringComponents[i];
+                await sleep(800);
+                
+                // Calculate score for this component
+                const variance = Math.floor(Math.random() * 10) - 5; // ±5 variance (reduced for higher pass rate)
+                const componentScore = Math.max(80, Math.min(98, component.base + variance)); // Increased minimum from 60 to 80
+                const weightedPoints = Math.round(componentScore * component.weight);
+                totalWeightedScore += weightedPoints;
+                
+                // Update modal display
+                document.getElementById(`${component.id}-score`).textContent = `${componentScore}/100`;
+                document.getElementById(`${component.id}-points`).textContent = weightedPoints;
+                
+                // Add highlight effect
+                const row = document.getElementById(`${component.id}-row`);
+                row.style.background = 'rgba(59, 130, 246, 0.2)';
+                setTimeout(() => {
+                    row.style.background = 'rgba(255, 255, 255, 0.05)';
+                }, 600);
+            }
+
+            await sleep(1000);
+
+            // Show final score
+            const finalANTScore = Math.round(totalWeightedScore);
+            document.getElementById('final-ant-score').textContent = finalANTScore;
+            
+            // Determine pass/fail
+            const passFailIndicator = document.getElementById('pass-fail-indicator');
+            const passFailText = document.getElementById('pass-fail-text');
+            const closeBtn = document.getElementById('close-score-btn');
+            
+            if (finalANTScore >= 80) {
+                passFailIndicator.className = 'pass-fail-indicator pass';
+                passFailText.innerHTML = '✅ VALIDATION PASSED';
+                closeBtn.textContent = '🚀 Continue to Lane 2';
+                closeBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                
+                // Store successful result
+                state.antScore = finalANTScore;
+                state.labBadges = 1;
+                state.currentMolecule = { name: moleculeName, smile: smileId };
+                state.antPassed = true;
+                
+                // Update dynamic dashboard metrics
+                state.totalBadges += 1;
+                state.recentAntScore = `${finalANTScore}%`;
+                updateDashboard();
+                
+                console.log(`📊 Dashboard updated: Badges: ${state.totalBadges}, ANT Score: ${state.recentAntScore}`);
+                
+            } else {
+                passFailIndicator.className = 'pass-fail-indicator fail';
+                passFailText.innerHTML = '❌ VALIDATION FAILED';
+                closeBtn.textContent = '🔄 Try Another Molecule';
+                closeBtn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                
+                state.antScore = finalANTScore;
+                state.antPassed = false;
+            }
+        }
+
+        // Close Score Modal and Continue
+        function closeScoreModal() {
+            document.getElementById('scoring-modal').style.display = 'none';
+            
+            if (state.antPassed) {
+                addLog(`🎯 FINAL ANT SCORE: ${state.antScore}/100`);
+                addLog(`✅ ANT VALIDATION PASSED! (≥80 score threshold)`);
+                addLog(`🔄 Proceeding to Lane 2: Community validation...`);
+                
+                // Update metrics
+                updateDashboard();
+                
+                // Enable Lane 2
+                document.getElementById('lane2-btn').disabled = false;
+                document.getElementById('lane2-btn').style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                document.getElementById('community-sim-btn').disabled = false;
+                
+                // Visual indicator
+                const lane2 = document.querySelector('.lane-card:nth-child(2)');
+                lane2.style.border = '2px solid #10b981';
+                setTimeout(() => { lane2.style.border = '1px solid rgba(255, 255, 255, 0.1)'; }, 3000);
+                
+                addLog('💎 Lane 2 unlocked! Start community building phase.');
+                
+            } else {
+                addLog(`🎯 FINAL ANT SCORE: ${state.antScore}/100`);
+                addLog(`❌ ANT VALIDATION FAILED: ${state.antScore} below 80 score threshold`);
+                addLog(`📝 Try selecting a different molecule for better results`);
+            }
+        }
+
+        // Enable Lane 2 and close modal - NEW FUNCTION
+        function enableLane2AndClose() {
+            console.log('🎯 Enabling Lane 2 from modal...');
+            
+            // Close the modal first
+            document.getElementById('scoring-modal').style.display = 'none';
+            
+            // Enable Lane 2 buttons with force
+            const lane2Btn = document.getElementById('lane2-btn');
+            const communitySimBtn = document.getElementById('community-sim-btn');
+            
+            console.log('🔧 Forcing Lane 2 button enablement...');
+            
+            if (lane2Btn) {
+                lane2Btn.disabled = false;
+                lane2Btn.style.opacity = '1';
+                lane2Btn.style.pointerEvents = 'auto';
+                lane2Btn.style.cursor = 'pointer';
+                lane2Btn.style.background = '#3b82f6';
+                console.log('✅ Lane 2 Start button FORCEFULLY enabled');
+            } else {
+                console.error('❌ Lane 2 button not found with ID: lane2-btn');
+            }
+            
+            if (communitySimBtn) {
+                communitySimBtn.disabled = false;
+                communitySimBtn.style.opacity = '1';
+                communitySimBtn.style.pointerEvents = 'auto';
+                communitySimBtn.style.cursor = 'pointer';
+                communitySimBtn.style.background = '#10b981';
+                console.log('✅ Community Simulate button FORCEFULLY enabled');
+            } else {
+                console.error('❌ Community sim button not found with ID: community-sim-btn');
+            }
+            
+            // Log completion and auto-start Lane 2
+            addLog(`🎯 FINAL ANT SCORE: ${state.antScore}/100`);
+            addLog(`✅ ANT VALIDATION PASSED! (≥80 score threshold)`);
+            addLog(`🔄 Proceeding to Lane 2: Community validation...`);
+            addLog('💎 Lane 2 unlocked! Click "Start Community Building" or "Simulate Community"');
+            
+            // DON'T auto-start Lane 2 - wait for user to click button
+            console.log('🎯 Lane 2 ready - waiting for user to click Start Community Building');
+            
+            console.log('🎉 Lane 2 SHOULD BE ENABLED NOW!');
+        }
+
+        // Lane 2 Processing - Setup phase - ENHANCED
+        async function processLane2() {
+            addLog('💎 LANE 2: Initializing community building...');
+            addLog(`🧬 Target molecule: ${state.currentMolecule.name}`);
+            addLog(`🎯 Community funding goal: 100,000 CURE tokens`);
+            
+            // Show progress section
+            const progressElement = document.getElementById('community-progress');
+            const feedElement = document.getElementById('purchase-feed');
+            
+            if (progressElement) {
+                progressElement.style.display = 'block';
+                console.log('✅ Community progress section shown');
+            }
+            
+            if (feedElement) {
+                feedElement.style.display = 'block';
+                console.log('✅ Purchase feed section shown');
+            }
+            
+            // Reset progress
+            state.cureTokens = 0;
+            updateCommunityProgress();
+            
+            // Ensure community simulation button is enabled
+            const communityBtn = document.getElementById('community-sim-btn');
+            if (communityBtn) {
+                communityBtn.disabled = false;
+                communityBtn.style.opacity = '1';
+                console.log('✅ Community simulation button fully enabled');
+            }
+            
+            addLog('🌍 Community building initialized - Click "Simulate Community" for automatic funding');
+            addLog('💡 Watch real-time community purchases build toward the 100,000 CURE threshold');
+            console.log('🎯 Lane 2 setup complete - ready for community simulation');
+        }
+
+        // Simulate Community Buying with Visual Feedback
+        function simulateCommunityBuying() {
+            addLog('🌍 Starting community purchase simulation...');
+            
+            const btn = document.getElementById('community-sim-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Simulating...';
+            
+            // Enhanced community purchase scenarios with randomized amounts
+            const communityBuyers = [
+                { name: 'Stanford Research Lab', range: [12000, 18000], emoji: '🏛️' },
+                { name: 'Dr. Sarah Wilson', range: [7000, 12000], emoji: '👩‍⚕️' },
+                { name: 'Biotech Accelerator Fund', range: [15000, 22000], emoji: '🚀' },
+                { name: 'Children\'s Hospital', range: [8000, 15000], emoji: '🏥' },
+                { name: 'Parkinson\'s Foundation', range: [10000, 16000], emoji: '🧠' },
+                { name: 'Innovation Capital', range: [14000, 20000], emoji: '💰' },
+                { name: 'MIT Medical Lab', range: [9000, 14000], emoji: '🧪' },
+                { name: 'Dr. Rodriguez Research', range: [6000, 11000], emoji: '👨‍⚕️' },
+                { name: 'HealthTech Ventures', range: [11000, 17000], emoji: '🏢' },
+                { name: 'Cambridge Bio Fund', range: [13000, 19000], emoji: '🎓' }
+            ];
+
+            let totalCure = state.cureTokens;
+            
+            let buyerIndex = 0;
+            
+            // Use setInterval to ensure all buyers are processed
+            const purchaseInterval = setInterval(() => {
+                if (totalCure >= 100000 || buyerIndex >= communityBuyers.length) {
+                    clearInterval(purchaseInterval);
+                    
+                    if (totalCure >= 100000) {
+                        btn.disabled = false;
+                        btn.textContent = '✅ Funding Complete';
+                        btn.className = 'btn btn-success';
+                        
+                        addLog(`🎉 100,000 CURE THRESHOLD REACHED! (${totalCure.toLocaleString()}/100,000 CURE)`);
+                        addLog('🔄 Autonomous smart contract validation triggered!');
+                        addLog('✅ Community validation COMPLETE!');
+                        addLog('🏪 Molecular marketplace creation unlocked!');
+                        
+                        // Update dashboard
+                        state.cureDeployed += state.cureTokens;
+                        updateDashboard();
+                        
+                        // Enable Lane 3 directly instead of auto-processing
+                        setTimeout(() => {
+                            console.log('🎯 Enabling Lane 3 after funding complete...');
+                            enableLane3();
+                        }, 2000);
+                    } else {
+                        btn.disabled = false;
+                        btn.textContent = '🌍 Simulate Community';
+                    }
+                    return;
+                }
+                
+                const buyer = communityBuyers[buyerIndex];
+                
+                // Generate randomized purchase amount within buyer's range
+                const amount = Math.floor(Math.random() * (buyer.range[1] - buyer.range[0]) + buyer.range[0]);
+                
+                totalCure += amount;
+                state.cureTokens = totalCure;
+                
+                // Add to live purchase feed with emoji and randomized amount
+                const purchaseElement = document.createElement('div');
+                purchaseElement.style.fontSize = '0.75rem';
+                purchaseElement.style.marginBottom = '4px';
+                purchaseElement.style.color = '#06b6d4';
+                purchaseElement.innerHTML = `${buyer.emoji} ${buyer.name}: +${amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`;
+                document.getElementById('purchase-list').appendChild(purchaseElement);
+                
+                // Auto-scroll to show latest purchases
+                const purchaseList = document.getElementById('purchase-list');
+                purchaseList.scrollTop = purchaseList.scrollHeight;
+                
+                // Update progress
+                updateCommunityProgress();
+                updateDashboard();
+                
+                addLog(`💰 ${buyer.name}: ${amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`);
+                
+                buyerIndex++;
+                
+            }, 1500); // 1.5 seconds between each purchase
+        }
+
+        // Update Community Progress Visual
+        function updateCommunityProgress() {
+            const percentage = Math.min(100, (state.cureTokens / 100000) * 100);
+            document.getElementById('cure-progress').style.width = percentage + '%';
+            document.getElementById('cure-percentage').textContent = Math.round(percentage) + '%';
+            
+            // Change color as we approach target
+            const progressBar = document.getElementById('cure-progress');
+            if (percentage >= 80) {
+                progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+            } else if (percentage >= 50) {
+                progressBar.style.background = 'linear-gradient(90deg, #f59e0b, #d97706)';
+            }
+        }
+
+        // Lane 3 Processing - Marketplace Creation
+        async function processLane3() {
+            addLog('🏪 LANE 3: Creating molecular marketplace...');
+            
+            const btn = document.getElementById('lane3-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Creating...';
+
+            await sleep(1500);
+
+            // Generate disease-specific token
+            const diseaseMap = {
+                'L-DOPA': 'PD',    // Parkinson's Disease  
+                'Aspirin': 'CV',   // Cardiovascular
+                'Morphine': 'PM',  // Pain Management
+                'Penicillin': 'ID', // Infectious Disease
+                'Ibuprofen': 'IM'  // Inflammation
+            };
+            
+            const diseaseCode = diseaseMap[state.currentMolecule.name.split(' ')[0]] || 'GM'; // General Medicine
+            const tokenSymbol = `$PDCure-${diseaseCode}`;
+            const initialPrice = 0.008 + Math.random() * 0.020; // $0.008-$0.028
+            const marketCap = Math.round(100000 * initialPrice);
+
+            // Store marketplace data
+            state.marketplace = {
+                tokenSymbol: tokenSymbol,
+                price: initialPrice,
+                marketCap: marketCap,
+                totalSupply: 100000,
+                bondingCurveMultiplier: 1.0
+            };
+
+            // Show marketplace display
+            document.getElementById('molecule-listing').style.display = 'block';
+            document.getElementById('bonding-curve-display').style.display = 'block';
+            
+<<<<<<< HEAD
+            // Update marketplace UI
+            document.getElementById('live-molecule-name').textContent = state.currentMolecule.name;
+            document.getElementById('live-token-symbol').textContent = tokenSymbol;
+            document.getElementById('live-token-price').textContent = `$${initialPrice.toFixed(4)}`;
+            document.getElementById('live-market-cap').textContent = `$${marketCap.toLocaleString()}`;
+
+            addLog(`🏛️ SubDAO created: ${state.currentMolecule.name} Molecular DAO`);
+            addLog(`💎 Token launched: ${tokenSymbol}`);
+            addLog(`📈 Initial price: $${initialPrice.toFixed(4)}`);
+            addLog(`💰 Market cap: $${marketCap.toLocaleString()}`);
+            addLog('🚀 Marketplace is LIVE! Try investing or simulating trading.');
+=======
+            // Create enhanced Lane 3 content
+            const marketplaceHTML = `
+                <div class="marketplace-info">
+                    <h4>🏛️ ${state.currentMolecule?.name || 'Molecular'} DAO</h4>
+                    <div class="market-stats">
+                        <div class="stat-item">
+                            <span>Token:</span>
+                            <span style="color: #10b981; font-weight: bold;">${state.marketData.tokenSymbol}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Price:</span>
+                            <span style="color: #06b6d4; font-weight: bold;">$${state.marketData.price.toFixed(4)}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Market Cap:</span>
+                            <span>$${state.marketData.marketCap.toLocaleString()}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>24h Volume:</span>
+                            <span>$${state.marketData.volume24h.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="trading-actions">
+                        <div class="trading-buttons">
+                            <button class="btn btn-primary" onclick="showBuyCUREModal()">💎 Buy with CURE Tokens</button>
+                            <button class="btn btn-info" onclick="viewAvailableMolecules()">🔍 View Available Molecules</button>
+                        </div>
+                        <button class="btn btn-warning" id="bonding-btn" onclick="simulateBondingCurve()" style="width: 100%; margin-top: 15px;">📈 Simulate Trading</button>
+                    </div>
+                    
+                    <div class="price-chart-container" style="margin-top: 20px;">
+                        <h5>📊 Price Chart</h5>
+                        <canvas id="price-chart" width="400" height="200" style="width: 100%; height: 200px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(0,0,0,0.3);"></canvas>
+                    </div>
+                </div>
+            `;
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
+            
+            // Update dashboard - new molecule is active on market
+            state.activeMolecules += 1;
+            updateDashboard();
+            console.log(`📊 Active Molecules updated: ${state.activeMolecules}`);
+
+            // Enable Lane 3 buttons after marketplace creation - CLEANED UP
+            console.log('🔧 Enabling Lane 3 buttons after marketplace creation...');
+            
+            const uploadBtn = document.getElementById('lane3-btn');
+            const tradingBtn = document.getElementById('bonding-btn');
+            
+            if (uploadBtn) {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '🌐 Marketplace Upload';
+                uploadBtn.className = 'btn btn-primary';
+                uploadBtn.style.opacity = '1';
+                uploadBtn.style.pointerEvents = 'auto';
+                console.log('✅ Marketplace Upload button enabled');
+            }
+            
+            if (tradingBtn) {
+                tradingBtn.disabled = false;
+                tradingBtn.textContent = '📈 Simulate Trading';
+                tradingBtn.className = 'btn btn-success';
+                tradingBtn.style.opacity = '1';
+                tradingBtn.style.pointerEvents = 'auto';
+                console.log('✅ Simulate Trading button enabled and ready');
+            }
+            
+            console.log('🎉 Lane 3 marketplace created - Upload and Trading buttons ready!');
+        }
+
+        // Enable Lane 3 after funding complete - NEW FUNCTION
+        function enableLane3() {
+            console.log('🏪 Enabling Lane 3 after community funding...');
+            
+            // Auto-create marketplace data so Lane 3 is ready
+            processLane3();
+            
+            addLog('🏪 Lane 3 unlocked! Click "Marketplace Upload" to deploy your molecule.');
+        }
+
+        // Marketplace Upload - Upload molecule to live trading platform
+        function uploadToMarketplace() {
+            if (!state.marketplace) {
+                console.error('❌ No marketplace data available');
+                return;
+            }
+            
+            addLog('🌐 Uploading molecule to live marketplace...');
+            addLog(`📡 Deploying ${state.marketplace.tokenSymbol} to trading platform...`);
+            addLog('🔗 Connecting to liquidity pools...');
+            addLog('📊 Initializing price discovery mechanism...');
+            addLog(`✅ ${state.currentMolecule.name} successfully uploaded to marketplace!`);
+            addLog('🎯 Ready for live trading and investment!');
+            
+            // Update button to show completion
+            const btn = document.getElementById('lane3-btn');
+            if (btn) {
+                btn.textContent = '✅ Uploaded to Market';
+                btn.className = 'btn btn-success';
+                btn.disabled = true; // No need to upload again
+            }
+            
+            console.log('🌐 Molecule successfully uploaded to marketplace');
+        }
+
+        // Simulate Bonding Curve Trading
+        async function simulateBondingCurve() {
+            addLog('📈 Starting bonding curve simulation...');
+            
+            const btn = document.getElementById('bonding-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Trading...';
+            
+            const trades = [
+                { trader: 'Hedge Fund Alpha', action: 'BUY', amount: 5000 },
+                { trader: 'Retail Investor', action: 'BUY', amount: 1200 },
+                { trader: 'Institutional Buyer', action: 'BUY', amount: 8000 },
+                { trader: 'Early Investor', action: 'SELL', amount: -2500 },
+                { trader: 'DAO Treasury', action: 'BUY', amount: 15000 },
+                { trader: 'Liquidity Provider', action: 'BUY', amount: 3000 }
+            ];
+
+            for (let i = 0; i < trades.length; i++) {
+                const trade = trades[i];
+                await sleep(1000);
+                
+                // Update bonding curve
+                const priceImpact = trade.amount / 20000; // Price impact calculation
+                state.marketplace.bondingCurveMultiplier += priceImpact;
+                state.marketplace.bondingCurveMultiplier = Math.max(0.5, state.marketplace.bondingCurveMultiplier); // Floor at 50%
+                
+                const newPrice = state.marketplace.price * (1 + priceImpact);
+                state.marketplace.price = newPrice;
+                
+                const tokensTraded = Math.abs(trade.amount) / newPrice;
+                
+                // Add to investment feed
+                const tradeElement = document.createElement('div');
+                tradeElement.style.fontSize = '0.75rem';
+                tradeElement.style.marginBottom = '4px';
+                tradeElement.style.color = trade.action === 'BUY' ? '#10b981' : '#ef4444';
+                tradeElement.innerHTML = `${trade.action === 'BUY' ? '📈' : '📉'} ${trade.trader}: ${trade.action} ${tokensTraded.toFixed(1)} tokens`;
+                document.getElementById('investment-feed').appendChild(tradeElement);
+                
+                // Update UI
+                document.getElementById('live-token-price').textContent = `$${newPrice.toFixed(4)}`;
+                document.getElementById('live-market-cap').textContent = `$${(state.marketplace.totalSupply * newPrice).toLocaleString()}`;
+                
+                addLog(`📊 ${trade.trader}: ${trade.action} $${Math.abs(trade.amount).toLocaleString()} → Price: $${newPrice.toFixed(4)}`);
+            }
+            
+            addLog('✅ Bonding curve simulation complete!');
+            addLog('🎉 FULL TRI-LANE PIPELINE DEMONSTRATION SUCCESSFUL!');
+            
+<<<<<<< HEAD
+=======
+            priceHistory.forEach((point, index) => {
+                const x = (index / (priceHistory.length - 1)) * width;
+                const y = height - ((point.price - minPrice) / priceRange) * height;
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+                
+                // Add buy/sell markers
+                if (point.type === 'buy') {
+                    ctx.fillStyle = '#10b981';
+                    ctx.fillRect(x - 2, y - 2, 4, 4);
+                } else if (point.type === 'sell') {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(x - 2, y - 2, 4, 4);
+                }
+            });
+            
+            ctx.stroke();
+            
+            // Add current price label
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = '12px Arial';
+            const currentPrice = priceHistory[priceHistory.length - 1].price;
+            ctx.fillText(`$${currentPrice.toFixed(4)}`, width - 60, 20);
+        }
+                
+        // Toggle blockchain mode
+        function toggleBlockchainMode() {
+            const toggle = document.getElementById('blockchain-toggle');
+            const modeText = document.getElementById('blockchain-mode');
+            
+            if (toggle.checked) {
+                modeText.textContent = 'Aptos Testnet';
+                console.log('🔗 Switched to Aptos Testnet mode');
+            } else {
+                modeText.textContent = 'Simulation Mode';
+                console.log('🎭 Switched to Simulation mode');
+            }
+        }
+
+        // Simulate ANT Score Test - SIMPLIFIED AND WORKING
+        function simulateANTScoreTest() {
+            console.log('🧬 Starting ANT Score Test...');
+            
+            // Find the button and molecule name
+            const btn = document.getElementById('lab-badge-btn');
+            const moleculeName = document.getElementById('molecule-name').value;
+            
+            if (!moleculeName) {
+                alert('Please select a molecule first!');
+                return;
+            }
+            
+            console.log(`🧪 Testing molecule: ${moleculeName}`);
+            
+            // Update button state
+            btn.disabled = true;
+            btn.textContent = '🔬 Running ANT Analysis...';
+            
+            // Show modal immediately
+            showScoreModal();
+            
+            // Start scoring animation
+            setTimeout(() => {
+                animateANTScoring();
+            }, 500);
+            
+            // Re-enable button
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.textContent = '🧬 Simulate ANT Score Test';
+            }, 8000);
+        }
+
+        // Clear previous modal scores
+        function clearPreviousScores() {
+            const scoreElements = [
+                'therapeutic-score', 'drug-score', 'disease-score', 
+                'innovation-score', 'safety-score', 'final-score'
+            ];
+            scoreElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = '--';
+            });
+        }
+
+        // Animate ANT scoring with visual breakdown - SIMPLIFIED
+        function animateANTScoring() {
+            console.log('🎬 Starting ANT scoring animation...');
+            
+            const scores = calculateDetailedANTScore();
+            console.log('📊 Calculated scores:', scores);
+            
+            // Animate each component with simple timeouts
+            setTimeout(() => {
+                console.log('🎯 Animating Therapeutic Potential...');
+                animateScore('therapeutic-score', scores.therapeutic, 1000);
+            }, 200);
+            
+            setTimeout(() => {
+                console.log('💊 Animating Drug-likeness...');
+                animateScore('drug-score', scores.drugLikeness, 1000);
+            }, 1400);
+            
+            setTimeout(() => {
+                console.log('🎯 Animating Disease Specificity...');
+                animateScore('disease-score', scores.diseaseSpecificity, 1000);
+            }, 2600);
+            
+            setTimeout(() => {
+                console.log('💡 Animating Innovation...');
+                animateScore('innovation-score', scores.innovation, 1000);
+            }, 3800);
+            
+            setTimeout(() => {
+                console.log('🛡️ Animating Safety/Regulatory...');
+                animateScore('safety-score', scores.safety, 1000);
+            }, 5000);
+            
+            setTimeout(() => {
+                console.log('🏆 Calculating final ANT score...');
+                animateScore('final-score', scores.total, 1500);
+                
+                // Update state and dashboard
+                state.antScore = scores.total;
+                state.totalBadges += 1;
+                state.recentAntScore = `${scores.total}%`;
+                updateDashboard();
+                
+                console.log(`✅ ANT scoring complete! Final score: ${scores.total}%`);
+                
+                // Show pass/fail result
+                setTimeout(() => {
+                    showPassFailResult(scores.total);
+                }, 2000);
+            }, 6500);
+        }
+
+        // Calculate detailed ANT scores
+        function calculateDetailedANTScore() {
+            const name = document.getElementById('molecule-name').value;
+            
+            let therapeutic = 85 + Math.random() * 10; // 85-95
+            let drugLikeness = 80 + Math.random() * 15; // 80-95
+            let diseaseSpecificity = 82 + Math.random() * 13; // 82-95
+            let innovation = 75 + Math.random() * 20; // 75-95
+            let safety = 78 + Math.random() * 17; // 78-95
+            
+            // Enhanced scoring for specific molecules
+            if (name.toLowerCase().includes('tozadenant')) {
+                therapeutic = 92; diseaseSpecificity = 95; innovation = 88;
+            } else if (name.toLowerCase().includes('metformin')) {
+                drugLikeness = 95; safety = 92; therapeutic = 88;
+            }
+            
+            // Calculate weighted total
+            const total = Math.round(
+                therapeutic * 0.40 + 
+                drugLikeness * 0.25 + 
+                diseaseSpecificity * 0.20 + 
+                innovation * 0.10 + 
+                safety * 0.05
+            );
+            
+            return {
+                therapeutic: Math.round(therapeutic),
+                drugLikeness: Math.round(drugLikeness),
+                diseaseSpecificity: Math.round(diseaseSpecificity),
+                innovation: Math.round(innovation),
+                safety: Math.round(safety),
+                total: total
+            };
+        }
+
+        // Animate individual score - ENHANCED POPUP VERSION
+        function animateScore(elementId, targetScore, duration) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                console.error(`❌ Score element not found: ${elementId}`);
+                return;
+            }
+            
+            console.log(`🎬 Animating ${elementId} to ${targetScore}`);
+            
+            let currentValue = 0;
+            const increment = targetScore / (duration / 50); // 50ms intervals
+            
+            const animationInterval = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= targetScore) {
+                    currentValue = targetScore;
+                    clearInterval(animationInterval);
+                    element.style.color = '#10b981'; // Green when complete
+                    console.log(`✅ ${elementId} animation complete: ${targetScore}`);
+                } else {
+                    element.style.color = '#f59e0b'; // Orange while animating
+                }
+                
+                element.textContent = Math.round(currentValue);
+            }, 50);
+        }
+
+        // Show pass/fail result
+        function showPassFailResult(score) {
+            console.log(`📊 Showing pass/fail result for score: ${score}`);
+            
+            const resultDiv = document.getElementById('score-result');
+            const continueBtn = document.getElementById('continue-btn');
+            
+            if (!resultDiv || !continueBtn) {
+                console.error('❌ Missing modal elements');
+                // Fallback: directly enable Lane 2
+                if (score >= 80) {
+                    closeScoreModal();
+                    enableLane2();
+                }
+                return;
+            }
+            
+            if (score >= 80) {
+                resultDiv.innerHTML = '<div style="color: #10b981; font-size: 1.2rem; font-weight: bold;">✅ ANT VALIDATION PASSED!</div>';
+                continueBtn.textContent = 'Continue to Lane 2';
+                continueBtn.onclick = () => { 
+                    console.log('🎯 Continuing to Lane 2...');
+                    closeScoreModal(); 
+                    enableLane2(); 
+                };
+                continueBtn.style.display = 'block';
+            } else {
+                resultDiv.innerHTML = '<div style="color: #ef4444; font-size: 1.2rem; font-weight: bold;">❌ Score Too Low - Try Another Molecule</div>';
+                continueBtn.textContent = 'Try Another Molecule';
+                continueBtn.onclick = () => {
+                    console.log('🔄 Retrying ANT test...');
+                    closeScoreModal();
+                };
+                continueBtn.style.display = 'block';
+            }
+        }
+
+        // Enable Lane 2 after successful ANT test
+        function enableLane2() {
+            console.log('🎯 Enabling Lane 2...');
+            
+            state.lanes[2].status = 'active';
+            updateLaneStatus(2, 'active');
+            
+            // Show Lane 2 actions and ALWAYS enable the button
+            const actions = document.getElementById('community-actions');
+            const simulateBtn = document.getElementById('simulate-community-btn');
+            
+            if (actions) {
+                actions.style.display = 'block';
+                console.log('✅ Lane 2 actions displayed');
+            }
+            
+            if (simulateBtn) {
+                simulateBtn.disabled = false;
+                simulateBtn.style.display = 'block';
+                console.log('✅ Community simulation button enabled');
+            }
+            
+            console.log('✅ Lane 2 unlocked - Ready for community funding!');
+            
+            // Also ensure Lane 3 placeholder is ready
+            enableLane3Placeholder();
+        }
+        
+        // Enable Lane 3 placeholder
+        function enableLane3Placeholder() {
+            const lane3 = document.getElementById('lane3');
+            if (lane3) {
+                lane3.innerHTML = `
+                    <div class="lane-status pending" id="lane3-status">Waiting for Funding</div>
+                    <div class="lane-header">
+                        <div class="lane-icon">🏪</div>
+                        <div>
+                            <h3 class="lane-title">Lane 3: Molecular Marketplace</h3>
+                            <p class="lane-description">Token creation & trading platform</p>
+                        </div>
+                    </div>
+                    <div class="lane-content">
+                        <p style="color: #94a3b8; text-align: center; margin: 20px 0;">
+                            Complete Lane 2 community funding to unlock marketplace creation.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // Show Buy CURE modal
+        function showBuyCUREModal() {
+            const modal = document.getElementById('cure-modal');
+            if (!modal) {
+                createBuyCUREModal();
+            }
+            document.getElementById('cure-modal').style.display = 'block';
+        }
+
+        // Create Buy CURE modal
+        function createBuyCUREModal() {
+            const modalHTML = `
+                <div id="cure-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeBuyCUREModal()">&times;</span>
+                        <h2>💎 Buy CURE Tokens</h2>
+                        <p style="margin: 20px 0; color: #94a3b8;">This is a simulation demo.</p>
+                        <p style="margin: 20px 0; color: #f59e0b; font-weight: bold;">A wallet connection would be needed for real transactions.</p>
+                        <button class="btn btn-primary" onclick="closeBuyCUREModal()">Got it!</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        // Close Buy CURE modal
+        function closeBuyCUREModal() {
+            document.getElementById('cure-modal').style.display = 'none';
+        }
+
+        // View available molecules
+        function viewAvailableMolecules() {
+            const molecules = Object.keys(moleculeExamples).map(key => 
+                `• ${moleculeExamples[key].name} (${moleculeExamples[key].disease})`
+            ).join('\n');
+            
+            alert(`🧬 Available Molecules in Market:\n\n${molecules}\n\nSelect from Lane 1 dropdown to begin analysis!`);
+        }
+
+        // Community buying simulation - FULLY RESTORED VERSION
+        function simulateCommunityBuying() {
+            const btn = document.getElementById('simulate-community-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Simulating Community...';
+            
+            const progressBar = document.getElementById('cure-progress-bar');
+            const progressText = document.getElementById('cure-progress');
+            
+            console.log('🌍 Starting community funding simulation...');
+            
+            // Enhanced realistic buyers with varied amounts
+            const realisticBuyers = [
+                { name: "Stanford Research Lab", amount: 15000, emoji: "🏛️" },
+                { name: "Dr. Sarah Wilson", amount: 9500, emoji: "👩‍⚕️" },
+                { name: "Biotech Accelerator Fund", amount: 18000, emoji: "🚀" },
+                { name: "Children's Hospital", amount: 12000, emoji: "🏥" },
+                { name: "Parkinson's Foundation", amount: 14500, emoji: "🧠" },
+                { name: "Innovation Capital", amount: 16000, emoji: "💰" },
+                { name: "MIT Medical Lab", amount: 11000, emoji: "🧪" },
+                { name: "Dr. Rodriguez Research", amount: 8500, emoji: "👨‍⚕️" }
+            ];
+            
+            let totalFunded = 0;
+            let buyerIndex = 0;
+            
+            const fundingInterval = setInterval(() => {
+                if (totalFunded >= 100000 || buyerIndex >= realisticBuyers.length) {
+                    clearInterval(fundingInterval);
+                    
+                    if (totalFunded >= 100000) {
+                        // Final celebration effect
+                        progressBar.className = 'progress-bar complete';
+                        progressBar.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.6)';
+                        progressBar.style.animation = 'pulse 2s infinite';
+                        
+                        btn.textContent = '🎉 100K CURE REACHED!';
+                        btn.className = 'btn btn-success';
+                        
+                        // Update dashboard
+                        state.cureDeployed += totalFunded;
+                        updateDashboard();
+                        
+                        console.log(`🎉 100,000 CURE threshold reached! Total: ${totalFunded.toLocaleString()}`);
+                        console.log('🔄 Autonomous smart contract validation triggered!');
+                        console.log('🏪 Molecular marketplace creation unlocked!');
+                        
+                        // Enable Lane 3 with delay
+                        setTimeout(() => enableLane3(), 2000);
+                    }
+                    return;
+                }
+                
+                const buyer = realisticBuyers[buyerIndex];
+                totalFunded += buyer.amount;
+                
+                // Enhanced progress updates with color transitions
+                const percentage = Math.min((totalFunded / 100000) * 100, 100);
+                progressBar.style.width = `${percentage}%`;
+                progressText.textContent = totalFunded.toLocaleString();
+                
+                // Dynamic color-changing progress bar
+                if (percentage < 40) {
+                    progressBar.className = 'progress-bar';
+                    progressBar.style.background = 'linear-gradient(90deg, #3b82f6, #06b6d4)';
+                } else if (percentage < 60) {
+                    progressBar.className = 'progress-bar';
+                    progressBar.style.background = 'linear-gradient(90deg, #f59e0b, #ef4444)';
+                } else if (percentage < 80) {
+                    progressBar.className = 'progress-bar';
+                    progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+                } else if (percentage < 95) {
+                    progressBar.className = 'progress-bar';
+                    progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+                    progressBar.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.4)';
+                } else {
+                    progressBar.className = 'progress-bar complete';
+                    progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+                    progressBar.style.boxShadow = '0 0 25px rgba(16, 185, 129, 0.6)';
+                }
+                
+                // Milestone logging
+                if (percentage >= 25 && percentage < 50) {
+                    console.log(`📊 Milestone: 25% funding reached`);
+                } else if (percentage >= 50 && percentage < 75) {
+                    console.log(`📊 Milestone: 50% funding reached`);
+                } else if (percentage >= 75 && percentage < 95) {
+                    console.log(`📊 Milestone: 75% funding reached`);
+                }
+                
+                console.log(`${buyer.emoji} ${buyer.name}: ${buyer.amount.toLocaleString()} CURE → Total: ${totalFunded.toLocaleString()} (${percentage.toFixed(1)}%)`);
+                
+                buyerIndex++;
+            }, 1500); // Slightly slower for better visual effect
+        }
+
+        // Enable Lane 3 after successful funding
+        function enableLane3() {
+            console.log('🏪 LANE 3: Creating molecular marketplace...');
+            processLane3();
+        }
+
+        // Process Lane 3 - Create Molecular Marketplace - FULLY RESTORED
+        function processLane3() {
+            console.log('🏪 LANE 3: Creating molecular marketplace...');
+            
+            const moleculeName = state.currentMolecule?.name || document.getElementById('molecule-name').value;
+            const disease = state.currentMolecule?.disease || "Unknown";
+            
+            setTimeout(() => {
+                console.log(`🏛️ SubDAO created: ${moleculeName} Molecular DAO`);
+                
+                // Create disease-specific token symbol
+                let tokenSymbol;
+                if (disease.toLowerCase().includes('parkinson')) {
+                    tokenSymbol = '$PDCure-PD';
+                } else if (disease.toLowerCase().includes('cardiovascular') || disease.toLowerCase().includes('heart')) {
+                    tokenSymbol = '$PDCure-CV';
+                } else if (disease.toLowerCase().includes('diabetes')) {
+                    tokenSymbol = '$PDCure-DM';
+                } else if (disease.toLowerCase().includes('covid') || disease.toLowerCase().includes('viral')) {
+                    tokenSymbol = '$PDCure-VR';
+                } else if (disease.toLowerCase().includes('arthritis') || disease.toLowerCase().includes('inflammation')) {
+                    tokenSymbol = '$PDCure-AI';
+                } else {
+                    tokenSymbol = '$PDCure-GN';
+                }
+                
+                // Initialize market data
+                const initialPrice = 0.015 + Math.random() * 0.025; // $0.015-0.040
+                const totalSupply = 1000000;
+                
+                state.marketData = {
+                    tokenSymbol: tokenSymbol,
+                    price: initialPrice,
+                    marketCap: Math.round(initialPrice * totalSupply),
+                    totalSupply: totalSupply,
+                    volume24h: 0,
+                    priceHistory: [{ price: initialPrice, time: Date.now(), type: 'launch', amount: 0 }]
+                };
+                
+                // Update dashboard
+                state.activeMolecules += 1;
+                updateDashboard();
+                
+                console.log(`💎 Token launched: ${tokenSymbol}`);
+                console.log(`📈 Initial price: $${initialPrice.toFixed(4)}`);
+                console.log(`💰 Market cap: $${state.marketData.marketCap.toLocaleString()}`);
+                console.log('🚀 Marketplace is LIVE! Try investing or simulating trading.');
+                
+                // Enable Lane 3 UI
+                enableLane3Trading();
+                
+            }, 2000);
+        }
+
+        // Enable Lane 3 trading interface - FULLY RESTORED
+        function enableLane3Trading() {
+            state.lanes[3].status = 'active';
+            updateLaneStatus(3, 'active');
+            
+            // Update Lane 3 content with full marketplace
+            updateLane3Display();
+        }
+
+        // Update Lane 3 display with market data - FULLY RESTORED
+        function updateLane3Display() {
+            const lane3Card = document.getElementById('lane3');
+            
+            if (!state.marketData) return;
+            
+            // Create enhanced Lane 3 content with all features
+            const marketplaceHTML = `
+                <div class="lane-status active" id="lane3-status">🟢 LIVE</div>
+                <div class="lane-header">
+                    <div class="lane-icon">🏪</div>
+                    <div>
+                        <h3 class="lane-title">Lane 3: Molecular Marketplace</h3>
+                        <p class="lane-description">Live token trading & investment platform</p>
+                    </div>
+                </div>
+                
+                <div class="marketplace-info">
+                    <h4>🏛️ ${state.currentMolecule?.name || 'Molecular'} DAO</h4>
+                    <div class="market-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
+                        <div class="stat-item">
+                            <span>Token:</span>
+                            <span style="color: #10b981; font-weight: bold;">${state.marketData.tokenSymbol}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Price:</span>
+                            <span id="current-price" style="color: #06b6d4; font-weight: bold;">$${state.marketData.price.toFixed(4)}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Market Cap:</span>
+                            <span id="market-cap">$${state.marketData.marketCap.toLocaleString()}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>24h Volume:</span>
+                            <span id="volume-24h">$${state.marketData.volume24h.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="trading-actions">
+                        <button class="btn btn-warning" id="bonding-btn" onclick="simulateBondingCurve()" style="width: 100%; margin: 15px 0;">📈 Simulate Trading</button>
+                    </div>
+                    
+                    <div class="trading-feed" id="trading-feed" style="margin-top: 15px; max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 6px; padding: 10px;">
+                        <h6 style="margin: 0 0 8px 0; color: #94a3b8;">📊 Live Trading Activity</h6>
+                        <div id="activity-log" style="font-size: 0.8rem;">
+                            <div style="color: #10b981;">🚀 ${state.marketData.tokenSymbol} marketplace launched!</div>
+                        </div>
+                    </div>
+                    
+                    <div class="price-chart-container" style="margin-top: 15px;">
+                        <h6 style="color: #94a3b8; margin-bottom: 8px;">📈 Price Chart</h6>
+                        <canvas id="price-chart" width="400" height="120" style="width: 100%; height: 120px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; background: rgba(0,0,0,0.3);"></canvas>
+                    </div>
+                </div>
+            `;
+            
+            lane3Card.innerHTML = marketplaceHTML;
+            
+            // Initialize the price chart
+            setTimeout(() => {
+                initializePriceChart();
+            }, 100);
+        }
+
+        // Show/Hide ANT Score Modal - ENHANCED POPUP
+        function showScoreModal() {
+            console.log('📱 Opening ANT Score Modal...');
+            const modal = document.getElementById('score-modal');
+            if (modal) {
+                modal.classList.add('show');
+                modal.style.display = 'block';
+                console.log('✅ Enhanced modal displayed');
+                
+                // Clear previous scores
+                clearPreviousScores();
+            } else {
+                console.error('❌ Modal not found!');
+            }
+        }
+
+        function closeScoreModal() {
+            console.log('📱 Closing ANT Score Modal...');
+            const modal = document.getElementById('score-modal');
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300);
+                console.log('✅ Modal hidden');
+            }
+        }
+
+
+        // Bonding curve simulation - FULLY RESTORED
+        function simulateBondingCurve() {
+            if (!state.marketData) {
+                console.log('❌ No marketplace created yet');
+                return;
+            }
+            
+            console.log('📈 Starting bonding curve simulation...');
+            
+            const btn = document.getElementById('bonding-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Simulating Trading...';
+            
+            const traders = [
+                { name: "Hedge Fund Alpha", type: "buy", range: [3000, 8000] },
+                { name: "Retail Investor", type: "buy", range: [500, 2000] },
+                { name: "Institutional Buyer", type: "buy", range: [5000, 15000] },
+                { name: "Early Investor", type: "sell", range: [1000, 4000] },
+                { name: "DAO Treasury", type: "buy", range: [8000, 20000] },
+                { name: "Liquidity Provider", type: "buy", range: [2000, 5000] }
+            ];
+            
+            let tradeIndex = 0;
+            const tradingInterval = setInterval(() => {
+                if (tradeIndex >= traders.length) {
+                    clearInterval(tradingInterval);
+                    btn.disabled = false;
+                    btn.textContent = '📈 Simulate Trading';
+                    console.log('✅ Bonding curve simulation complete!');
+                    return;
+                }
+                
+                const trader = traders[tradeIndex];
+                const amount = Math.floor(Math.random() * (trader.range[1] - trader.range[0]) + trader.range[0]);
+                
+                let priceChange;
+                if (trader.type === 'buy') {
+                    priceChange = amount / 20000; // Buy pressure increases price
+                    state.marketData.volume24h += amount;
+                } else {
+                    priceChange = -amount / 25000; // Sell pressure decreases price
+                }
+                
+                const oldPrice = state.marketData.price;
+                state.marketData.price = Math.max(0.001, state.marketData.price + priceChange);
+                state.marketData.marketCap = Math.round(state.marketData.price * state.marketData.totalSupply);
+                
+                // Add to price history
+                state.marketData.priceHistory.push({
+                    price: state.marketData.price,
+                    time: Date.now(),
+                    type: trader.type,
+                    amount: amount
+                });
+                
+                const changePercent = (((state.marketData.price - oldPrice) / oldPrice) * 100).toFixed(2);
+                const changeColor = trader.type === 'buy' ? '🟢' : '🔴';
+                const changeSymbol = trader.type === 'buy' ? '+' : '';
+                
+                console.log(`📊 ${trader.name}: ${trader.type.toUpperCase()} $${amount.toLocaleString()} → Price: $${state.marketData.price.toFixed(4)}`);
+                
+                // Update activity feed
+                addTradingActivity(`${changeColor} ${trader.type.toUpperCase()} $${amount.toLocaleString()} by ${trader.name} → $${state.marketData.price.toFixed(4)} (${changeSymbol}${changePercent}%)`);
+                
+                // Update display and chart in real-time
+                updateMarketDisplay();
+                updatePriceChart();
+                
+                tradeIndex++;
+                
+            }, 1200); // 1.2 seconds between trades
+        }
+
+        // Update market display
+        function updateMarketDisplay() {
+            if (!state.marketData) return;
+            
+            const priceEl = document.getElementById('current-price');
+            const marketCapEl = document.getElementById('market-cap');
+            const volumeEl = document.getElementById('volume-24h');
+            
+            if (priceEl) priceEl.textContent = `$${state.marketData.price.toFixed(4)}`;
+            if (marketCapEl) marketCapEl.textContent = `$${state.marketData.marketCap.toLocaleString()}`;
+            if (volumeEl) volumeEl.textContent = `$${state.marketData.volume24h.toLocaleString()}`;
+        }
+
+        // Add trading activity to feed
+        function addTradingActivity(activity) {
+            const activityLog = document.getElementById('activity-log');
+            if (activityLog) {
+                const activityDiv = document.createElement('div');
+                activityDiv.style.marginBottom = '4px';
+                activityDiv.style.fontSize = '0.75rem';
+                activityDiv.innerHTML = `<span style="color: #64748b;">${new Date().toLocaleTimeString()}</span> ${activity}`;
+                activityLog.appendChild(activityDiv);
+                
+                // Keep only last 8 activities
+                if (activityLog.children.length > 9) {
+                    activityLog.removeChild(activityLog.children[1]); // Keep the header
+                }
+                
+                // Auto-scroll to bottom
+                activityLog.scrollTop = activityLog.scrollHeight;
+            }
+        }
+
+        // Initialize price chart - RESTORED
+        function initializePriceChart() {
+            const canvas = document.getElementById('price-chart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth * 2; // High DPI
+            canvas.height = canvas.offsetHeight * 2;
+            ctx.scale(2, 2);
+            
+            updatePriceChart();
+        }
+
+        // Update price chart with current data - RESTORED
+        function updatePriceChart() {
+            const canvas = document.getElementById('price-chart');
+            if (!canvas || !state.marketData) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.offsetWidth;
+            const height = canvas.offsetHeight;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            const priceHistory = state.marketData.priceHistory;
+            if (priceHistory.length < 2) return;
+            
+            // Calculate price range for scaling
+            const prices = priceHistory.map(p => p.price);
+            const minPrice = Math.min(...prices) * 0.98;
+            const maxPrice = Math.max(...prices) * 1.02;
+            const priceRange = maxPrice - minPrice;
+            
+            if (priceRange === 0) return;
+            
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 4; i++) {
+                const y = (height / 3) * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+            
+            // Draw price line
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            priceHistory.forEach((point, index) => {
+                const x = (index / (priceHistory.length - 1)) * width;
+                const y = height - ((point.price - minPrice) / priceRange) * height;
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+                
+                // Add buy/sell markers
+                if (point.type === 'buy') {
+                    ctx.fillStyle = '#10b981';
+                    ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
+                } else if (point.type === 'sell') {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
+                }
+            });
+            
+            ctx.stroke();
+            
+            // Add current price label
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = '10px Arial';
+            const currentPrice = priceHistory[priceHistory.length - 1].price;
+            ctx.fillText(`$${currentPrice.toFixed(4)}`, width - 50, 15);
+        }
+
+        // Initialize dashboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDashboard();
+            console.log('🎯 Curable Labs: Trial by Molecule initialized!');
+        });
+        
+        // Legacy functions (keeping for compatibility)
+        function buyCURETokens() {
+            const amount = parseInt(document.getElementById('cure-amount').value) || 500;
+            
+            state.cureTokens += amount;
+            state.purchaseHistory.push({
+                buyer: "You",
+                amount: amount,
+                time: new Date().toLocaleTimeString()
+            });
+            
+            updatePurchaseLog();
+            updateUI();
+            
+            console.log(`💎 Purchased ${amount} CURE tokens`);
+            
+            // Check threshold
+            if (state.cureTokens >= state.cureTarget) {
+                console.log('🎉 100,000 CURE threshold reached!');
+                
+                setTimeout(() => {
+                    if (typeof processLane3 === 'function') {
+                        processLane3();
+                    }
+                }, 2000);
+            }
+        }
+
+        // Update purchase log
+        function updatePurchaseLog() {
+            const log = document.getElementById('purchase-log');
+            const recentPurchases = state.purchaseHistory.slice(-8).reverse();
+            
+            log.innerHTML = recentPurchases.map(purchase => `
+                <div class="purchase-item">
+                    <span class="purchase-buyer">${purchase.buyer}</span>
+                    <span class="purchase-amount">+${purchase.amount.toLocaleString()} CURE</span>
+                    <span class="purchase-time">${purchase.time}</span>
+                </div>
+            `).join('');
+        }
+
+        // Autonomous Sub-DAO creation (Lane 3 trigger)
+        function triggerAutonomousSubDAOCreation() {
+            state.lanes[2].completed = true;
+            state.lanes[3].status = 'active';
+            
+            updateLaneStatus(2, 'completed');
+            updateLaneStatus(3, 'active');
+            
+            console.log('🏛️ Triggering autonomous Sub-DAO creation...');
+            
+            // Create marketplace button becomes available
+            const actions = document.getElementById('marketplace-actions');
+            const btn = document.getElementById('create-marketplace-btn');
+            
+            actions.style.display = 'block';
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
+            btn.disabled = false;
+            btn.textContent = '📈 Simulate Trading';
+        }
+
+        // REMOVED DUPLICATE - using updateDashboard() instead
+
+        function addLog(message) {
+            const log = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.textContent = new Date().toLocaleTimeString() + ' - ' + message;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 Curable Labs: Trial by Molecule loaded');
+            updateDashboard(); // Initialize dynamic dashboard
+            addLog('🌐 Curable Labs: Trial by Molecule ready');
+        });
+    </script>
+</body>
+</html>
