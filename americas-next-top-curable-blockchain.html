@@ -820,29 +820,9 @@
                         state.cureDeployed += state.cureTokens;
                         updateDashboard();
                         
-                        // Enable Lane 3 with proper button setup
+                        // Enable Lane 3 with comprehensive setup
                         setTimeout(() => {
-                            processLane3(); // Auto-create marketplace
-                            
-                            // FORCE enable Lane 3 buttons
-                            setTimeout(() => {
-                                const uploadBtn = document.getElementById('lane3-btn');
-                                const tradingBtn = document.getElementById('bonding-btn');
-                                
-                                if (uploadBtn) {
-                                    uploadBtn.disabled = false;
-                                    uploadBtn.style.opacity = '1';
-                                    uploadBtn.style.pointerEvents = 'auto';
-                                    console.log('✅ Upload button force-enabled');
-                                }
-                                
-                                if (tradingBtn) {
-                                    tradingBtn.disabled = false;
-                                    tradingBtn.style.opacity = '1';
-                                    tradingBtn.style.pointerEvents = 'auto';
-                                    console.log('✅ Trading button force-enabled');
-                                }
-                            }, 500);
+                            enableLane3AfterFunding();
                         }, 2000);
                     } else {
                         btn.disabled = false;
@@ -878,6 +858,52 @@
                 buyerIndex++;
                 
             }, 1500); // 1.5 seconds between purchases
+        }
+
+        // Enable Lane 3 after funding complete - NEW DEDICATED FUNCTION
+        function enableLane3AfterFunding() {
+            console.log('🏪 Enabling Lane 3 after funding complete...');
+            
+            // First create marketplace data
+            processLane3();
+            
+            // Then force-enable all Lane 3 buttons with multiple attempts
+            setTimeout(() => {
+                const uploadBtn = document.getElementById('lane3-btn');
+                const tradingBtn = document.getElementById('bonding-btn');
+                
+                console.log('🔧 Force-enabling Lane 3 buttons...');
+                
+                if (uploadBtn) {
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = '🌐 Marketplace Upload';
+                    uploadBtn.className = 'btn btn-primary';
+                    uploadBtn.style.opacity = '1';
+                    uploadBtn.style.pointerEvents = 'auto';
+                    uploadBtn.style.cursor = 'pointer';
+                    uploadBtn.style.background = '#3b82f6';
+                    console.log('✅ Upload button fully enabled');
+                } else {
+                    console.error('❌ Upload button not found');
+                }
+                
+                if (tradingBtn) {
+                    tradingBtn.disabled = false;
+                    tradingBtn.textContent = '📈 Simulate Trading';
+                    tradingBtn.className = 'btn btn-success';
+                    tradingBtn.style.opacity = '1';
+                    tradingBtn.style.pointerEvents = 'auto';
+                    tradingBtn.style.cursor = 'pointer';
+                    tradingBtn.style.background = '#10b981';
+                    console.log('✅ Trading button fully enabled');
+                } else {
+                    console.error('❌ Trading button not found');
+                }
+                
+                addLog('🏪 Lane 3 unlocked! Click "Marketplace Upload" to deploy your molecule.');
+                console.log('🎉 Lane 3 should now be fully functional!');
+                
+            }, 1000);
         }
 
         // Update Community Progress Visual
