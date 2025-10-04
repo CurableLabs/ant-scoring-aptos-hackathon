@@ -529,12 +529,17 @@
             activeMolecules: 0
         };
 
-        // Update dynamic dashboard metrics
+        // Update dynamic dashboard metrics - FIXED
         function updateDashboard() {
-            document.getElementById('total-badges').textContent = state.totalBadges;
-            document.getElementById('recent-ant-score').textContent = state.recentAntScore;
-            document.getElementById('cure-deployed').textContent = state.cureDeployed.toLocaleString();
-            document.getElementById('active-molecules').textContent = state.activeMolecules;
+            try {
+                document.getElementById('total-badges').textContent = state.totalBadges;
+                document.getElementById('recent-ant-score').textContent = state.recentAntScore;
+                document.getElementById('cure-deployed').textContent = state.cureDeployed.toLocaleString();
+                document.getElementById('active-molecules').textContent = state.activeMolecules;
+                console.log('✅ Dashboard updated successfully');
+            } catch (error) {
+                console.error('❌ Dashboard update error:', error);
+            }
         }
 
         // Test button functionality
