@@ -919,26 +919,33 @@
 
             let totalCure = state.cureTokens;
             
-            for (let i = 0; i < communityPurchases.length; i++) {
-                const purchase = communityPurchases[i];
+            for (let i = 0; i < communityBuyers.length && totalCure < 100000; i++) {
+                const buyer = communityBuyers[i];
                 await sleep(1000);
                 
-                totalCure += purchase.amount;
+                // Generate randomized purchase amount within buyer's range
+                const amount = Math.floor(Math.random() * (buyer.range[1] - buyer.range[0]) + buyer.range[0]);
+                
+                totalCure += amount;
                 state.cureTokens = totalCure;
                 
-                // Add to purchase feed
+                // Add to live purchase feed with emoji and randomized amount
                 const purchaseElement = document.createElement('div');
                 purchaseElement.style.fontSize = '0.75rem';
                 purchaseElement.style.marginBottom = '4px';
                 purchaseElement.style.color = '#06b6d4';
-                purchaseElement.innerHTML = `🏦 ${purchase.buyer}: +${purchase.amount.toLocaleString()} CURE (${purchase.type})`;
+                purchaseElement.innerHTML = `${buyer.emoji} ${buyer.name}: +${amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`;
                 document.getElementById('purchase-list').appendChild(purchaseElement);
+                
+                // Auto-scroll to show latest purchases
+                const purchaseList = document.getElementById('purchase-list');
+                purchaseList.scrollTop = purchaseList.scrollHeight;
                 
                 // Update progress
                 updateCommunityProgress();
                 updateMetrics();
                 
-                addLog(`💰 ${purchase.buyer}: ${purchase.amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`);
+                addLog(`💰 ${buyer.name}: ${amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`);
                 
                 // Check if threshold reached
                 if (totalCure >= 100000) {
