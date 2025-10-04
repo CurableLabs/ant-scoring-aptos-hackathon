@@ -405,7 +405,7 @@
                         <div class="progress-fill" id="cure-progress"></div>
                     </div>
                     <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 8px;">
-                        Target: <span id="cure-target">80,000</span> CURE tokens
+                        Target: 100,000 CURE tokens
                     </div>
                 </div>
 
@@ -903,16 +903,18 @@
             btn.disabled = true;
             btn.textContent = '⏳ Simulating...';
             
-            // Community purchase scenarios
-            const communityPurchases = [
-                { buyer: 'Stanford Research Lab', amount: 15000, type: 'Institution' },
-                { buyer: 'Dr. Sarah Wilson', amount: 8500, type: 'Individual' },
-                { buyer: 'Biotech Accelerator Fund', amount: 18000, type: 'Investment' },
-                { buyer: 'Children\'s Hospital', amount: 12000, type: 'Healthcare' },
-                { buyer: 'Parkinson\'s Foundation', amount: 14500, type: 'Foundation' },
-                { buyer: 'Innovation Capital', amount: 16000, type: 'Investment' },
-                { buyer: 'Community Pool', amount: 7000, type: 'Community' },
-                { buyer: 'Research Consortium', amount: 9000, type: 'Institution' }
+            // Enhanced community purchase scenarios with randomized amounts
+            const communityBuyers = [
+                { name: 'Stanford Research Lab', range: [12000, 18000], emoji: '🏛️' },
+                { name: 'Dr. Sarah Wilson', range: [7000, 12000], emoji: '👩‍⚕️' },
+                { name: 'Biotech Accelerator Fund', range: [15000, 22000], emoji: '🚀' },
+                { name: 'Children\'s Hospital', range: [8000, 15000], emoji: '🏥' },
+                { name: 'Parkinson\'s Foundation', range: [10000, 16000], emoji: '🧠' },
+                { name: 'Innovation Capital', range: [14000, 20000], emoji: '💰' },
+                { name: 'MIT Medical Lab', range: [9000, 14000], emoji: '🧪' },
+                { name: 'Dr. Rodriguez Research', range: [6000, 11000], emoji: '👨‍⚕️' },
+                { name: 'HealthTech Ventures', range: [11000, 17000], emoji: '🏢' },
+                { name: 'Cambridge Bio Fund', range: [13000, 19000], emoji: '🎓' }
             ];
 
             let totalCure = state.cureTokens;
