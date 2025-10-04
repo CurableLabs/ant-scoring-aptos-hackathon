@@ -377,7 +377,7 @@
                     <div id="scoring-details" style="font-size: 0.8rem; color: #94a3b8;"></div>
                 </div>
                 
-                <button class="btn" onclick="processLane1()" id="lane1-btn">🎬 Begin Competition Audition</button>
+                <button class="btn" onclick="processLane1()" id="lane1-btn">🧮 Calculate ANT Score</button>
             </div>
 
             <!-- Lane 2 -->
@@ -628,7 +628,7 @@
                 addLog(`🔬 Molecular signature: ${examples[value].smile}`);
                 addLog(`📄 Research document: ${examples[value].pdf}`);
                 addLog(`🎯 Disease target: ${examples[value].disease}`);
-                addLog(`🎬 Ready for audition - Click "Begin Competition Audition"`);
+                addLog(`🎬 Ready for ANT scoring - Click "Calculate ANT Score"`);
             } else if (value === '') {
                 document.getElementById('molecule-name').value = '';
                 document.getElementById('smile-id').value = '';
@@ -665,7 +665,7 @@
 
             // Reset button
             btn.disabled = false;
-            btn.textContent = '🎬 Begin Competition Audition';
+            btn.textContent = '🧮 Calculate ANT Score';
         }
 
         // Visual ANT Scoring with Modal
@@ -863,7 +863,19 @@
                         addLog('✅ Community validation COMPLETE!');
                         
                         // Show popup instead of button change
-                        alert('🎉 $CURE community threshold reached! Continue to the marketplace.');
+                        // ENHANCED CELEBRATION POPUP 
+                        const celebrationMessage = `🎉🎊🌟 CONGRATULATIONS! 🌟🎊🎉
+
+💰 100,000 CURE TOKEN THRESHOLD ACHIEVED! 💰
+
+🏆 Community has successfully funded your molecule! 🏆
+🚀 Ready to launch to the marketplace! 🚀
+
+✨ Your molecular innovation is now community-backed! ✨
+🌍 Continue to Lane 3 for marketplace launch! 🌍
+
+🎯 Achievement Unlocked: Community Champion! 🎯`;
+                        alert(celebrationMessage);
                         
                         // Update dashboard
                         state.cureDeployed += state.cureTokens;
