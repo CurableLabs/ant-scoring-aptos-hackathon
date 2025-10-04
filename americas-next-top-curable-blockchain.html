@@ -494,12 +494,14 @@
 </head>
 <body>
     <div class="container">
+<<<<<<< HEAD
         <div class="header">
             <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 16px;">
                 <div style="font-size: 4rem;">🏆</div>
                 <div style="text-align: left;">
                     <h1 style="margin: 0; font-size: 2.8rem; background: linear-gradient(135deg, #3b82f6, #06b6d4, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Curable Labs: Trial by Molecule</h1>
                     <p style="margin: 4px 0 0 0; font-size: 1.1rem; color: #06b6d4;">Advanced DeFi-Powered Drug Discovery Platform</p>
+=======
         <!-- Blockchain Status with Toggle -->
         <div class="blockchain-status">
             <div class="status-dot"></div>
@@ -534,6 +536,7 @@
                 </div>
                 <div class="molecule-section">
                     <div class="molecule-icon">🧬</div>
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
                 </div>
                 <div style="font-size: 4rem;">🧬</div>
             </div>
@@ -563,6 +566,7 @@
             </div>
         </div>
 
+<<<<<<< HEAD
         <!-- Lanes -->
         <div class="lane-grid">
             <!-- Lane 1 -->
@@ -605,6 +609,7 @@
                     <div style="color: #f8fafc; font-weight: 600; margin: 16px 0;">🧠 ANT Scoring Progress:</div>
                     <div class="progress-bar">
                         <div class="progress-fill" id="ant-progress"></div>
+=======
 
         <!-- Tri-Lane Grid -->
         <div class="tri-lane-grid">
@@ -668,11 +673,76 @@
                             <span>Status:</span>
                             <span id="validation-status">Pending</span>
                         </div>
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
                     </div>
                     <div id="scoring-details" style="font-size: 0.8rem; color: #94a3b8;"></div>
                 </div>
                 
                 <button class="btn" onclick="processLane1()" id="lane1-btn">🎬 Begin Competition Audition</button>
+            </div>
+
+            <!-- Lane 2: CURE Community Building -->
+            <div class="lane-card">
+                <h2>💎 Lane 2: CURE Community Building</h2>
+                
+                <div id="community-progress" style="background: rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 12px; margin: 16px 0; display: none;">
+                    <div style="color: #f8fafc; font-weight: 600; margin-bottom: 8px;">🎯 Funding Progress</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+                        <span>Current: <span style="color: #10b981;" id="cure-current">0 CURE</span></span>
+                        <span style="color: #94a3b8;" id="cure-percentage">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="cure-progress"></div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 8px;">
+                        Target: 100,000 CURE tokens
+                    </div>
+                </div>
+
+                <div id="purchase-feed" style="background: rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 12px; margin: 16px 0; max-height: 120px; overflow-y: auto; display: none;">
+                    <div style="font-weight: 600; color: #f8fafc; margin-bottom: 8px; font-size: 0.9rem;">🏦 Live Purchases</div>
+                    <div id="purchase-list" style="font-size: 0.75rem; line-height: 1.4;"></div>
+                </div>
+                
+                <button class="btn" onclick="processLane2()" id="lane2-btn" disabled>💰 Start Community Building</button>
+                <button class="btn btn-success" onclick="simulateCommunityBuying()" id="community-sim-btn" disabled>🌍 Simulate Community</button>
+            </div>
+
+            <!-- Lane 3: Molecular Marketplace -->
+            <div class="lane-card">
+                <h2>🏪 Lane 3: Molecular Marketplace</h2>
+                
+                <div id="molecule-listing" style="display: none;">
+                    <div class="score-display">
+                        <div style="font-weight: 600; color: #f8fafc; margin-bottom: 12px;">🧬 Live Molecule</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem;">
+                            <div>
+                                <div style="color: #94a3b8;">Molecule:</div>
+                                <div style="color: #3b82f6; font-weight: 600;" id="live-molecule-name">--</div>
+                            </div>
+                            <div>
+                                <div style="color: #94a3b8;">Token:</div>
+                                <div style="color: #10b981; font-weight: 600;" id="live-token-symbol">--</div>
+                            </div>
+                            <div>
+                                <div style="color: #94a3b8;">Price:</div>
+                                <div style="color: #06b6d4; font-weight: 600;" id="live-token-price">--</div>
+                            </div>
+                            <div>
+                                <div style="color: #94a3b8;">Market Cap:</div>
+                                <div style="color: #f59e0b; font-weight: 600;" id="live-market-cap">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="bonding-curve-display" style="display: none;">
+                    <div style="color: #f8fafc; font-weight: 600; margin: 16px 0;">📈 Bonding Curve Activity</div>
+                    <div id="investment-feed" style="font-size: 0.8rem; max-height: 100px; overflow-y: auto;"></div>
+                </div>
+                
+                <button class="btn" onclick="uploadToMarketplace()" id="lane3-btn" disabled>🌐 Marketplace Upload</button>
+                <button class="btn btn-success" onclick="simulateBondingCurve()" id="bonding-btn" disabled>📈 Simulate Trading</button>
             </div>
 
             <!-- Lane 2 -->
@@ -726,6 +796,8 @@
                             </div>
                         </div>
                     </div>
+<<<<<<< HEAD
+=======
 
                     <div class="community-stats">
                         <h4>💎 Community CURE Pool</h4>
@@ -764,6 +836,7 @@
                             <!-- Community purchases will appear here -->
                         </div>
                     </div>
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
                 </div>
                 
                 <div id="bonding-curve-display" style="display: none;">
@@ -782,6 +855,7 @@
         </div>
     </div>
 
+<<<<<<< HEAD
     <!-- ANT Scoring Modal -->
     <div class="modal-overlay" id="scoring-modal">
         <div class="modal-content">
@@ -842,6 +916,7 @@
 
             <div class="modal-footer">
                 <button class="btn" onclick="enableLane2AndClose()" id="close-score-btn">Continue to Lane 2</button>
+=======
     <!-- Progress Overlay Modal -->
     <div class="progress-overlay" id="progress-overlay">
         <div class="progress-content">
@@ -903,6 +978,7 @@
                 <div class="final-score" id="final-score" style="font-size: 3rem; font-weight: bold; color: #10b981; margin: 15px 0;">--</div>
                 <div id="score-result" style="margin: 20px 0;"></div>
                 <button id="continue-btn" class="btn btn-success" style="display: none; padding: 12px 24px; border: none; border-radius: 8px; background: #10b981; color: white; font-weight: 600; cursor: pointer;">Continue</button>
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
             </div>
         </div>
     </div>
@@ -913,13 +989,16 @@
             labBadges: 0,
             antScore: 0,
             cureTokens: 0,
+<<<<<<< HEAD
             currentMolecule: null,
             antPassed: false,
             // Dynamic metrics for meaningful dashboard
+=======
             cureTarget: 100000, // Fixed 100,000 CURE threshold
             molecules: [],
             purchaseHistory: [],
             // Dynamic metrics for dashboard
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
             totalBadges: 0,
             recentAntScore: '--',
             cureDeployed: 0,
@@ -1443,6 +1522,7 @@
             document.getElementById('molecule-listing').style.display = 'block';
             document.getElementById('bonding-curve-display').style.display = 'block';
             
+<<<<<<< HEAD
             // Update marketplace UI
             document.getElementById('live-molecule-name').textContent = state.currentMolecule.name;
             document.getElementById('live-token-symbol').textContent = tokenSymbol;
@@ -1454,6 +1534,7 @@
             addLog(`📈 Initial price: $${initialPrice.toFixed(4)}`);
             addLog(`💰 Market cap: $${marketCap.toLocaleString()}`);
             addLog('🚀 Marketplace is LIVE! Try investing or simulating trading.');
+=======
             // Create enhanced Lane 3 content
             const marketplaceHTML = `
                 <div class="marketplace-info">
@@ -1491,6 +1572,7 @@
                     </div>
                 </div>
             `;
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
             
             // Update dashboard - new molecule is active on market
             state.activeMolecules += 1;
@@ -1608,6 +1690,8 @@
             addLog('✅ Bonding curve simulation complete!');
             addLog('🎉 FULL TRI-LANE PIPELINE DEMONSTRATION SUCCESSFUL!');
             
+<<<<<<< HEAD
+=======
             priceHistory.forEach((point, index) => {
                 const x = (index / (priceHistory.length - 1)) * width;
                 const y = height - ((point.price - minPrice) / priceRange) * height;
@@ -2447,6 +2531,7 @@
             const btn = document.getElementById('create-marketplace-btn');
             
             actions.style.display = 'block';
+>>>>>>> 29ee0838de8c06a3725acb4702023c993755094c
             btn.disabled = false;
             btn.textContent = '📈 Simulate Trading';
         }
