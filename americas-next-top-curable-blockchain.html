@@ -508,7 +508,7 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn" onclick="closeScoreModal()" id="close-score-btn">Continue to Lane 2</button>
+                <button class="btn" onclick="enableLane2AndClose()" id="close-score-btn">Continue to Lane 2</button>
             </div>
         </div>
     </div>
@@ -793,6 +793,55 @@
                 addLog(`❌ ANT VALIDATION FAILED: ${state.antScore} below 80 score threshold`);
                 addLog(`📝 Try selecting a different molecule for better results`);
             }
+        }
+
+        // Enable Lane 2 and close modal - NEW FUNCTION
+        function enableLane2AndClose() {
+            console.log('🎯 Enabling Lane 2 from modal...');
+            
+            // Close the modal first
+            document.getElementById('scoring-modal').style.display = 'none';
+            
+            // Enable Lane 2 buttons with force
+            const lane2Btn = document.getElementById('lane2-btn');
+            const communitySimBtn = document.getElementById('community-sim-btn');
+            
+            console.log('🔧 Forcing Lane 2 button enablement...');
+            
+            if (lane2Btn) {
+                lane2Btn.disabled = false;
+                lane2Btn.style.opacity = '1';
+                lane2Btn.style.pointerEvents = 'auto';
+                lane2Btn.style.cursor = 'pointer';
+                lane2Btn.style.background = '#3b82f6';
+                console.log('✅ Lane 2 Start button FORCEFULLY enabled');
+            } else {
+                console.error('❌ Lane 2 button not found with ID: lane2-btn');
+            }
+            
+            if (communitySimBtn) {
+                communitySimBtn.disabled = false;
+                communitySimBtn.style.opacity = '1';
+                communitySimBtn.style.pointerEvents = 'auto';
+                communitySimBtn.style.cursor = 'pointer';
+                communitySimBtn.style.background = '#10b981';
+                console.log('✅ Community Simulate button FORCEFULLY enabled');
+            } else {
+                console.error('❌ Community sim button not found with ID: community-sim-btn');
+            }
+            
+            // Log completion and auto-start Lane 2
+            addLog(`🎯 FINAL ANT SCORE: ${state.antScore}/100`);
+            addLog(`✅ ANT VALIDATION PASSED! (≥80 score threshold)`);
+            addLog(`🔄 Proceeding to Lane 2: Community validation...`);
+            addLog('💎 Lane 2 unlocked! Click "Start Community Building" or "Simulate Community"');
+            
+            // Auto-start Lane 2 setup
+            setTimeout(() => {
+                processLane2();
+            }, 1000);
+            
+            console.log('🎉 Lane 2 SHOULD BE ENABLED NOW!');
         }
 
         // Lane 2 Processing - Setup phase - ENHANCED
