@@ -1955,14 +1955,43 @@
             updateDashboard();
             console.log('🎯 Curable Labs: Trial by Molecule initialized!');
         });
-                
-                console.log(`💎 ${buyer} purchased ${amount} CURE tokens`);
-                
-                // Check threshold
-                if (state.cureTokens >= state.cureTarget) {
-                    clearInterval(purchaseInterval);
-                    btn.disabled = false;
-                    btn.textContent = '🎉 Threshold Reached!';
+        
+        // Update purchase log function
+        function updatePurchaseLog() {
+            const log = document.getElementById('purchase-log');
+            const recentPurchases = state.purchaseHistory.slice(-8).reverse();
+            
+            log.innerHTML = recentPurchases.map(purchase => `
+                <div class="purchase-item">
+                    <div class="purchase-buyer">${purchase.buyer}</div>
+                    <div class="purchase-amount">${purchase.amount.toLocaleString()} CURE</div>
+                    <div class="purchase-time">${purchase.time}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Update UI function
+        function updateUI() {
+            // Update displays if they exist
+            const cureDisplay = document.getElementById('cure-display');
+            if (cureDisplay) {
+                cureDisplay.textContent = `${state.cureTokens.toLocaleString()} CURE`;
+            }
+        }
+        
+        // Update lane status function
+        function updateLaneStatus(laneNumber, status) {
+            const statusElement = document.getElementById(`lane${laneNumber}-status`);
+            if (statusElement) {
+                statusElement.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                statusElement.className = `lane-status ${status}`;
+            }
+        }
+
+        // Complete script properly
+    </script>
+</body>
+</html>
                     
                     setTimeout(() => {
                         triggerAutonomousSubDAOCreation();
