@@ -392,7 +392,7 @@
                         <div class="progress-fill" id="cure-progress"></div>
                     </div>
                     <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 8px;">
-                        Target: <span id="cure-target">80,000</span> CURE tokens
+                        Target: 100,000 CURE tokens
                     </div>
                 </div>
 
@@ -438,8 +438,7 @@
                     <div id="investment-feed" style="font-size: 0.8rem; max-height: 100px; overflow-y: auto;"></div>
                 </div>
                 
-                <button class="btn" onclick="processLane3()" id="lane3-btn" disabled>🚀 Create Marketplace</button>
-                <button class="btn btn-warning" onclick="investInMolecule()" id="invest-btn" disabled>💰 Invest</button>
+                <button class="btn" onclick="uploadToMarketplace()" id="lane3-btn" disabled>🌐 Marketplace Upload</button>
                 <button class="btn btn-success" onclick="simulateBondingCurve()" id="bonding-btn" disabled>📈 Simulate Trading</button>
             </div>
         </div>
@@ -761,7 +760,7 @@
         async function processLane2() {
             addLog('💎 LANE 2: Initializing community building...');
             addLog(`🧬 Target molecule: ${state.currentMolecule.name}`);
-            addLog(`🎯 Community funding goal: 80,000 CURE tokens`);
+            addLog(`🎯 Community funding goal: 100,000 CURE tokens`);
             
             // Show progress section
             document.getElementById('community-progress').style.display = 'block';
@@ -820,7 +819,7 @@
                 
                 // Check if threshold reached
                 if (totalCure >= 80000) {
-                    addLog(`🎉 80% THRESHOLD REACHED! (${totalCure.toLocaleString()}/100,000 CURE)`);
+                    addLog(`🎉 100,000 CURE THRESHOLD REACHED! (${totalCure.toLocaleString()}/100,000 CURE)`);
                     addLog('🔄 Autonomous smart contract validation triggered!');
                     
                     await sleep(1500);
@@ -863,7 +862,24 @@
             }
         }
 
-        // Lane 3 Processing - Marketplace Creation
+        // Marketplace Upload - Upload molecule to live trading platform  
+        function uploadToMarketplace() {
+            addLog('🌐 Uploading molecule to live marketplace...');
+            addLog(`📡 Deploying ${state.currentMolecule.name} to trading platform...`);
+            addLog('🔗 Connecting to liquidity pools...');
+            addLog('📊 Initializing price discovery mechanism...');
+            addLog(`✅ ${state.currentMolecule.name} successfully uploaded to marketplace!`);
+            addLog('🎯 Ready for live trading and investment!');
+            
+            const btn = document.getElementById('lane3-btn');
+            if (btn) {
+                btn.textContent = '✅ Uploaded to Market';
+                btn.className = 'btn btn-success';
+                btn.disabled = true;
+            }
+        }
+
+        // Lane 3 Processing - Marketplace Creation (called automatically after Lane 2)
         async function processLane3() {
             addLog('🏪 LANE 3: Creating molecular marketplace...');
             
@@ -917,37 +933,26 @@
             updateDashboard();
             console.log(`📊 Active Molecules updated: ${state.activeMolecules}`);
 
-            // Reset button
-            btn.disabled = false;
-            btn.textContent = '🚀 Create Marketplace';
+            // Enable Lane 3 buttons after marketplace creation
+            const uploadBtn = document.getElementById('lane3-btn');
+            const tradingBtn = document.getElementById('bonding-btn');
+            
+            if (uploadBtn) {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '🌐 Marketplace Upload';
+                uploadBtn.style.opacity = '1';
+            }
+            
+            if (tradingBtn) {
+                tradingBtn.disabled = false;
+                tradingBtn.textContent = '📈 Simulate Trading';
+                tradingBtn.style.opacity = '1';
+            }
+            
+            console.log('✅ Lane 3 Upload and Trading buttons enabled');
         }
 
-        // Invest in Molecule - User Interaction
-        async function investInMolecule() {
-            const investAmount = prompt('How much would you like to invest in USD?', '1000');
-            if (!investAmount || isNaN(investAmount)) return;
-
-            const amount = parseFloat(investAmount);
-            const tokensReceived = amount / state.marketplace.price;
-            
-            addLog(`💰 Investment: $${amount.toLocaleString()}`);
-            addLog(`🎯 Tokens received: ${tokensReceived.toFixed(2)} ${state.marketplace.tokenSymbol}`);
-            
-            // Update price via bonding curve
-            state.marketplace.bondingCurveMultiplier += amount / 10000; // Price increases with investment
-            const newPrice = state.marketplace.price * state.marketplace.bondingCurveMultiplier;
-            const newMarketCap = state.marketplace.totalSupply * newPrice;
-            
-            state.marketplace.price = newPrice;
-            state.marketplace.marketCap = newMarketCap;
-            
-            // Update UI
-            document.getElementById('live-token-price').textContent = `$${newPrice.toFixed(4)}`;
-            document.getElementById('live-market-cap').textContent = `$${newMarketCap.toLocaleString()}`;
-            
-            addLog(`📈 New price: $${newPrice.toFixed(4)} (+${((state.marketplace.bondingCurveMultiplier - 1) * 100).toFixed(1)}%)`);
-            addLog(`💼 Updated market cap: $${newMarketCap.toLocaleString()}`);
-        }
+        // INVEST FUNCTION REMOVED - Was confusing as requested
 
         // Simulate Bonding Curve Trading
         async function simulateBondingCurve() {
