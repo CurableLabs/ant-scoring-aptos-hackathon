@@ -1362,16 +1362,23 @@
         function simulateBondingCurve() {
             console.log('📈 Starting Kana Labs bonding curve simulation...');
             
-            // Initialize Kana metrics with current marketplace data
+            // Initialize Kana metrics and starting price point
             if (state.marketplace && kanaChart) {
                 const initialPrice = state.marketplace.price;
                 const initialVolume = state.marketplace.volume24h || 0;
                 const initialMarketCap = state.marketplace.marketCap;
                 
-                updateKanaMetrics(initialPrice, initialVolume, initialMarketCap, 0);
-                addKanaDataPoint(new Date().toLocaleTimeString(), initialPrice);
+                // Clear any existing chart data
+                kanaChart.data.labels = [];
+                kanaChart.data.datasets[0].data = [];
+                kanaChart.data.datasets[1].data = [];
+                kanaChart.data.datasets[2].data = [];
                 
-                console.log('✅ Kana Labs metrics initialized');
+                updateKanaMetrics(initialPrice, initialVolume, initialMarketCap, 0);
+                addKanaDataPoint(new Date().toLocaleTimeString(), initialPrice, 0, null);
+                
+                addLog('📊 Kana Labs professional trading interface initialized');
+                console.log('✅ Kana Labs chart ready for real-time trading simulation');
             }
             
             if (!state.marketplace) {
@@ -1443,13 +1450,17 @@
                     priceElement.textContent = `$${state.marketplace.price.toFixed(4)}`;
                 }
                 
-                // Update Kana Labs chart and metrics during trading simulation
-                if (kanaChart && state.marketData) {
+                // ENHANCED: Update Kana Labs chart with buy/sell markers
+                if (kanaChart) {
                     const currentTime = new Date().toLocaleTimeString();
-                    const priceChange = ((state.marketplace.price - (state.marketData.priceHistory[0]?.price || state.marketplace.price)) / (state.marketData.priceHistory[0]?.price || state.marketplace.price)) * 100;
+                    const initialPrice = state.marketData.priceHistory[0]?.price || state.marketplace.price;
+                    const priceChange = ((state.marketplace.price - initialPrice) / initialPrice) * 100;
                     
-                    addKanaDataPoint(currentTime, state.marketplace.price);
+                    // Add data point with trade type for visual markers
+                    addKanaDataPoint(currentTime, state.marketplace.price, trade.amount, trade.type);
                     updateKanaMetrics(state.marketplace.price, state.marketData.volume24h, state.marketplace.marketCap, priceChange);
+                    
+                    console.log(`📊 Kana Chart Update: ${trade.type} $${trade.amount} → $${state.marketplace.price.toFixed(4)}`);
                 }
                 
                 if (marketCapElement) {
@@ -1506,14 +1517,51 @@
                         pointBackgroundColor: '#22c55e',
                         pointBorderColor: '#16a34a',
                         pointRadius: 3
+                    }, {
+                        label: 'Buy Orders',
+                        data: [],
+                        borderColor: '#10b981',
+                        backgroundColor: '#10b981',
+                        borderWidth: 0,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        showLine: false,
+                        pointStyle: 'triangle'
+                    }, {
+                        label: 'Sell Orders', 
+                        data: [],
+                        borderColor: '#ef4444',
+                        backgroundColor: '#ef4444',
+                        borderWidth: 0,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        showLine: false,
+                        pointStyle: 'rectRot'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: {
+                        duration: 750,
+                        easing: 'easeInOutQuart'
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
                     plugins: {
                         legend: {
-                            display: false
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: '#e2e8f0',
+                                font: { size: 11 },
+                                usePointStyle: true,
+                                filter: function(item) {
+                                    return item.text !== 'Price'; // Hide price line from legend
+                                }
+                            }
                         },
                         tooltip: {
                             mode: 'index',
@@ -1571,16 +1619,31 @@
             changeElement.style.color = change >= 0 ? '#22c55e' : '#ef4444';
         }
         
-        function addKanaDataPoint(time, price, volume = 0) {
+        function addKanaDataPoint(time, price, volume = 0, tradeType = null) {
             if (!kanaChart) return;
             
+            // Add price data point
             kanaChart.data.labels.push(time);
             kanaChart.data.datasets[0].data.push(price);
+            
+            // Add trade markers if this is a buy/sell
+            if (tradeType === 'BUY') {
+                kanaChart.data.datasets[1].data.push(price); // Buy markers
+                kanaChart.data.datasets[2].data.push(null);
+            } else if (tradeType === 'SELL') {
+                kanaChart.data.datasets[1].data.push(null);
+                kanaChart.data.datasets[2].data.push(price); // Sell markers
+            } else {
+                kanaChart.data.datasets[1].data.push(null);
+                kanaChart.data.datasets[2].data.push(null);
+            }
             
             // Keep only last 50 data points for performance
             if (kanaChart.data.labels.length > 50) {
                 kanaChart.data.labels.shift();
                 kanaChart.data.datasets[0].data.shift();
+                kanaChart.data.datasets[1].data.shift();
+                kanaChart.data.datasets[2].data.shift();
             }
             
             kanaChart.update('none'); // No animation for real-time updates
