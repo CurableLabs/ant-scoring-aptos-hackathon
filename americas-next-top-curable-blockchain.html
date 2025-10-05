@@ -843,6 +843,16 @@
             }
         }
 
+        // Show Lane 2 Celebration Modal
+        function showCelebrationModal() {
+            document.getElementById('celebration-modal').style.display = 'flex';
+        }
+
+        // Close Celebration Modal and Continue
+        function closeCelebrationModal() {
+            document.getElementById('celebration-modal').style.display = 'none';
+        }
+
         // Lane 2 Processing - Setup phase
         async function processLane2() {
             addLog('💎 LANE 2: Initializing community building...');
