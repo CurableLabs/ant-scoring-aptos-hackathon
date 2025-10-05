@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧬 Curable Labs: Trial by Molecule</title>
+    <title>🧬 MolecularDAO Protocol - Decentralized Research Funding</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -891,7 +891,7 @@
             document.getElementById('purchase-feed').style.display = 'block';
             
             // Reset progress
-            state.usdcRaised = 0;
+            state.cureTokens = 0;
             updateCommunityProgress();
             
             addLog('🌍 Community building initialized - Click "Simulate Community" for automatic funding');
@@ -921,15 +921,15 @@
                 { name: 'Roche Venture Fund', range: [2400, 2900], emoji: '🌍' }
             ];
 
-            let totalUsdc = state.usdcRaised || 0;
+            let totalCure = state.cureTokens || 0;
             let buyerIndex = 0;
             
             // Use setInterval to ensure proper completion
             const purchaseInterval = setInterval(() => {
-                if (totalUsdc >= state.usdcTarget || buyerIndex >= communityBuyers.length) {
+                if (totalCure >= state.cureTarget || buyerIndex >= communityBuyers.length) {
                     clearInterval(purchaseInterval);
                     
-                    if (totalUsdc >= state.usdcTarget) {
+                    if (totalCure >= state.cureTarget) {
                         clearInterval(purchaseInterval);
                         
                         // Reset button to original state (no confusing "Funding Complete")
@@ -938,7 +938,7 @@
                         btn.className = 'btn btn-success';
                         
                         // Show clean popup message
-                        addLog(`🎉 25,000 CURE GOVERNANCE THRESHOLD REACHED! (${totalUsdc.toLocaleString()}/25,000 CURE)`);
+                        addLog(`🎉 25,000 CURE GOVERNANCE THRESHOLD REACHED! (${totalCure.toLocaleString()}/25,000 CURE)`);
                         addLog('🔄 Autonomous smart contract validation triggered!');
                         addLog('✅ Community validation COMPLETE!');
                         
@@ -958,7 +958,7 @@
                         showCelebrationModal();
                         
                         // Update dashboard with CURE tokens
-                        state.cureDeployed += totalUsdc;
+                        state.cureDeployed += totalCure;
                         updateDashboard();
                         
                         // Enable Lane 3 immediately
@@ -973,15 +973,15 @@
                 const buyer = communityBuyers[buyerIndex];
                 const amount = Math.floor(Math.random() * (buyer.range[1] - buyer.range[0]) + buyer.range[0]);
                 
-                totalUsdc += amount;
-                state.usdcRaised = totalUsdc;
+                totalCure += amount;
+                state.cureTokens = totalCure;
                 
                 // Add to live purchase feed
                 const purchaseElement = document.createElement('div');
                 purchaseElement.style.fontSize = '0.75rem';
                 purchaseElement.style.marginBottom = '4px';
                 purchaseElement.style.color = '#06b6d4';
-                purchaseElement.innerHTML = `${buyer.emoji} ${buyer.name}: +${amount.toLocaleString()} CURE → Total: ${totalUsdc.toLocaleString()}`;
+                purchaseElement.innerHTML = `${buyer.emoji} ${buyer.name}: +${amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`;
                 document.getElementById('purchase-list').appendChild(purchaseElement);
                 
                 // Auto-scroll
@@ -1043,8 +1043,8 @@
 
         // Update Community Progress Visual
         function updateCommunityProgress() {
-            const currentAmount = state.usdcRaised || 0;
-            const percentage = Math.min(100, (currentAmount / state.usdcTarget) * 100);
+            const currentAmount = state.cureTokens || 0;
+            const percentage = Math.min(100, (currentAmount / state.cureTarget) * 100);
             document.getElementById('cure-progress').style.width = percentage + '%';
             document.getElementById('cure-percentage').textContent = Math.round(percentage) + '%';
             
@@ -1147,25 +1147,23 @@
             addLog(`🏛️ Auto-creating SubDAO: ${state.currentMolecule.name} Research DAO`);
             addLog(`💎 SubDAO Token: ${subDAOSymbol}`);
             
-            // Enhanced disease mapping for more molecules
-            const diseaseMap = {
-                'Tozadenant': 'PD', 'L-DOPA': 'PD', 'Metformin': 'DM', 'Adalimumab': 'RA',
-                'Remdesivir': 'VR', 'Paxlovid': 'VR', 'Aspirin': 'CV', 'Morphine': 'PM',
-                'Penicillin': 'AI', 'Ibuprofen': 'IF'
-            };
-            
-            const diseaseCode = diseaseMap[state.currentMolecule.name.split(' ')[0]] || 'GM';
-            const tokenSymbol = `$PDCure-${diseaseCode}`;
+            // Use the existing diseaseMap and subDAOSymbol from above
             const initialPrice = 0.015 + Math.random() * 0.025; // $0.015-$0.040
             const marketCap = Math.round(100000 * initialPrice);
 
             // Store marketplace data
+            // Create SubDAO marketplace data structure  
             state.marketplace = {
-                tokenSymbol: tokenSymbol,
+                tokenSymbol: subDAOSymbol,
+                cureBackedSupply: state.cureTokens,
                 price: initialPrice,
                 marketCap: marketCap,
-                totalSupply: 100000,
-                bondingCurveMultiplier: 1.0
+                totalSupply: 80000,
+                volume24h: 0,
+                bondingCurveMultiplier: 1.0,
+                parentDAOTokens: state.cureTokens,
+                governanceWeight: Math.floor(state.cureTokens / 1000),
+                diseaseCategory: diseaseCode
             };
 
             console.log('✅ Marketplace data created:', state.marketplace);
