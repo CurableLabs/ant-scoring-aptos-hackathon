@@ -382,17 +382,17 @@
 
             <!-- Lane 2 -->
             <div class="lane-card">
-                <h2>💎 Lane 2: CURE Community Building</h2>
+                <h2>💎 Lane 2: USDC Community Funding</h2>
                 
                 <div id="community-progress" style="display: none;">
                     <div style="color: #f8fafc; font-weight: 600; margin: 16px 0;">
-                        🎯 Community CURE Progress: <span id="cure-percentage">0%</span>
+                        🎯 USDC Community Funding: <span id="cure-percentage">0%</span>
                     </div>
                     <div class="progress-bar">
                         <div class="progress-fill" id="cure-progress"></div>
                     </div>
                     <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 8px;">
-                        Target: 100,000 CURE tokens
+                        Target: $25,000 USDC
                     </div>
                 </div>
 
@@ -527,7 +527,7 @@
                 </div>
                 
                 <div style="font-size: 1.4rem; color: #10b981; font-weight: 600; margin-bottom: 16px;">
-                    💰 100,000 CURE TOKEN THRESHOLD ACHIEVED! 💰
+                    💵 $25,000 USDC FUNDING GOAL ACHIEVED! 💵
                 </div>
                 
                 <div style="color: #e2e8f0; line-height: 1.6; margin-bottom: 20px;">
@@ -556,18 +556,31 @@
     </div>
 
     <script>
+        // USDC Configuration for Circle Partner Bounty
+        const USDC_CONFIG = {
+            symbol: "USDC",
+            name: "USD Coin",
+            decimals: 6,
+            // Simulation mode address (for development)
+            simAddress: "simulation_usdc",
+            // Real Aptos USDC address (for deployment)
+            realAddress: "0x5e156f1207d0ebfa19a9eeff00d62a282278fb8719f4fab3a586a0a2c0fffbea::coin::T",
+            icon: "💵",
+            color: "#2775CA" // USDC brand color
+        };
+
         // Simple state
         let state = {
             labBadges: 0,
             antScore: 0,
-            cureTokens: 0,
-            cureTarget: 100000,
+            usdcDeployed: 0, // Changed from cureTokens to usdcDeployed
+            usdcTarget: 25000, // Realistic funding target: $25,000 USDC
             currentMolecule: null,
             antPassed: false,
             // Dynamic metrics for meaningful dashboard
             totalBadges: 0,
             recentAntScore: '--',
-            cureDeployed: 0,
+            usdcDeployed: 0, // Changed from cureDeployed to usdcDeployed
             activeMolecules: 0
         };
 
@@ -576,7 +589,7 @@
             try {
                 document.getElementById('total-badges').textContent = state.totalBadges;
                 document.getElementById('recent-ant-score').textContent = state.recentAntScore;
-                document.getElementById('cure-deployed').textContent = state.cureDeployed.toLocaleString();
+                document.getElementById('cure-deployed').textContent = '$' + state.usdcDeployed.toLocaleString();
                 document.getElementById('active-molecules').textContent = state.activeMolecules;
                 console.log('✅ Dashboard updated successfully');
             } catch (error) {
@@ -857,18 +870,18 @@
         async function processLane2() {
             addLog('💎 LANE 2: Initializing community building...');
             addLog(`🧬 Target molecule: ${state.currentMolecule.name}`);
-            addLog(`🎯 Community funding goal: 100,000 CURE tokens`);
+            addLog(`🎯 Community funding goal: $25,000 USDC stablecoins`);
             
             // Show progress section
             document.getElementById('community-progress').style.display = 'block';
             document.getElementById('purchase-feed').style.display = 'block';
             
             // Reset progress
-            state.cureTokens = 0;
+            state.usdcRaised = 0;
             updateCommunityProgress();
             
             addLog('🌍 Community building initialized - Click "Simulate Community" for automatic funding');
-            addLog('💡 Watch real-time community purchases build toward the 100,000 CURE threshold');
+            addLog('💡 Watch real-time USDC contributions from research institutions and DeFi community');
         }
 
         // Simulate Community Buying - FIXED WITH PROPER ENDING
@@ -880,28 +893,29 @@
             btn.textContent = '⏳ Simulating...';
             
             // Enhanced randomized community buyers with MORE buyers to ensure 100k
+            // Updated for USDC - Realistic DeFi/Research Contributors
             const communityBuyers = [
-                { name: 'Stanford Research Lab', range: [12000, 18000], emoji: '🏛️' },
-                { name: 'Dr. Sarah Wilson', range: [7000, 12000], emoji: '👩‍⚕️' },
-                { name: 'Biotech Accelerator Fund', range: [15000, 22000], emoji: '🚀' },
-                { name: 'Children\'s Hospital', range: [8000, 15000], emoji: '🏥' },
-                { name: 'Parkinson\'s Foundation', range: [10000, 16000], emoji: '🧠' },
-                { name: 'Innovation Capital', range: [14000, 20000], emoji: '💰' },
-                { name: 'MIT Medical Lab', range: [9000, 14000], emoji: '🧪' },
-                { name: 'Dr. Rodriguez Research', range: [6000, 11000], emoji: '👨‍⚕️' },
-                { name: 'HealthTech Ventures', range: [11000, 17000], emoji: '🏢' },
-                { name: 'Cambridge Bio Fund', range: [13000, 19000], emoji: '🎓' }
+                { name: 'Stanford Research Lab', range: [2800, 3500], emoji: '🏛️' },
+                { name: 'Andreessen Horowitz Bio Fund', range: [3500, 4200], emoji: '💼' },
+                { name: 'Circle Ventures', range: [2200, 2800], emoji: '💵' },
+                { name: 'Pfizer Digital Health', range: [2800, 3500], emoji: '🏥' },
+                { name: 'DeFi Alliance', range: [2000, 2800], emoji: '🔗' },
+                { name: 'Novartis Venture Fund', range: [3200, 4000], emoji: '🧬' },
+                { name: 'Compound Community', range: [1800, 2500], emoji: '🏦' },
+                { name: 'Johnson & Johnson Innovation', range: [3000, 3800], emoji: '🔬' },
+                { name: 'Aave Ecosystem Fund', range: [2200, 3000], emoji: '👻' },
+                { name: 'Roche Venture Fund', range: [2800, 3500], emoji: '🌍' }
             ];
 
-            let totalCure = state.cureTokens;
+            let totalUsdc = state.usdcRaised || 0;
             let buyerIndex = 0;
             
             // Use setInterval to ensure proper completion
             const purchaseInterval = setInterval(() => {
-                if (totalCure >= 100000 || buyerIndex >= communityBuyers.length) {
+                if (totalUsdc >= state.usdcTarget || buyerIndex >= communityBuyers.length) {
                     clearInterval(purchaseInterval);
                     
-                    if (totalCure >= 100000) {
+                    if (totalUsdc >= state.usdcTarget) {
                         clearInterval(purchaseInterval);
                         
                         // Reset button to original state (no confusing "Funding Complete")
@@ -910,7 +924,7 @@
                         btn.className = 'btn btn-success';
                         
                         // Show clean popup message
-                        addLog(`🎉 100,000 CURE THRESHOLD REACHED! (${totalCure.toLocaleString()}/100,000 CURE)`);
+                        addLog(`🎉 $25,000 USDC FUNDING GOAL REACHED! ($${totalUsdc.toLocaleString()}/$25,000 USDC)`);
                         addLog('🔄 Autonomous smart contract validation triggered!');
                         addLog('✅ Community validation COMPLETE!');
                         
@@ -918,7 +932,7 @@
                         // ENHANCED CELEBRATION POPUP 
                         const celebrationMessage = `🎉🎊🌟 CONGRATULATIONS! 🌟🎊🎉
 
-💰 100,000 CURE TOKEN THRESHOLD ACHIEVED! 💰
+💵 $25,000 USDC FUNDING GOAL ACHIEVED! 💵
 
 🏆 Community has successfully funded your molecule! 🏆
 🚀 Ready to launch to the marketplace! 🚀
@@ -930,7 +944,7 @@
                         showCelebrationModal();
                         
                         // Update dashboard
-                        state.cureDeployed += state.cureTokens;
+                        state.usdcDeployed += totalUsdc;
                         updateDashboard();
                         
                         // Enable Lane 3 immediately
@@ -945,15 +959,15 @@
                 const buyer = communityBuyers[buyerIndex];
                 const amount = Math.floor(Math.random() * (buyer.range[1] - buyer.range[0]) + buyer.range[0]);
                 
-                totalCure += amount;
-                state.cureTokens = totalCure;
+                totalUsdc += amount;
+                state.usdcRaised = totalUsdc;
                 
                 // Add to live purchase feed
                 const purchaseElement = document.createElement('div');
                 purchaseElement.style.fontSize = '0.75rem';
                 purchaseElement.style.marginBottom = '4px';
                 purchaseElement.style.color = '#06b6d4';
-                purchaseElement.innerHTML = `${buyer.emoji} ${buyer.name}: +${amount.toLocaleString()} CURE → Total: ${totalCure.toLocaleString()}`;
+                purchaseElement.innerHTML = `${buyer.emoji} ${buyer.name}: +$${amount.toLocaleString()} USDC → Total: $${totalUsdc.toLocaleString()}`;
                 document.getElementById('purchase-list').appendChild(purchaseElement);
                 
                 // Auto-scroll
@@ -1015,7 +1029,8 @@
 
         // Update Community Progress Visual
         function updateCommunityProgress() {
-            const percentage = Math.min(100, (state.cureTokens / 100000) * 100);
+            const currentAmount = state.usdcRaised || 0;
+            const percentage = Math.min(100, (currentAmount / state.usdcTarget) * 100);
             document.getElementById('cure-progress').style.width = percentage + '%';
             document.getElementById('cure-percentage').textContent = Math.round(percentage) + '%';
             
