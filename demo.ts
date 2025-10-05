@@ -14,7 +14,7 @@
  * - Real-time scoring calculations
  */
 
-import { Aptos, AptosConfig, Network, Account } from "@aptos-labs/ts-sdk";
+import { AptosAccount, AptosClient } from "aptos";
 import { ANTScoringHelper, ScoreInput, createExampleScores, createPassingScores } from "./antScoringUtils";
 
 // Demo configuration
@@ -169,7 +169,7 @@ class ANTScoringDemo {
     /**
      * Simulate scoring phase
      */
-    async simulateScoring(proposalIds: number[]): Promise<number[]> {
+    async simulateScoring(proposalIds: number[]): Promise<void> {
         this.printHeader("🔬 SCORING PHASE - MULTI-DIMENSIONAL EVALUATION");
 
         const scorers = [

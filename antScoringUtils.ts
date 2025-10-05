@@ -1,4 +1,4 @@
-import { Aptos, AptosConfig, Network, Account } from "@aptos-labs/ts-sdk";
+import { AptosClient, AptosAccount, TxnBuilderTypes, HexString, MaybeHexString } from "aptos";
 
 // Type definitions for ANT Scoring System on Aptos
 export interface ScientificMeritScores {
