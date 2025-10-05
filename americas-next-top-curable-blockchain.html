@@ -1388,6 +1388,20 @@
             
             addLog('📈 Starting bonding curve simulation...');
             
+            // FORCE Kana Labs chart initialization if needed
+            if (!kanaChart) {
+                console.log('⚠️ Kana chart not ready - initializing now...');
+                initializeKanaChart();
+                
+                // Wait a moment for initialization
+                setTimeout(() => {
+                    if (kanaChart) {
+                        console.log('✅ Kana chart successfully initialized');
+                        addKanaDataPoint(new Date().toLocaleTimeString(), state.marketplace.price, 0, null);
+                    }
+                }, 100);
+            }
+            
             const btn = document.getElementById('bonding-btn');
             btn.disabled = true;
             btn.textContent = '⏳ Trading...';
@@ -1425,14 +1439,20 @@
                 const trade = traders[tradeIndex];
                 console.log(`🔄 Processing trade ${tradeIndex + 1}/${traders.length}: ${trade.name} ${trade.type} $${trade.amount}`);
                 
-                // Enhanced price calculation with more dramatic movements
+                // DRAMATIC price movements for clear chart visualization
                 let priceChange;
+                const basePrice = state.marketplace.price;
+                
                 if (trade.type === 'BUY') {
-                    priceChange = (trade.amount / 15000) * (0.8 + Math.random() * 0.4); // 20% variance
+                    // More aggressive price increases for visibility
+                    priceChange = (trade.amount / 10000) * (1.2 + Math.random() * 0.8); // 40% variance, stronger impact
                     state.marketplace.price += priceChange;
+                    console.log(`📈 BUY: +$${priceChange.toFixed(4)} (${((priceChange/basePrice)*100).toFixed(1)}%)`);
                 } else {
-                    priceChange = (trade.amount / 18000) * (0.8 + Math.random() * 0.4); // 20% variance  
-                    state.marketplace.price = Math.max(0.001, state.marketplace.price - priceChange);
+                    // More aggressive price decreases for visibility  
+                    priceChange = (trade.amount / 12000) * (1.0 + Math.random() * 0.6); // 30% variance
+                    state.marketplace.price = Math.max(0.005, state.marketplace.price - priceChange);
+                    console.log(`📉 SELL: -$${priceChange.toFixed(4)} (${((priceChange/basePrice)*100).toFixed(1)}%)`);
                 }
                 
                 console.log(`💰 Price Movement: ${trade.type} $${trade.amount} → ${priceChange > 0 ? '+' : ''}$${priceChange.toFixed(4)} → $${state.marketplace.price.toFixed(4)}`);
@@ -1513,7 +1533,16 @@
         
         function initializeKanaChart() {
             const ctx = document.getElementById('kana-price-chart');
-            if (!ctx || kanaChart) return; // Already initialized
+            if (!ctx) {
+                console.error('❌ Kana chart canvas not found!');
+                return;
+            }
+            if (kanaChart) {
+                console.log('✅ Kana chart already initialized');
+                return;
+            }
+            
+            console.log('🔄 Initializing Kana Labs professional chart...');
             
             kanaChart = new Chart(ctx, {
                 type: 'line',
