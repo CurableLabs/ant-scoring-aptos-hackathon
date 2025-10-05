@@ -382,17 +382,17 @@
 
             <!-- Lane 2 -->
             <div class="lane-card">
-                <h2>💎 Lane 2: USDC Community Funding</h2>
+                <h2>🧬 Lane 2: CURE Token Governance</h2>
                 
                 <div id="community-progress" style="display: none;">
                     <div style="color: #f8fafc; font-weight: 600; margin: 16px 0;">
-                        🎯 USDC Community Funding: <span id="cure-percentage">0%</span>
+                        🎯 CURE Token Governance: <span id="cure-percentage">0%</span>
                     </div>
                     <div class="progress-bar">
                         <div class="progress-fill" id="cure-progress"></div>
                     </div>
                     <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 8px;">
-                        Target: $25,000 USDC
+                        Target: 25,000 CURE tokens ($25 USDC backing)
                     </div>
                 </div>
 
@@ -527,7 +527,7 @@
                 </div>
                 
                 <div style="font-size: 1.4rem; color: #10b981; font-weight: 600; margin-bottom: 16px;">
-                    💵 $25,000 USDC FUNDING GOAL ACHIEVED! 💵
+                    🧬 25,000 CURE GOVERNANCE THRESHOLD REACHED! 🧬
                 </div>
                 
                 <div style="color: #e2e8f0; line-height: 1.6; margin-bottom: 20px;">
@@ -556,31 +556,45 @@
     </div>
 
     <script>
-        // USDC Configuration for Circle Partner Bounty
+        // CURE Token Configuration - Pure DeFi Governance
+        const CURE_CONFIG = {
+            symbol: "CURE",
+            name: "Curable Governance Token", 
+            decimals: 3,
+            priceInUSDC: 0.001, // $0.001 per CURE token
+            // Simulation mode address
+            simAddress: "simulation_cure",
+            // Real Aptos address (to be deployed)
+            realAddress: "0xYOUR_ADDRESS::cure_token::CURE",
+            icon: "🧬",
+            color: "#10b981", // Green for biotech
+            governanceThreshold: 25000 // 25,000 CURE = $25 USDC backing
+        };
+
+        // USDC Backing Configuration
         const USDC_CONFIG = {
             symbol: "USDC",
             name: "USD Coin",
             decimals: 6,
-            // Simulation mode address (for development)
             simAddress: "simulation_usdc",
-            // Real Aptos USDC address (for deployment)
             realAddress: "0x5e156f1207d0ebfa19a9eeff00d62a282278fb8719f4fab3a586a0a2c0fffbea::coin::T",
             icon: "💵",
-            color: "#2775CA" // USDC brand color
+            color: "#2775CA"
         };
 
         // Simple state
         let state = {
             labBadges: 0,
             antScore: 0,
-            usdcDeployed: 0, // Changed from cureTokens to usdcDeployed
-            usdcTarget: 25000, // Realistic funding target: $25,000 USDC
+            cureTokens: 0, // CURE tokens for governance
+            cureTarget: 25000, // 25,000 CURE tokens = $25 USDC backing
+            usdcBacking: 0, // USDC backing the CURE tokens
             currentMolecule: null,
             antPassed: false,
             // Dynamic metrics for meaningful dashboard
             totalBadges: 0,
             recentAntScore: '--',
-            usdcDeployed: 0, // Changed from cureDeployed to usdcDeployed
+            cureDeployed: 0, // Total CURE tokens deployed across all molecules
             activeMolecules: 0
         };
 
@@ -589,7 +603,7 @@
             try {
                 document.getElementById('total-badges').textContent = state.totalBadges;
                 document.getElementById('recent-ant-score').textContent = state.recentAntScore;
-                document.getElementById('cure-deployed').textContent = '$' + state.usdcDeployed.toLocaleString();
+                document.getElementById('cure-deployed').textContent = state.cureDeployed.toLocaleString() + ' CURE';
                 document.getElementById('active-molecules').textContent = state.activeMolecules;
                 console.log('✅ Dashboard updated successfully');
             } catch (error) {
@@ -870,7 +884,7 @@
         async function processLane2() {
             addLog('💎 LANE 2: Initializing community building...');
             addLog(`🧬 Target molecule: ${state.currentMolecule.name}`);
-            addLog(`🎯 Community funding goal: $25,000 USDC stablecoins`);
+            addLog(`🎯 Governance threshold: 25,000 CURE tokens ($25 USDC backing)`);
             
             // Show progress section
             document.getElementById('community-progress').style.display = 'block';
@@ -881,7 +895,7 @@
             updateCommunityProgress();
             
             addLog('🌍 Community building initialized - Click "Simulate Community" for automatic funding');
-            addLog('💡 Watch real-time USDC contributions from research institutions and DeFi community');
+            addLog('💡 Watch community acquire CURE governance tokens to signal molecular support');
         }
 
         // Simulate Community Buying - FIXED WITH PROPER ENDING
@@ -893,18 +907,18 @@
             btn.textContent = '⏳ Simulating...';
             
             // Enhanced randomized community buyers with MORE buyers to ensure 100k
-            // Updated for USDC - Realistic DeFi/Research Contributors
+            // CURE Token Governance - DeFi Community Signaling  
             const communityBuyers = [
-                { name: 'Stanford Research Lab', range: [2800, 3500], emoji: '🏛️' },
-                { name: 'Andreessen Horowitz Bio Fund', range: [3500, 4200], emoji: '💼' },
-                { name: 'Circle Ventures', range: [2200, 2800], emoji: '💵' },
-                { name: 'Pfizer Digital Health', range: [2800, 3500], emoji: '🏥' },
-                { name: 'DeFi Alliance', range: [2000, 2800], emoji: '🔗' },
-                { name: 'Novartis Venture Fund', range: [3200, 4000], emoji: '🧬' },
-                { name: 'Compound Community', range: [1800, 2500], emoji: '🏦' },
-                { name: 'Johnson & Johnson Innovation', range: [3000, 3800], emoji: '🔬' },
-                { name: 'Aave Ecosystem Fund', range: [2200, 3000], emoji: '👻' },
-                { name: 'Roche Venture Fund', range: [2800, 3500], emoji: '🌍' }
+                { name: 'Stanford Research Lab', range: [2500, 3000], emoji: '🏛️' },
+                { name: 'Andreessen Horowitz Bio Fund', range: [3000, 3500], emoji: '💼' },
+                { name: 'DeFi Pulse Community', range: [2000, 2500], emoji: '📊' },
+                { name: 'Pfizer Digital Health', range: [2500, 3000], emoji: '🏥' },
+                { name: 'Compound Governance', range: [1800, 2300], emoji: '🏦' },
+                { name: 'Novartis Venture Fund', range: [2800, 3200], emoji: '🧬' },
+                { name: 'Uniswap Community', range: [2200, 2700], emoji: '🦄' },
+                { name: 'Johnson & Johnson Innovation', range: [2600, 3100], emoji: '🔬' },
+                { name: 'Aave Ecosystem Governors', range: [2000, 2500], emoji: '👻' },
+                { name: 'Roche Venture Fund', range: [2400, 2900], emoji: '🌍' }
             ];
 
             let totalUsdc = state.usdcRaised || 0;
@@ -924,7 +938,7 @@
                         btn.className = 'btn btn-success';
                         
                         // Show clean popup message
-                        addLog(`🎉 $25,000 USDC FUNDING GOAL REACHED! ($${totalUsdc.toLocaleString()}/$25,000 USDC)`);
+                        addLog(`🎉 25,000 CURE GOVERNANCE THRESHOLD REACHED! (${totalUsdc.toLocaleString()}/25,000 CURE)`);
                         addLog('🔄 Autonomous smart contract validation triggered!');
                         addLog('✅ Community validation COMPLETE!');
                         
@@ -932,7 +946,7 @@
                         // ENHANCED CELEBRATION POPUP 
                         const celebrationMessage = `🎉🎊🌟 CONGRATULATIONS! 🌟🎊🎉
 
-💵 $25,000 USDC FUNDING GOAL ACHIEVED! 💵
+🧬 25,000 CURE GOVERNANCE THRESHOLD REACHED! 🧬
 
 🏆 Community has successfully funded your molecule! 🏆
 🚀 Ready to launch to the marketplace! 🚀
@@ -943,8 +957,8 @@
 🎯 Achievement Unlocked: Community Champion! 🎯`;
                         showCelebrationModal();
                         
-                        // Update dashboard
-                        state.usdcDeployed += totalUsdc;
+                        // Update dashboard with CURE tokens
+                        state.cureDeployed += totalUsdc;
                         updateDashboard();
                         
                         // Enable Lane 3 immediately
@@ -967,7 +981,7 @@
                 purchaseElement.style.fontSize = '0.75rem';
                 purchaseElement.style.marginBottom = '4px';
                 purchaseElement.style.color = '#06b6d4';
-                purchaseElement.innerHTML = `${buyer.emoji} ${buyer.name}: +$${amount.toLocaleString()} USDC → Total: $${totalUsdc.toLocaleString()}`;
+                purchaseElement.innerHTML = `${buyer.emoji} ${buyer.name}: +${amount.toLocaleString()} CURE → Total: ${totalUsdc.toLocaleString()}`;
                 document.getElementById('purchase-list').appendChild(purchaseElement);
                 
                 // Auto-scroll
@@ -1107,10 +1121,31 @@
             }, 1500); // 1.5 second delay for upload animation
         }
 
-        // Lane 3 Processing - DEBUG AND FIX
+        // Lane 3 Processing - Auto SubDAO Creation
         function processLane3() {
-            console.log('🏪 LANE 3: Creating molecular marketplace...');
-            addLog('🏪 LANE 3: Creating molecular marketplace...');
+            console.log('🏪 LANE 3: Creating Auto SubDAO...');
+            addLog('🏪 LANE 3: Initializing Auto SubDAO creation...');
+            
+            // Auto SubDAO Token Creation based on molecule/disease
+            const diseaseMap = {
+                'Tozadenant': 'PD', // Parkinson's Disease
+                'L-DOPA': 'PD',
+                'Aspirin': 'CV', // Cardiovascular
+                'Metformin': 'DM', // Diabetes
+                'Adalimumab': 'AI', // Autoimmune
+                'Remdesivir': 'AV', // Antiviral
+                'Paxlovid': 'AV',
+                'Imatinib': 'CN', // Cancer
+                'Paclitaxel': 'CN',
+                'Donepezil': 'AD' // Alzheimer's
+            };
+            
+            const moleculeName = state.currentMolecule.name.split(' ')[0];
+            const diseaseCode = diseaseMap[moleculeName] || 'GM'; // Generic Medicine
+            const subDAOSymbol = `$${diseaseCode}-CURE`;
+            
+            addLog(`🏛️ Auto-creating SubDAO: ${state.currentMolecule.name} Research DAO`);
+            addLog(`💎 SubDAO Token: ${subDAOSymbol}`);
             
             // Enhanced disease mapping for more molecules
             const diseaseMap = {
@@ -1138,10 +1173,12 @@
             // DON'T show marketplace data yet - wait for user to click Upload
             console.log('💡 Marketplace data created but hidden - waiting for user upload click');
 
-            addLog(`🏛️ SubDAO created: ${state.currentMolecule.name} Molecular DAO`);
-            addLog(`💎 Token launched: ${tokenSymbol}`);
-            addLog(`📈 Initial price: $${initialPrice.toFixed(4)}`);
-            addLog(`💰 Market cap: $${marketCap.toLocaleString()}`);
+            addLog(`🏛️ SubDAO created: ${state.currentMolecule.name} Research DAO`);
+            addLog(`💎 SubDAO Token launched: ${subDAOSymbol}`);
+            addLog(`🧬 Backed by ${state.cureTokens.toLocaleString()} CURE governance tokens`);
+            addLog(`📊 Governance weight: ${Math.floor(state.cureTokens / 1000)} votes`);
+            addLog(`📈 Initial bonding curve price: $${initialPrice.toFixed(4)}`);
+            addLog(`💰 SubDAO Market cap: $${marketCap.toLocaleString()}`);
             addLog('🚀 Marketplace is LIVE! Upload and trading ready.');
             
             // Update dashboard
