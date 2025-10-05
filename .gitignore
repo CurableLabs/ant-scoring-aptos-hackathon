@@ -55,3 +55,14 @@ build/
 *.bak
 *.backup
 *~
+
+# Aptos private keys and sensitive files (CRITICAL - DO NOT DEPLOY)
+.aptos/
+.aptos-key
+.aptos-key.pub
+*.key
+*.pem
+credentials.json
+
+# Deployment-specific
+.render/
