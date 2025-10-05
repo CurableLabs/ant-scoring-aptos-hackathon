@@ -683,7 +683,7 @@
     </div>
 
     <script>
-        // CURE Token Configuration - Pure DeFi Governance
+        // CURE Token Configuration - LIVE ON MAINNET!
         const CURE_CONFIG = {
             symbol: "CURE",
             name: "Curable Governance Token", 
@@ -691,11 +691,14 @@
             priceInUSDC: 0.001, // $0.001 per CURE token
             // Simulation mode address
             simAddress: "simulation_cure",
-            // Real Aptos address (to be deployed)
-            realAddress: "0xYOUR_ADDRESS::cure_token::CURE",
+            // LIVE MAINNET ADDRESS!
+            realAddress: "0xd66a8d0824e419d4e279797f44270ffafbf349599f245393ddc018892c34ab6f::clean_minimal_tri_lane::CURE",
             icon: "🧬",
             color: "#10b981", // Green for biotech
-            governanceThreshold: 25000 // 25,000 CURE = $25 USDC backing
+            governanceThreshold: 25000, // 25,000 CURE = $25 USDC backing
+            // MAINNET CONFIGURATION
+            mainnetDeployed: true,
+            deployedAddress: "0xd66a8d0824e419d4e279797f44270ffafbf349599f245393ddc018892c34ab6f"
         };
 
         // USDC Backing Configuration
@@ -1729,7 +1732,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🎯 MolecularDAO Protocol loaded');
             updateDashboard(); // Initialize dynamic dashboard
-            addLog('🌐 MolecularDAO Protocol ready - Decentralized Research Funding');
+            addLog('🌐 MolecularDAO Protocol ready - 🎉 LIVE ON APTOS MAINNET!');
         });
     </script>
 </body>
