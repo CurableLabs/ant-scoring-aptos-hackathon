@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🧬 MolecularDAO Protocol - Decentralized Research Funding</title>
+    <!-- Kana Labs Integration: Professional Trading Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -44,6 +46,91 @@
             border-radius: 16px;
             padding: 24px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Kana Labs Professional Trading Interface */
+        .kana-trading-container {
+            background: linear-gradient(135deg, #0a0e17 0%, #0f1419 100%);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            display: none;
+        }
+
+        .kana-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            color: #e2e8f0;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .kana-price-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .kana-metric {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .kana-metric-label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-bottom: 2px;
+        }
+
+        .kana-metric-value {
+            font-size: 0.85rem;
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        .kana-chart-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 8px;
+            height: 250px;
+            position: relative;
+        }
+
+        .kana-trading-controls {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .kana-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .kana-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        .kana-btn.active {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
         }
         
         .btn {
@@ -433,6 +520,46 @@
                     </div>
                 </div>
                 
+                <!-- Kana Labs Professional Trading Interface -->
+                <div id="kana-trading-interface" class="kana-trading-container">
+                    <div class="kana-chart-header">
+                        <span>📊 Professional Trading Analytics</span>
+                        <span style="color: #22c55e; font-size: 0.75rem;">Powered by Kana Labs</span>
+                    </div>
+                    
+                    <div class="kana-price-display">
+                        <div class="kana-metric">
+                            <div class="kana-metric-label">Price</div>
+                            <div class="kana-metric-value" id="kana-current-price">$0.000</div>
+                        </div>
+                        <div class="kana-metric">
+                            <div class="kana-metric-label">24h Vol</div>
+                            <div class="kana-metric-value" id="kana-volume">$0</div>
+                        </div>
+                        <div class="kana-metric">
+                            <div class="kana-metric-label">Market Cap</div>
+                            <div class="kana-metric-value" id="kana-market-cap">$0</div>
+                        </div>
+                        <div class="kana-metric">
+                            <div class="kana-metric-label">Change</div>
+                            <div class="kana-metric-value" id="kana-price-change">+0.00%</div>
+                        </div>
+                    </div>
+
+                    <div class="kana-chart-container">
+                        <canvas id="kana-price-chart"></canvas>
+                    </div>
+
+                    <div class="kana-trading-controls">
+                        <button class="kana-btn active" onclick="setKanaTimeframe('5m')">5M</button>
+                        <button class="kana-btn" onclick="setKanaTimeframe('15m')">15M</button>
+                        <button class="kana-btn" onclick="setKanaTimeframe('1h')">1H</button>
+                        <button class="kana-btn" onclick="setKanaTimeframe('4h')">4H</button>
+                        <button class="kana-btn" onclick="setKanaTimeframe('1d')">1D</button>
+                    </div>
+                </div>
+
+                <!-- Legacy Bonding Curve Display -->
                 <div id="bonding-curve-display" style="display: none;">
                     <div style="color: #f8fafc; font-weight: 600; margin: 16px 0;">📈 Bonding Curve Activity</div>
                     <div id="investment-feed" style="font-size: 0.8rem; max-height: 100px; overflow-y: auto;"></div>
@@ -1082,9 +1209,18 @@
                     console.log('✅ Live molecule data displayed after upload');
                 }
                 
+                // Show Kana Labs trading interface instead
+                const kanaInterface = document.getElementById('kana-trading-interface');
+                if (kanaInterface) {
+                    kanaInterface.style.display = 'block';
+                    initializeKanaChart();
+                    console.log('✅ Kana Labs trading interface displayed');
+                }
+                
+                const bondingDisplay = document.getElementById('bonding-curve-display');
                 if (bondingDisplay) {
                     bondingDisplay.style.display = 'block';
-                    console.log('✅ Trading interface displayed after upload');
+                    console.log('✅ Legacy trading interface displayed after upload');
                 }
 
                 // Update live molecule UI
@@ -1224,7 +1360,19 @@
 
         // Simulate Bonding Curve Trading - FULLY RESTORED FUNCTIONALITY
         function simulateBondingCurve() {
-            console.log('📈 Bonding curve simulation clicked');
+            console.log('📈 Starting Kana Labs bonding curve simulation...');
+            
+            // Initialize Kana metrics with current marketplace data
+            if (state.marketplace && kanaChart) {
+                const initialPrice = state.marketplace.price;
+                const initialVolume = state.marketplace.volume24h || 0;
+                const initialMarketCap = state.marketplace.marketCap;
+                
+                updateKanaMetrics(initialPrice, initialVolume, initialMarketCap, 0);
+                addKanaDataPoint(new Date().toLocaleTimeString(), initialPrice);
+                
+                console.log('✅ Kana Labs metrics initialized');
+            }
             
             if (!state.marketplace) {
                 addLog('❌ No marketplace created yet');
@@ -1295,6 +1443,15 @@
                     priceElement.textContent = `$${state.marketplace.price.toFixed(4)}`;
                 }
                 
+                // Update Kana Labs chart and metrics during trading simulation
+                if (kanaChart && state.marketData) {
+                    const currentTime = new Date().toLocaleTimeString();
+                    const priceChange = ((state.marketplace.price - (state.marketData.priceHistory[0]?.price || state.marketplace.price)) / (state.marketData.priceHistory[0]?.price || state.marketplace.price)) * 100;
+                    
+                    addKanaDataPoint(currentTime, state.marketplace.price);
+                    updateKanaMetrics(state.marketplace.price, state.marketData.volume24h, state.marketplace.marketCap, priceChange);
+                }
+                
                 if (marketCapElement) {
                     const newMarketCap = state.marketplace.totalSupply * state.marketplace.price;
                     marketCapElement.textContent = `$${newMarketCap.toLocaleString()}`;
@@ -1324,6 +1481,121 @@
 
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Kana Labs Chart Integration
+        let kanaChart = null;
+        let kanaTimeframe = '5m';
+        
+        function initializeKanaChart() {
+            const ctx = document.getElementById('kana-price-chart');
+            if (!ctx || kanaChart) return; // Already initialized
+            
+            kanaChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Price',
+                        data: [],
+                        borderColor: '#22c55e',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#22c55e',
+                        pointBorderColor: '#16a34a',
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#e2e8f0',
+                            bodyColor: '#22c55e',
+                            borderColor: '#22c55e',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                font: { size: 10 }
+                            }
+                        },
+                        y: {
+                            display: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                font: { size: 10 },
+                                callback: function(value) {
+                                    return '$' + value.toFixed(4);
+                                }
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hoverRadius: 5
+                        }
+                    }
+                }
+            });
+            
+            console.log('✅ Kana Labs chart initialized');
+        }
+        
+        function updateKanaMetrics(price, volume, marketCap, change) {
+            document.getElementById('kana-current-price').textContent = '$' + price.toFixed(4);
+            document.getElementById('kana-volume').textContent = '$' + volume.toLocaleString();
+            document.getElementById('kana-market-cap').textContent = '$' + marketCap.toLocaleString();
+            
+            const changeElement = document.getElementById('kana-price-change');
+            changeElement.textContent = (change >= 0 ? '+' : '') + change.toFixed(2) + '%';
+            changeElement.style.color = change >= 0 ? '#22c55e' : '#ef4444';
+        }
+        
+        function addKanaDataPoint(time, price, volume = 0) {
+            if (!kanaChart) return;
+            
+            kanaChart.data.labels.push(time);
+            kanaChart.data.datasets[0].data.push(price);
+            
+            // Keep only last 50 data points for performance
+            if (kanaChart.data.labels.length > 50) {
+                kanaChart.data.labels.shift();
+                kanaChart.data.datasets[0].data.shift();
+            }
+            
+            kanaChart.update('none'); // No animation for real-time updates
+        }
+        
+        function setKanaTimeframe(timeframe) {
+            kanaTimeframe = timeframe;
+            
+            // Update active button
+            document.querySelectorAll('.kana-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            console.log(`📊 Kana Labs timeframe changed to ${timeframe}`);
         }
 
         // Initialize with dashboard
