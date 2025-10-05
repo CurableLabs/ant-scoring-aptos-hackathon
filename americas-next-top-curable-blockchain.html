@@ -1202,7 +1202,7 @@
             setTimeout(() => {
                 // Show marketplace display sections
                 const moleculeListing = document.getElementById('molecule-listing');
-                const bondingDisplay = document.getElementById('bonding-curve-display');
+                const primaryBondingDisplay = document.getElementById('bonding-curve-display');
                 
                 if (moleculeListing) {
                     moleculeListing.style.display = 'block';
@@ -1217,9 +1217,9 @@
                     console.log('✅ Kana Labs trading interface displayed');
                 }
                 
-                const bondingDisplay = document.getElementById('bonding-curve-display');
-                if (bondingDisplay) {
-                    bondingDisplay.style.display = 'block';
+                const legacyBondingDisplay = document.getElementById('bonding-curve-display');
+                if (legacyBondingDisplay) {
+                    legacyBondingDisplay.style.display = 'block';
                     console.log('✅ Legacy trading interface displayed after upload');
                 }
 
