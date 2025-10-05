@@ -1392,13 +1392,20 @@
             btn.disabled = true;
             btn.textContent = '⏳ Trading...';
             
+            // Enhanced diverse trading activity for visual chart movement
             const traders = [
                 { name: 'Hedge Fund Alpha', type: 'BUY', amount: 5000 },
                 { name: 'Retail Investor', type: 'BUY', amount: 1200 },
                 { name: 'Institutional Buyer', type: 'BUY', amount: 8000 },
-                { name: 'Early Investor', type: 'SELL', amount: 2500 },
-                { name: 'DAO Treasury', type: 'BUY', amount: 15000 },
-                { name: 'Liquidity Provider', type: 'BUY', amount: 3000 }
+                { name: 'Day Trader Pro', type: 'SELL', amount: 2500 },
+                { name: 'DAO Treasury', type: 'BUY', amount: 12000 },
+                { name: 'Liquidity Provider', type: 'BUY', amount: 3000 },
+                { name: 'Whale Investor', type: 'BUY', amount: 20000 },
+                { name: 'Profit Taker', type: 'SELL', amount: 4000 },
+                { name: 'Research Fund', type: 'BUY', amount: 6500 },
+                { name: 'Market Maker', type: 'SELL', amount: 3200 },
+                { name: 'DeFi Protocol', type: 'BUY', amount: 9000 },
+                { name: 'Arbitrage Bot', type: 'SELL', amount: 1800 }
             ];
 
             let tradeIndex = 0;
@@ -1416,17 +1423,19 @@
                 }
                 
                 const trade = traders[tradeIndex];
-                console.log(`🔄 Processing trade ${tradeIndex + 1}/${traders.length}: ${trade.name}`);
+                console.log(`🔄 Processing trade ${tradeIndex + 1}/${traders.length}: ${trade.name} ${trade.type} $${trade.amount}`);
                 
-                // Enhanced price calculation
+                // Enhanced price calculation with more dramatic movements
                 let priceChange;
                 if (trade.type === 'BUY') {
-                    priceChange = trade.amount / 20000; // Buy increases price
+                    priceChange = (trade.amount / 15000) * (0.8 + Math.random() * 0.4); // 20% variance
                     state.marketplace.price += priceChange;
                 } else {
-                    priceChange = trade.amount / 25000; // Sell decreases price
+                    priceChange = (trade.amount / 18000) * (0.8 + Math.random() * 0.4); // 20% variance  
                     state.marketplace.price = Math.max(0.001, state.marketplace.price - priceChange);
                 }
+                
+                console.log(`💰 Price Movement: ${trade.type} $${trade.amount} → ${priceChange > 0 ? '+' : ''}$${priceChange.toFixed(4)} → $${state.marketplace.price.toFixed(4)}`);
                 
                 // Add to investment feed with enhanced display
                 const investmentFeed = document.getElementById('investment-feed');
@@ -1456,11 +1465,15 @@
                     const initialPrice = state.marketData.priceHistory[0]?.price || state.marketplace.price;
                     const priceChange = ((state.marketplace.price - initialPrice) / initialPrice) * 100;
                     
-                    // Add data point with trade type for visual markers
+                    // Add data point with trade type for visual markers - FORCE UPDATE
                     addKanaDataPoint(currentTime, state.marketplace.price, trade.amount, trade.type);
                     updateKanaMetrics(state.marketplace.price, state.marketData.volume24h, state.marketplace.marketCap, priceChange);
                     
-                    console.log(`📊 Kana Chart Update: ${trade.type} $${trade.amount} → $${state.marketplace.price.toFixed(4)}`);
+                    console.log(`📊 Kana Chart Update: ${trade.name} ${trade.type} $${trade.amount} → Price: $${state.marketplace.price.toFixed(4)}`);
+                    console.log(`📈 Chart Data Points: ${kanaChart.data.datasets[0].data.length}`);
+                } else {
+                    console.warn('⚠️ Kana Chart not available - initializing...');
+                    initializeKanaChart();
                 }
                 
                 if (marketCapElement) {
@@ -1472,7 +1485,7 @@
                 
                 tradeIndex++;
                 
-            }, 1200); // 1.2 seconds between trades for smooth visualization
+            }, 1200); // 1.2 seconds between trades for smooth Kana Labs visualization
         }
 
         // Helper functions
@@ -1646,7 +1659,7 @@
                 kanaChart.data.datasets[2].data.shift();
             }
             
-            kanaChart.update('none'); // No animation for real-time updates
+            kanaChart.update('active'); // Smooth animation for visual updates
         }
         
         function setKanaTimeframe(timeframe) {
