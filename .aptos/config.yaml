@@ -12,3 +12,9 @@ profiles:
     public_key: ed25519-pub-0x5b4887079053de3ea2254d1d4b822e2e09958df55523b74994800a72a43e500b
     account: 68525d6513fad9151c7b1db32b017f40b32e6af4606b1b673ec982c7ae985083
     rest_url: "https://fullnode.mainnet.aptoslabs.com"
+  petra:
+    network: Mainnet
+    private_key: ed25519-priv-0x365ccf494fa9331e2e2ff87ae3b10ef18ef508a95ee01c881f3dbd324750427c
+    public_key: ed25519-pub-0x6a471980998297ccd845a61c9aec690d54ff12c039aed22ab9ebaedbe56b3456
+    account: d66a8d0824e419d4e279797f44270ffafbf349599f245393ddc018892c34ab6f
+    rest_url: "https://fullnode.mainnet.aptoslabs.com"
