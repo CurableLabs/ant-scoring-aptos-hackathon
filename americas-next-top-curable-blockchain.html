@@ -1362,23 +1362,29 @@
         function simulateBondingCurve() {
             console.log('📈 Starting Kana Labs bonding curve simulation...');
             
-            // Initialize Kana metrics and starting price point
+            // Initialize marketData structure for proper data handling
+            state.marketData = {
+                price: state.marketplace.price,
+                volume24h: 0,
+                priceHistory: [{price: state.marketplace.price, time: Date.now()}]
+            };
+            
+            // Initialize Kana chart with starting data
             if (state.marketplace && kanaChart) {
                 const initialPrice = state.marketplace.price;
-                const initialVolume = state.marketplace.volume24h || 0;
-                const initialMarketCap = state.marketplace.marketCap;
                 
-                // Clear any existing chart data
+                // Clear existing chart data for fresh start
                 kanaChart.data.labels = [];
                 kanaChart.data.datasets[0].data = [];
                 kanaChart.data.datasets[1].data = [];
                 kanaChart.data.datasets[2].data = [];
                 
-                updateKanaMetrics(initialPrice, initialVolume, initialMarketCap, 0);
+                // Add starting point
+                updateKanaMetrics(initialPrice, 0, state.marketplace.marketCap, 0);
                 addKanaDataPoint(new Date().toLocaleTimeString(), initialPrice, 0, null);
                 
-                addLog('📊 Kana Labs professional trading interface initialized');
-                console.log('✅ Kana Labs chart ready for real-time trading simulation');
+                addLog('📊 Kana Labs trading interface ready - Starting price: $' + initialPrice.toFixed(4));
+                console.log('✅ Kana Labs chart initialized with starting price point');
             }
             
             if (!state.marketplace) {
@@ -1424,15 +1430,17 @@
 
             let tradeIndex = 0;
             
-            // Enhanced trading simulation with proper functionality
+            // FIXED: Trading simulation with proper loop progression
             const tradingInterval = setInterval(() => {
+                console.log(`🔍 Debug: tradeIndex=${tradeIndex}, traders.length=${traders.length}`);
+                
                 if (tradeIndex >= traders.length) {
                     clearInterval(tradingInterval);
                     btn.disabled = false;
                     btn.textContent = '📈 Simulate Trading';
                     addLog('✅ Bonding curve simulation complete!');
-                    addLog('🎉 FULL TRI-LANE PIPELINE DEMONSTRATION SUCCESSFUL!');
-                    console.log('🎉 Trading simulation completed successfully');
+                    addLog(`📊 Final Price: $${state.marketplace.price.toFixed(4)} | Trades: ${traders.length}`);
+                    console.log('🎉 Trading simulation completed - all traders processed');
                     return;
                 }
                 
@@ -1479,18 +1487,31 @@
                     priceElement.textContent = `$${state.marketplace.price.toFixed(4)}`;
                 }
                 
-                // ENHANCED: Update Kana Labs chart with buy/sell markers
+                // FIXED: Update Kana Labs chart with proper error handling
                 if (kanaChart) {
                     const currentTime = new Date().toLocaleTimeString();
+                    
+                    // Initialize marketData if needed
+                    if (!state.marketData) {
+                        state.marketData = {
+                            price: state.marketplace.price,
+                            volume24h: 0,
+                            priceHistory: [{price: state.marketplace.price, time: Date.now()}]
+                        };
+                    }
+                    
+                    // Calculate price change safely
                     const initialPrice = state.marketData.priceHistory[0]?.price || state.marketplace.price;
                     const priceChange = ((state.marketplace.price - initialPrice) / initialPrice) * 100;
                     
-                    // Add data point with trade type for visual markers - FORCE UPDATE
+                    // Update volume
+                    state.marketData.volume24h += trade.amount;
+                    
+                    // FORCE chart update with trade type
                     addKanaDataPoint(currentTime, state.marketplace.price, trade.amount, trade.type);
                     updateKanaMetrics(state.marketplace.price, state.marketData.volume24h, state.marketplace.marketCap, priceChange);
                     
-                    console.log(`📊 Kana Chart Update: ${trade.name} ${trade.type} $${trade.amount} → Price: $${state.marketplace.price.toFixed(4)}`);
-                    console.log(`📈 Chart Data Points: ${kanaChart.data.datasets[0].data.length}`);
+                    console.log(`✅ Kana Chart Updated: ${trade.name} ${trade.type} → $${state.marketplace.price.toFixed(4)}`);
                 } else {
                     console.warn('⚠️ Kana Chart not available - initializing...');
                     initializeKanaChart();
@@ -1504,6 +1525,7 @@
                 addLog(`📊 ${trade.name}: ${trade.type} $${trade.amount.toLocaleString()} → Price: $${state.marketplace.price.toFixed(4)}`);
                 
                 tradeIndex++;
+                console.log(`✅ Trade ${tradeIndex}/${traders.length} complete, moving to next...`);
                 
             }, 1200); // 1.2 seconds between trades for smooth Kana Labs visualization
         }
