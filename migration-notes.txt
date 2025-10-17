@@ -1,0 +1,30 @@
+MIGRATION NOTES - Move to Solidity
+==================================
+Date Started: October 17, 2025
+Branch: Aptos-to-solidity-migration
+
+GOAL: Transform ANT Scoring system from Aptos/Move to Ethereum L2 (Abstract or Arbitrum)
+
+CONTRACTS TO MIGRATE:
+1. sources/clean_ant_scoring.move
+2. sources/clean_deploy_ready.move
+3. sources/clean_minimal_tri_lane.move
+
+PHASE 1: Understanding the Current System
+------------------------------------------
+Questions to answer:
+- What does the ANT scoring system do?
+- What are the main data structures?
+- What are the key functions?
+- How does the tri-lane tokenomics work?
+
+CURSOR PROMPTS LOG:
+-------------------
+[Keep all your prompts here as you work]
+
+
+PROJECT STRUCTURE DECISION:
+---------------------------
+- Keep original Move code in sources/
+- Create new solidity/ folder for Solidity contracts
+- Both versions live in same repo on migration branch
