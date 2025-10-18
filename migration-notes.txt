@@ -10,13 +10,206 @@ CONTRACTS TO MIGRATE:
 2. sources/clean_deploy_ready.move
 3. sources/clean_minimal_tri_lane.move
 
-PHASE 1: Understanding the Current System
-------------------------------------------
+PHASE 1: UNDERSTANDING THE CURRENT SYSTEM
+==========================================
 Questions to answer:
-- What does the ANT scoring system do?
-- What are the main data structures?
-- What are the key functions?
-- How does the tri-lane tokenomics work?
+1. What does the ANT scoring system do?
+2. What are the main data structures?
+3. Some basic Move concepts
+4. What are the key functions?
+5. How does the tri-lane tokenomics work?
+
+ANSWERS
+===========================================
+1. The ANT Scoring system is a decentralized research proposal evaluation platform.
+Researchers submit proposals, authorized experts score them on 5 weighted categories
+(Scientific merit, feasibility, community alignment, resource efficiency, and open science).
+Proposals scoring >= 80% are approved for funding. All scores are recorded immuntably on the blockchain for transparency.
+
+--------------------------------------------
+2. MAIN DATA STRUCTURES
+--------------------------------------------    
+    => SCORE CATEGORY STRUCTS
+    Five categories for scoring research proposals:
+   - ScientificMeritScores (40% weight) - novelty, biological_plausibility, prior_evidence
+
+   - FeasibilityScores (25% weight) - technical_viability, data_quality, clarity_of_protocol
+  
+   - CommunityAlignmentScores (20% weight) - mission_fit, dao_engagement
+  
+   - ResourceEfficiencyScores (10% weight) - cost_effectiveness, agentic_resource_use
+  
+   - OpenScienceScores (5% weight) - data_protocol_sharing, collaborative_potential
+  
+    Total weights = 100%
+  
+   => PROPOSALSCORE STRUCT
+     Combines all 5 categories plus:
+     final_score: u8 - Weighted average (0-100)
+    
+     is_passing: bool - True if score ≥ 80%
+    
+     is_fulfilled: bool - Has it been funded/approved?
+    
+     scorer_count: u64 - How many judges scored it
+    
+     timestamp: u64 - When it was scored
+
+   => PROPOSAL STRUCT
+     The actual research proposal:
+     id: u64 - Proposal number
+
+     submitter: address - Who submitted it
+
+     title, description, ipfs_hash: String - Proposal details
+
+     scores: ProposalScore - The score card
+
+     scorers: vector<address> - List of judges who scored it
+
+     is_active: bool - Still open for scoring?
+
+     submission_time: u64 - When submitted
+
+   => ANTScoringState STRUCT 
+     System's global configuration:
+     owner: address - System owner/admin
+    
+     proposal_counter: u64 - Total proposals submitted (ever)
+    
+     authorized_scorers: vector<address> - List of approved judges
+    
+     passing_threshold: u8 - Minimum score to pass (default: 80)
+    
+     active_proposal_count: u64 - Currently active proposals
+ 
+- ---------------------------------------------------
+3.  BASIC MOVE CONCEPTS
+-----------------------------------------------------
+
+    => MODULE DECLARATION <=
+        Like contract in Solidity
+        ant_scoring::clean_ant_scoring = namespace structure (Parent::Child)
+    
+    => IMPORTS/USE STATEMENTS <=
+        use = import libraries/modules
+        Similar to Solidity imports
+        std:: = standard library
+
+    => STRUCT ABILITIES <=
+      Abilities (Move-specific - Solidity doesn't have this):
+
+    - store = Can be stored inside other structs or in global storage
+    - copy = Can be duplicated/copied
+    - drop = Can be deleted/discarded when no longer needed
+    - key = Can be stored at top-level under an account address (only ONE per account)
+      Note: In Solidity, all structs can automatically be stored, copied, and deleted. Move makes you declare permissions explicitly.
+    
+    => THE SIGNER TYPE <=
+
+    - &signer = Reference to the account calling the function
+    - Like msg.sender in Solidity
+    - Must be passed as a parameter (not global like in Solidity)
+    - & = reference (borrowing, not taking ownership)
+    - Use signer::address_of() to get the actual address
+    Solidity equivalent: msg.sender is automatically available
+    
+    => move_to - Store Data Under Account <=
+
+    - Permanently stores data under an account's address on blockchain
+    - Can only store each struct type ONCE per address
+    - The data is "owned" by that account
+    - Like attaching a file to someone's account
+      Solidity equivalent:
+    
+    => borrow_global - Read Stored Data <=
+
+    - Read data stored at an address (read-only access)
+    - borrow = temporary access (like borrowing a book)
+    - <MyStruct> = specify which type you're accessing
+    - Returns a reference you can read but NOT modify
+     Solidity equivalent: Just read state variables directly
+    
+    => borrow_global_mut - Read AND Modify Data <=
+
+    - Read AND modify data stored at an address
+    - mut = mutable (can change it)
+    - Returns a reference you can both read and modify
+     Solidity equivalent: Just modify state variables directly
+    
+    => acquires Keyword <=
+
+    - Declares which resources a function will access
+    - Required in function signature if using borrow_global or borrow_global_mut
+    - Move's way of making data access explicit
+    - Must list ALL resource types the function touches
+    Solidity equivalent: Not needed - can access state variables without declaring
+    
+    => @ Symbol - Address Of <=
+
+    - @ = "the address of"
+    - @ant_scoring = the module's address
+    - @0x123 = literal address 0x123
+    Solidity equivalent: Just use the address directly
+    
+    => Entry Functions <=
+
+    - public = anyone can call
+    - entry = can be called from OUTSIDE (wallets, dApps, transactions)
+    - Non-entry functions can only be called by other functions inside the module
+    - public and external functions (can be called from outside)
+    - entry is similar to external
+    
+    => View Functions <=
+
+    - #[view] = read-only function (doesn't modify blockchain state)
+    - Like annotations/decorators
+    - Solidity equivalent: view or pure functions
+    
+    => Data Types <=
+
+    Solidity equivalents:
+    - u8 → uint8
+    - u64 → uint64
+    - u128 → uint128
+    - address → address
+    - bool → bool
+    - vector<T> → T[] (array)
+    
+    => Constants <=
+
+    - Same as Solidity
+    - Use ALL_CAPS naming convention
+    - Must declare type
+    
+    => Let Keyword (Variables) <=
+
+    - let = create a variable
+    - Type can be inferred or explicit
+    - Variables are immutable by default (can't change)
+    - Use let mut for mutable variables (but rare in Move)
+    
+    => Assert (Error Handling) <=
+
+    - Checks if condition is true
+    - If false, transaction fails with error code
+    - ! = macro (special Move syntax)
+    Solidity equivalent:
+    
+    => Resource Ownership Model <=
+    
+    KEY DIFFERENCE FROM SOLIDITY:
+    Move:
+    - Resources are OWNED by accounts
+    - Stored under account addresses using move_to
+    - Each account can only have ONE instance of each resource type
+    - Like a safety deposit box - each person has their own box
+    Solidity:
+    - Data stored in contract's storage
+    - Use mappings to associate data with addresses
+    - Multiple instances can exist
+    - Like a database - contract stores everything  
+
 
 CURSOR PROMPTS LOG:
 -------------------
