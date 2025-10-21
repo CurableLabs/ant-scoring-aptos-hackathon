@@ -1,223 +1,367 @@
+================================================================================
 MIGRATION NOTES - Move to Solidity
-==================================
+================================================================================
 Date Started: October 17, 2025
 Branch: Aptos-to-solidity-migration
 
 GOAL: Transform ANT Scoring system from Aptos/Move to Ethereum L2 (Abstract or Arbitrum)
 
 CONTRACTS TO MIGRATE:
-1. sources/clean_ant_scoring.move
-2. sources/clean_deploy_ready.move
-3. sources/clean_minimal_tri_lane.move
+1. sources/clean_ant_scoring.move - ✅ COMPLETED
+2. sources/clean_deploy_ready.move - ⏳ Pending
+3. sources/clean_minimal_tri_lane.move - ⏳ Pending
 
+
+================================================================================
 PHASE 1: UNDERSTANDING THE CURRENT SYSTEM
-==========================================
-Questions to answer:
-1. What does the ANT scoring system do?
-2. What are the main data structures?
-3. Some basic Move concepts
-4. What are the key functions?
-5. How does the tri-lane tokenomics work?
+================================================================================
 
-ANSWERS
-===========================================
-1. The ANT Scoring system is a decentralized research proposal evaluation platform.
+
+1. WHAT DOES THE ANT SCORING SYSTEM DO?
+========================================
+
+The ANT Scoring system is a decentralized research proposal evaluation platform.
 Researchers submit proposals, authorized experts score them on 5 weighted categories
-(Scientific merit, feasibility, community alignment, resource efficiency, and open science).
-Proposals scoring >= 80% are approved for funding. All scores are recorded immuntably on the blockchain for transparency.
+(scientific merit, feasibility, community alignment, resource efficiency, open science).
+Proposals scoring ≥80% are approved for funding. All scores are recorded immutably 
+on the blockchain for transparency.
 
---------------------------------------------
+
 2. MAIN DATA STRUCTURES
---------------------------------------------    
-    => SCORE CATEGORY STRUCTS
-    Five categories for scoring research proposals:
-   - ScientificMeritScores (40% weight) - novelty, biological_plausibility, prior_evidence
+========================================
 
-   - FeasibilityScores (25% weight) - technical_viability, data_quality, clarity_of_protocol
-  
-   - CommunityAlignmentScores (20% weight) - mission_fit, dao_engagement
-  
-   - ResourceEfficiencyScores (10% weight) - cost_effectiveness, agentic_resource_use
-  
-   - OpenScienceScores (5% weight) - data_protocol_sharing, collaborative_potential
-  
-    Total weights = 100%
-  
-   => PROPOSALSCORE STRUCT
-     Combines all 5 categories plus:
-     final_score: u8 - Weighted average (0-100)
-    
-     is_passing: bool - True if score ≥ 80%
-    
-     is_fulfilled: bool - Has it been funded/approved?
-    
-     scorer_count: u64 - How many judges scored it
-    
-     timestamp: u64 - When it was scored
+*** Score Category Structs ***
+Five categories for scoring research proposals:
 
-   => PROPOSAL STRUCT
-     The actual research proposal:
-     id: u64 - Proposal number
+- ScientificMeritScores (40% weight)
+  Fields: novelty, biological_plausibility, prior_evidence
 
-     submitter: address - Who submitted it
+- FeasibilityScores (25% weight)
+  Fields: technical_viability, data_quality, clarity_of_protocol
 
-     title, description, ipfs_hash: String - Proposal details
+- CommunityAlignmentScores (20% weight)
+  Fields: mission_fit, dao_engagement
 
-     scores: ProposalScore - The score card
+- ResourceEfficiencyScores (10% weight)
+  Fields: cost_effectiveness, agentic_resource_use
 
-     scorers: vector<address> - List of judges who scored it
+- OpenScienceScores (5% weight)
+  Fields: data_protocol_sharing, collaborative_potential
 
-     is_active: bool - Still open for scoring?
+Total weights = 100%
 
-     submission_time: u64 - When submitted
+*** ProposalScore Struct ***
+Combines all 5 categories plus:
+- final_score: u8 - Weighted average (0-100)
+- is_passing: bool - True if score ≥80%
+- is_fulfilled: bool - Has it been funded/approved?
+- scorer_count: u64 - How many judges scored it
+- timestamp: u64 - When it was scored
 
-   => ANTScoringState STRUCT 
-     System's global configuration:
-     owner: address - System owner/admin
-    
-     proposal_counter: u64 - Total proposals submitted (ever)
-    
-     authorized_scorers: vector<address> - List of approved judges
-    
-     passing_threshold: u8 - Minimum score to pass (default: 80)
-    
-     active_proposal_count: u64 - Currently active proposals
- 
-- ---------------------------------------------------
-3.  BASIC MOVE CONCEPTS
------------------------------------------------------
+*** Proposal Struct ***
+The actual research proposal:
+- id: u64 - Proposal number
+- submitter: address - Who submitted it
+- title, description, ipfs_hash: String - Proposal details
+- scores: ProposalScore - The score card
+- scorers: vector<address> - List of judges who scored it
+- is_active: bool - Still open for scoring?
+- submission_time: u64 - When submitted
 
-    => MODULE DECLARATION <=
-        Like contract in Solidity
-        ant_scoring::clean_ant_scoring = namespace structure (Parent::Child)
-    
-    => IMPORTS/USE STATEMENTS <=
-        use = import libraries/modules
-        Similar to Solidity imports
-        std:: = standard library
-
-    => STRUCT ABILITIES <=
-      Abilities (Move-specific - Solidity doesn't have this):
-
-    - store = Can be stored inside other structs or in global storage
-    - copy = Can be duplicated/copied
-    - drop = Can be deleted/discarded when no longer needed
-    - key = Can be stored at top-level under an account address (only ONE per account)
-      Note: In Solidity, all structs can automatically be stored, copied, and deleted. Move makes you declare permissions explicitly.
-    
-    => THE SIGNER TYPE <=
-
-    - &signer = Reference to the account calling the function
-    - Like msg.sender in Solidity
-    - Must be passed as a parameter (not global like in Solidity)
-    - & = reference (borrowing, not taking ownership)
-    - Use signer::address_of() to get the actual address
-    Solidity equivalent: msg.sender is automatically available
-    
-    => move_to - Store Data Under Account <=
-
-    - Permanently stores data under an account's address on blockchain
-    - Can only store each struct type ONCE per address
-    - The data is "owned" by that account
-    - Like attaching a file to someone's account
-      Solidity equivalent:
-    
-    => borrow_global - Read Stored Data <=
-
-    - Read data stored at an address (read-only access)
-    - borrow = temporary access (like borrowing a book)
-    - <MyStruct> = specify which type you're accessing
-    - Returns a reference you can read but NOT modify
-     Solidity equivalent: Just read state variables directly
-    
-    => borrow_global_mut - Read AND Modify Data <=
-
-    - Read AND modify data stored at an address
-    - mut = mutable (can change it)
-    - Returns a reference you can both read and modify
-     Solidity equivalent: Just modify state variables directly
-    
-    => acquires Keyword <=
-
-    - Declares which resources a function will access
-    - Required in function signature if using borrow_global or borrow_global_mut
-    - Move's way of making data access explicit
-    - Must list ALL resource types the function touches
-    Solidity equivalent: Not needed - can access state variables without declaring
-    
-    => @ Symbol - Address Of <=
-
-    - @ = "the address of"
-    - @ant_scoring = the module's address
-    - @0x123 = literal address 0x123
-    Solidity equivalent: Just use the address directly
-    
-    => Entry Functions <=
-
-    - public = anyone can call
-    - entry = can be called from OUTSIDE (wallets, dApps, transactions)
-    - Non-entry functions can only be called by other functions inside the module
-    - public and external functions (can be called from outside)
-    - entry is similar to external
-    
-    => View Functions <=
-
-    - #[view] = read-only function (doesn't modify blockchain state)
-    - Like annotations/decorators
-    - Solidity equivalent: view or pure functions
-    
-    => Data Types <=
-
-    Solidity equivalents:
-    - u8 → uint8
-    - u64 → uint64
-    - u128 → uint128
-    - address → address
-    - bool → bool
-    - vector<T> → T[] (array)
-    
-    => Constants <=
-
-    - Same as Solidity
-    - Use ALL_CAPS naming convention
-    - Must declare type
-    
-    => Let Keyword (Variables) <=
-
-    - let = create a variable
-    - Type can be inferred or explicit
-    - Variables are immutable by default (can't change)
-    - Use let mut for mutable variables (but rare in Move)
-    
-    => Assert (Error Handling) <=
-
-    - Checks if condition is true
-    - If false, transaction fails with error code
-    - ! = macro (special Move syntax)
-    Solidity equivalent:
-    
-    => Resource Ownership Model <=
-    
-    KEY DIFFERENCE FROM SOLIDITY:
-    Move:
-    - Resources are OWNED by accounts
-    - Stored under account addresses using move_to
-    - Each account can only have ONE instance of each resource type
-    - Like a safety deposit box - each person has their own box
-    Solidity:
-    - Data stored in contract's storage
-    - Use mappings to associate data with addresses
-    - Multiple instances can exist
-    - Like a database - contract stores everything  
+*** ANTScoringState Struct ***
+System's global configuration:
+- owner: address - System owner/admin
+- proposal_counter: u64 - Total proposals submitted (ever)
+- authorized_scorers: vector<address> - List of approved judges
+- passing_threshold: u8 - Minimum score to pass (default: 80)
+- active_proposal_count: u64 - Currently active proposals
 
 
-CURSOR PROMPTS LOG:
--------------------
-[Keep all your prompts here as you work]
+3. MOVE CONCEPTS (vs Solidity)
+========================================
+
+*** Module Declaration ***
+module ant_scoring::clean_ant_scoring { }
+- Like 'contract' in Solidity
+- ant_scoring::clean_ant_scoring = namespace (Parent::Child)
+
+*** Imports ***
+use std::signer;
+- Import libraries/modules
+- std:: = standard library
+
+*** Struct Abilities ***
+struct MyStruct has store, copy, drop, key { }
+- store = Can be stored in global storage
+- copy = Can be duplicated
+- drop = Can be deleted
+- key = Can be stored at top-level under account (ONE per account)
+Note: Solidity doesn't need this - all structs can be stored/copied/deleted
+
+*** The Signer Type ***
+fun my_function(account: &signer)
+- &signer = Reference to caller (like msg.sender in Solidity)
+- Must be passed as parameter (not global)
+- Use signer::address_of() to get actual address
+
+*** move_to - Store Data ***
+move_to(account, data)
+- Permanently stores data under account's address
+- Can only store each type ONCE per address
+- Solidity equivalent: mapping[addr] = data
+
+*** borrow_global - Read Data ***
+let state = borrow_global<Type>(address);
+- Fetches and reads data from blockchain storage
+- Read-only access
+- Solidity: Direct state variable access
+
+*** borrow_global_mut - Read & Modify ***
+let state = borrow_global_mut<Type>(address);
+- Fetches data with write permission
+- Can modify the data
+- Solidity: Direct state variable access
+
+*** & vs borrow_global ⭐ IMPORTANT ***
+& (Reference):
+- Reference to data ALREADY in scope
+- Just points to it, doesn't fetch
+- Example: &scientific_merit, &mut proposal.scorers
+
+borrow_global (Fetch + Reference):
+- FETCHES from blockchain THEN gives reference
+- Goes to blockchain storage to get it
+- Example: borrow_global<ANTScoringState>(@ant_scoring)
+
+Key: borrow_global = fetch + reference, & = reference only
+
+*** acquires Keyword ***
+public fun my_function() acquires Type1, Type2 { }
+- Declares which resources function will access
+- Required when using borrow_global
+- Solidity: Not needed
+
+*** @ Symbol ***
+@ant_scoring
+- Means "the address of"
+- @ant_scoring = module's address
+
+*** Entry Functions ***
+public entry fun my_function()
+- public = anyone can call
+- entry = callable from outside (wallets, dApps)
+- Solidity: similar to 'external'
+
+*** View Functions ***
+#[view]
+public fun my_function()
+- Read-only, no state modifications
+- Solidity: 'view' or 'pure'
+
+*** Data Types ***
+Move → Solidity:
+- u8 → uint8
+- u64 → uint64
+- address → address
+- bool → bool
+- vector<T> → T[]
+
+*** New Functions Learned ***
+- assert!(condition, ERROR_CODE) - Check or throw error
+- vector::contains(list, item) - Check if item in list
+- vector::push_back(&mut list, item) - Add to end
+- vector::index_of(list, item) - Returns (found, index)
+- vector::remove(&mut list, index) - Remove at index
+- exists<Type>(address) - Check if resource exists
+- Type casting: (value as u64), (value as u8)
+- Tuple unpacking: let (a, b) = function()
+
+*** Resource Ownership Model ***
+Move:
+- Resources OWNED by accounts
+- Stored AT account addresses using move_to
+- Each account = ONE instance per type
+- Like safety deposit boxes
+
+Solidity:
+- Data stored IN contract
+- Use mappings to associate with addresses
+- Like a central database
 
 
-PROJECT STRUCTURE DECISION:
----------------------------
+4. KEY FUNCTIONS (clean_ant_scoring.move)
+========================================
+
+*** initialize() - Lines 92-103 ***
+Purpose: Set up system for first time
+Who: Owner
+Does: Creates ANTScoringState with owner, empty scorers, 80% threshold
+Key: Can only be called ONCE per address
+
+*** submit_proposal() - Lines 105-144 ***
+Purpose: Researcher submits proposal
+Who: Anyone
+Parameters: submitter, title, description, ipfs_hash
+Flow:
+  1. Get submitter address
+  2. Increment counters
+  3. Create empty_scores (all zeros)
+  4. Create Proposal
+  5. Store at submitter's address via move_to
+
+Key: proposal_owner = submitter_addr (same address!)
+
+*** score_proposal() - Lines 146-209 ⭐ MOST COMPLEX ***
+Purpose: Authorized judge scores proposal
+Who: Authorized scorers only
+Parameters: scorer, proposal_owner, + 5 score category structs
+
+Key Insight: Judge provides ALL individual scores as parameters!
+
+Flow:
+  1. Setup: Get addresses, access state
+  2. Security Checks:
+     - Is scorer authorized?
+     - Does proposal exist?
+     - Not already scored by this judge?
+  3. Validate: All 12 fields ≤ 100
+  4. Record: Add judge to scorers list
+  5. Calculate: Weighted final score
+     - Average each category internally
+     - Apply weights: 40%, 25%, 20%, 10%, 5%
+     - Formula: (sci*40 + feas*25 + comm*20 + res*10 + open*5) / 100
+  6. Save Scores:
+     IF first scorer (count=0): Replace empty scores
+     ELSE: Average with existing scores
+       Formula: (old_score * old_count + new_score) / (old_count + 1)
+  7. Update is_passing flag (≥80%)
+
+Minimum Judges: 1 (not enforced - potential improvement!)
+Maximum Judges: Unlimited (keeps averaging)
+
+*** fulfill_proposal() - Lines 211-226 ***
+Purpose: Mark passing proposal as approved/funded
+Who: Anyone (no authorization check!)
+Parameters: fulfiller, proposal_owner
+Flow:
+  1. Check proposal exists
+  2. Check is_passing = true
+  3. Check not already fulfilled
+  4. Set is_fulfilled = true
+  5. Set is_active = false
+
+Key: Final approval step, closes proposal
+
+*** add_authorized_scorer() - Lines 229-240 ***
+Purpose: Owner adds new judge
+Who: Owner ONLY (security check)
+Logic: Check not duplicate, add with vector::push_back
+Idempotent: Safe to call multiple times
+
+*** remove_authorized_scorer() - Lines 242-254 ***
+Purpose: Owner removes judge
+Who: Owner ONLY (security check)
+Logic: Find with vector::index_of, remove if found
+Idempotent: Safe to call multiple times
+
+*** View Functions - Lines 354-372 ***
+Read-only queries (no gas cost):
+
+- get_system_info(): Returns owner, counters, threshold
+- get_proposal_info(address): Returns proposal details, scores
+- is_authorized_scorer(address): Returns bool if authorized
+
+Use: Dashboard displays, authorization checks
+
+
+5. HELPER FUNCTIONS (Private/Internal)
+========================================
+
+*** validate_scores() - Lines 257-285 ***
+- Checks all 12 score fields ≤ 100
+- Throws E_INVALID_SCORE if any field > 100
+
+*** calculate_final_score() - Lines 287-309 ***
+- Averages each category's fields
+- Applies weights (40%, 25%, 20%, 10%, 5%)
+- Returns single score 0-100
+
+*** average_scores() - Lines 311-352 ***
+- Averages new scores with existing
+- Formula: (old * count + new) / (count + 1)
+- Returns new ProposalScore with all fields averaged
+
+
+6. KEY SYSTEM DESIGN INSIGHTS
+========================================
+
+*** Proposal Lifecycle ***
+Submit → Score (Judge 1, 2, 3...) → Passing (≥80%) → Fulfill → Complete
+(is_active=true) → (is_passing=true) → (is_fulfilled=true, is_active=false)
+
+*** Scoring Philosophy ***
+- Multiple judges for fairness (but min=1 not enforced)
+- Weighted categories (scientific merit most important at 40%)
+- Running average (all judges count equally)
+- 80% passing threshold
+
+*** Access Control ***
+- Owner controls: Who can score (add/remove judges)
+- Anyone can: Submit proposals, fulfill passing proposals, view data
+- Centralized owner control (could use DAO governance)
+
+*** Resource Storage ***
+- Proposals stored AT submitter's address
+- ANTScoringState stored AT module address
+- Different from Solidity's central storage
+
+
+7. SOLIDITY MIGRATION PLANNING
+========================================
+
+*** Key Differences to Handle ***
+Move → Solidity:
+- Resources at addresses → Mappings (mapping(uint => Proposal))
+- move_to → mapping[id] = data
+- borrow_global → Direct state access
+- acquires → Not needed
+- Struct abilities → Not needed
+
+*** Potential Improvements ***
+- Add minimum judges requirement (e.g., 3 minimum)
+- Add authorization to fulfill_proposal
+- Event emissions (Move code doesn't show events)
+- Consider upgradeability patterns
+- Gas optimization
+
+
+================================================================================
+PROJECT STATUS
+================================================================================
+
+✅ clean_ant_scoring.move - 374 lines - FULLY UNDERSTOOD
+⏳ clean_deploy_ready.move - 187 lines - Not yet analyzed
+⏳ clean_minimal_tri_lane.move - 142 lines - Not yet analyzed (tri-lane tokenomics)
+
+Progress:
+- Day 1: Module structure, data structures, Move basics, initialize(), submit_proposal()
+- Day 2: acquires keyword, resource ownership, score_proposal() start
+- Day 3: Complete score_proposal(), fulfill_proposal(), admin/view functions
+
+Phase 1 Status: ~65% complete (1 of 3 contracts fully understood)
+
+
+================================================================================
+PROJECT STRUCTURE
+================================================================================
+
+Repository Layout:
 - Keep original Move code in sources/
 - Create new solidity/ folder for Solidity contracts
 - Both versions live in same repo on migration branch
+
+
+================================================================================
+CURSOR PROMPTS LOG
+================================================================================
+[Track your work sessions here]
