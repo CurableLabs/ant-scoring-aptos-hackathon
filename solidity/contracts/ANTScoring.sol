@@ -69,11 +69,100 @@ contract ANTScoring {
     uint8 public constant PASSING_THRESHOLD = 80;
     uint256 public constant MAX_SCORE = 100;
 
+    //Events
+    event ProposalSubmitted(
+        uint256 indexed proposalId,
+        address indexed submitter,
+        string title,
+        uint256 timestamp
+    );
+
+    event ProposalScored(
+        uint256 indexed proposalId,
+        address indexed scorer,
+        uint8 finalScore,
+        bool isPassing
+    );
+
+    event ProposalFulfilled(
+        uint256 indexed proposalId,
+        address indexed fulfiller,
+        uint256 timestamp
+    );
+
+    event ScorerAdded(
+        address indexed scorer,
+        address indexed addedBy
+    );
+
+    event ScorerRemoved(
+        address indexed scorer,
+        address indexed removedBy
+    );
+
     //Modifiers
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can call this function");
         _;
     }
+    modifier onlyAuthorizedScorer(){
+        require(authorizedScorers[msg.sender], "Only authorized scorers can call this function");
+        _;
+    }
+     
+     //Constructor
+    constructor(){
+        owner = msg.sender;
+        proposalCounter = 0;
+        activeProposalCount = 0;
+        passingThreshold = PASSING_THRESHOLD;
+     }
     
-     //Todo: Add more modifiers as needed
+    //External Functions
+    function submitProposal(string memory title, string memory description, string memory ipfsHash) external{
+        address submitter = msg.sender;
+        proposalCounter +=1;
+        activeProposalCount +=1;
+        uint256 proposalId = proposalCounter;
+        ProposalScore memory emptyScores = ProposalScore({
+            scientificMerit: ScientificMeritScores({novelty:0, biologicalPlausibility:0, priorEvidence:0}),
+            feasibility: FeasibilityScores({technicalViability:0, dataQuality:0, clarityOfProtocol:0}),
+            communityAlignment: CommunityAlignmentScores({missionFit:0, daoEngagement:0}),
+            resourceEfficiency: ResourceEfficiencyScores({costEffectiveness:0, agenticResourceUse:0}),
+            openScience: OpenScienceScores({dataProtocolSharing:0, collaborativePotential:0}),
+            finalScore:0,
+            isPassing:false,
+            isFulfilled:false,  
+            timestamp: 0,
+            scorerCount:0
+        });
+
+        Proposal memory newProposal = Proposal({
+            id: proposalId,
+            submitter:submitter,
+            title: title,
+            description: description,
+            ipfsHash: ipfsHash,
+            scores:emptyScores,
+            scorers: new address[](0),
+            isActive: true,
+            submissionTime: block.timestamp
+        });
+
+        proposals[proposalId] = newProposal;
+        userProposals[submitter].push(proposalId);
+        emit ProposalSubmitted(proposalId, submitter, title, block.timestamp);
+    }
+    function scoreProposal(
+        uint256 proposalId,
+        ScientificMeritScores memory scientificMerit,
+        FeasibilityScores memory feasibility,
+        CommunityAlignmentScores memory communityAlignment,
+        ResourceEfficiencyScores memory resourceEfficiency,
+        OpenScienceScores memory openScience
+    ) external onlyAuthorizedScorer {
+        address scorer = msg.sender;
+        Proposal storage proposal = proposals[proposalId];
+        require(proposal.id !=0, "Proposal not found");
+
 }
