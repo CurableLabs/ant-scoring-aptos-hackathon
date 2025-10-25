@@ -160,9 +160,114 @@ contract ANTScoring {
         CommunityAlignmentScores memory communityAlignment,
         ResourceEfficiencyScores memory resourceEfficiency,
         OpenScienceScores memory openScience
-    ) external onlyAuthorizedScorer {
-        address scorer = msg.sender;
-        Proposal storage proposal = proposals[proposalId];
-        require(proposal.id !=0, "Proposal not found");
+     ) external onlyAuthorizedScorer {
+         address scorer = msg.sender;
+         Proposal storage proposal = proposals[proposalId];
+         require(proposal.id !=0, "Proposal not found");
+         bool hasScored = false;
+         for(uint256 i = 0; i < proposal.scorers.length; i++){
+            if (proposal.scorers[i] == scorer){
+                hasScored = true;
+                break;
+            }
+        }
+    
+        require(!hasScored, "Scorer has already scored proposal");
+        //Validate Scores
+        //Scientific Merit Scores
+        require(scientificMerit.novelty <= MAX_SCORE, "Novelty score must be less than or equal to 100");
+        require(scientificMerit.biologicalPlausibility <= MAX_SCORE, "Biological plausibility score must be less than or equal to 100");
+        require(scientificMerit.priorEvidence <= MAX_SCORE, "Prior evidence score must be less than or equal to 100");
+       
+        //Feasibility Scores
+        require(feasibility.technicalViability <= MAX_SCORE, "Technical viability score must be less than or equal to 100");
+        require(feasibility.dataQuality <= MAX_SCORE, "Data quality score must be less than or equal to 100");
+        require(feasibility.clarityOfProtocol <= MAX_SCORE, "Clarity of protocol score must be less than or equal to 100");
+        
+        //Community Alignment Scores
+        require(communityAlignment.missionFit <= MAX_SCORE, "Mission fit score must be less than or equal to 100");
+        require(communityAlignment.daoEngagement <= MAX_SCORE, "DAO engagement score must be less than or equal to 100");
+       
+        // Resource Efficiency Scores   
+        require(resourceEfficiency.costEffectiveness <= MAX_SCORE, "Cost effectiveness score must be less than or equal to 100");
+        require(resourceEfficiency.agenticResourceUse <= MAX_SCORE, "Agentic resource use score must be less than or equal to 100");
+      
+        //Open Science Scores
+        require(openScience.dataProtocolSharing <= MAX_SCORE, "Data protocol sharing score must be less than or equal to 100");
+        require(openScience.collaborativePotential <= MAX_SCORE, "Collaborative potential score must be less than or equal to 100");
+        
+        proposal.scorers.push(scorer);
+    } 
 
+    
+    //Helper Functions 
+    //Calculate final score of proposal  
+    function calculateFinalScore(
+        ScientificMeritScores memory scientificMerit,
+        FeasibilityScores memory feasibility,
+        CommunityAlignmentScores memory communityAlignment,
+        ResourceEfficiencyScores memory resourceEfficiency,
+        OpenScienceScores memory openScience
+    ) internal pure returns (uint8) {
+       uint8 scientificMeritAvg = (scientificMerit.novelty + scientificMerit.biologicalPlausibility + scientificMerit.priorEvidence) / 3;
+       uint8 feasibilityAvg = (feasibility.technicalViability + feasibility.dataQuality + feasibility.clarityOfProtocol) / 3;
+       uint8 communityAlignmentAvg = (communityAlignment.missionFit +communityAlignment.daoEngagement ) / 2;
+       uint8 resourceEfficiencyAvg = (resourceEfficiency.costEffectiveness + resourceEfficiency.agenticResourceUse) / 2;
+       uint8 openScienceAvg = (openScience.dataProtocolSharing + openScience.collaborativePotential) / 2;
+      
+
+       uint256 weightedFinal = (scientificMeritAvg * SCIENTIFIC_MERIT_WEIGHT + feasibilityAvg * FEASIBILITY_WEIGHT + communityAlignmentAvg * COMMUNITY_ALIGNMENT_WEIGHT + resourceEfficiencyAvg * RESOURCE_EFFICIENCY_WEIGHT + openScienceAvg * OPEN_SCIENCE_WEIGHT);
+       uint8 finalScore = uint8(weightedFinal / 100);
+       return finalScore;
+    }
+
+    //Calculate average scores of the proposal
+    function averageScores(
+        ProposalScore memory existingScores,
+        ScientificMeritScores memory newScientificMerit,
+        FeasibilityScores memory newFeasibility,
+        CommunityAlignmentScores memory newCommunityAlignment,
+        ResourceEfficiencyScores memory newResourceEfficiency,
+        OpenScienceScores memory newOpenScience,
+        uint8 newFinalScore
+    ) internal pure returns (ProposalScore memory) {
+      uint64 currentCount = existingScores.scorerCount;
+      uint64 newCount = currentCount + 1;
+      ScientificMeritScores memory avgScientificMerit =  ScientificMeritScores({
+        novelty: uint8((existingScores.scientificMerit.novelty * currentCount + newScientificMerit.novelty) / newCount),
+        biologicalPlausibility: uint8((existingScores.scientificMerit.biologicalPlausibility * currentCount + newScientificMerit.biologicalPlausibility) / newCount),
+        priorEvidence: uint8((existingScores.scientificMerit.priorEvidence * currentCount + newScientificMerit.priorEvidence) / newCount)
+      });
+      FeasibilityScores memory avgFeasibility = FeasibilityScores({
+        technicalViability: uint8((existingScores.feasibility.technicalViability * currentCount + newFeasibility.technicalViability) / newCount),
+        dataQuality: uint8((existingScores.feasibility.dataQuality * currentCount + newFeasibility.dataQuality) / newCount),
+        clarityOfProtocol: uint8((existingScores.feasibility.clarityOfProtocol * currentCount + newFeasibility.clarityOfProtocol) / newCount)
+      });
+      CommunityAlignmentScores memory avgCommunityAlignment = CommunityAlignmentScores({
+        missionFit: uint8((existingScores.communityAlignment.missionFit * currentCount + newCommunityAlignment.missionFit) / newCount),
+        daoEngagement: uint8((existingScores.communityAlignment.daoEngagement * currentCount + newCommunityAlignment.daoEngagement) / newCount)
+      });
+      ResourceEfficiencyScores memory avgResourceEfficiency = ResourceEfficiencyScores({
+        costEffectiveness: uint8((existingScores.resourceEfficiency.costEffectiveness * currentCount + newResourceEfficiency.costEffectiveness) / newCount),
+        agenticResourceUse: uint8((existingScores.resourceEfficiency.agenticResourceUse * currentCount + newResourceEfficiency.agenticResourceUse) / newCount)
+      });
+      OpenScienceScores memory avgOpenScience = OpenScienceScores({
+        dataProtocolSharing: uint8((existingScores.openScience.dataProtocolSharing * currentCount + newOpenScience.dataProtocolSharing) / newCount),
+        collaborativePotential: uint8((existingScores.openScience.collaborativePotential * currentCount + newOpenScience.collaborativePotential) / newCount)
+      });
+      uint8 avgFinalScore = uint8((existingScores.finalScore * currentCount + newFinalScore) / newCount);
+      
+      return ProposalScore({
+        scientificMerit: avgScientificMerit,
+        feasibility: avgFeasibility,
+        communityAlignment: avgCommunityAlignment,
+        resourceEfficiency: avgResourceEfficiency,
+        openScience: avgOpenScience,
+        finalScore: avgFinalScore,
+        scorerCount: newCount,
+        timestamp: uint64(block.timestamp),
+        isPassing: false,
+        isFulfilled: existingScores.isFulfilled
+      });
+    }
 }
