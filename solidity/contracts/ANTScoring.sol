@@ -61,6 +61,7 @@ contract ANTScoring {
     mapping(address => uint256[]) public userProposals;
 
     //Constants
+    //ANT Scoring weights (multiplied by 100 for precision)
     uint8 public constant SCIENTIFIC_MERIT_WEIGHT = 40;
     uint8 public constant FEASIBILITY_WEIGHT = 25;
     uint8 public constant COMMUNITY_ALIGNMENT_WEIGHT = 20;
@@ -171,7 +172,7 @@ contract ANTScoring {
                 break;
             }
         }
-    
+
         require(!hasScored, "Scorer has already scored proposal");
         //Validate Scores
         //Scientific Merit Scores
@@ -196,10 +197,84 @@ contract ANTScoring {
         require(openScience.dataProtocolSharing <= MAX_SCORE, "Data protocol sharing score must be less than or equal to 100");
         require(openScience.collaborativePotential <= MAX_SCORE, "Collaborative potential score must be less than or equal to 100");
         
+         //Calculate Final weighted scores
+         uint8 finalScore = calculateFinalScore(
+            scientificMerit,
+            feasibility,
+            communityAlignment,
+            resourceEfficiency,
+            openScience
+        );
+
+        //Average scores with existing scores
+        proposal.scores = averageScores(
+            proposal.scores,
+            scientificMerit,
+            feasibility,
+            communityAlignment,
+            resourceEfficiency,
+            openScience,
+            finalScore
+        );
+
+        proposal.scores.isPassing = finalScore >= PASSING_THRESHOLD;
         proposal.scorers.push(scorer);
+        emit ProposalScored(proposalId, scorer, finalScore, proposal.scores.isPassing);
     } 
 
+    function fulfillProposal(uint256 proposalId) external{
+        address fulfiller = msg.sender;
+        Proposal storage proposal = proposals[proposalId];
+        require(msg.sender == proposal.submitter, "Only submitter can fulfill proposal");
+        require(proposal.id !=0, "Proposal not found");
+        require(proposal.scores.isPassing, "Proposal not passed the threshold");
+        require(!proposal.scores.isFulfilled, "Proposal already fulfilled");
+        proposal.scores.isFulfilled = true;
+        activeProposalCount -=1;
+        emit ProposalFulfilled(proposalId, fulfiller, block.timestamp);
+    }
+
+    function addAuthorizedScorer(address newScorer) external onlyOwner{
+        require (newScorer != address(0), "Invalid scorer address");
+        require(!authorizedScorers[newScorer],"Scorer already authorized");
+        authorizedScorers[newScorer] = true;
+        emit ScorerAdded(newScorer, msg.sender);
+    }
+    function removeAuthorizedScorer(address scorer) external onlyOwner{
+        require(scorer != address(0), "Invalid scorer address");
+        if(authorizedScorers[scorer]){
+            authorizedScorers[scorer] = false;
+        }
+        emit ScorerRemoved(scorer, msg.sender); 
+    }
     
+    //View Functions
+    function getSystemInfo() external view returns (
+        address,
+        uint256,
+        uint256,
+        uint8
+    ){
+        return(owner, proposalCounter, activeProposalCount, passingThreshold);
+    }
+
+    function getProposalInfo(uint256 proposalId) external view returns (
+        uint256,
+        string memory,
+        string memory,
+        string memory,
+        uint8,
+        bool,
+        bool,
+        uint64
+    ){
+        Proposal storage proposal = proposals[proposalId];
+        return(proposal.id, proposal.title, proposal.description, proposal.ipfsHash, proposal.scores.finalScore, proposal.scores.isPassing, proposal.scores.isFulfilled, proposal.scores.scorerCount);
+    }
+    function isAuthorizedScorer(address scorer) external view returns (bool){
+        return authorizedScorers[scorer];
+    }
+
     //Helper Functions 
     //Calculate final score of proposal  
     function calculateFinalScore(
@@ -214,7 +289,6 @@ contract ANTScoring {
        uint8 communityAlignmentAvg = (communityAlignment.missionFit +communityAlignment.daoEngagement ) / 2;
        uint8 resourceEfficiencyAvg = (resourceEfficiency.costEffectiveness + resourceEfficiency.agenticResourceUse) / 2;
        uint8 openScienceAvg = (openScience.dataProtocolSharing + openScience.collaborativePotential) / 2;
-      
 
        uint256 weightedFinal = (scientificMeritAvg * SCIENTIFIC_MERIT_WEIGHT + feasibilityAvg * FEASIBILITY_WEIGHT + communityAlignmentAvg * COMMUNITY_ALIGNMENT_WEIGHT + resourceEfficiencyAvg * RESOURCE_EFFICIENCY_WEIGHT + openScienceAvg * OPEN_SCIENCE_WEIGHT);
        uint8 finalScore = uint8(weightedFinal / 100);
