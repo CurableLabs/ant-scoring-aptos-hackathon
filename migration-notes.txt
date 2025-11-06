@@ -7,9 +7,12 @@ Branch: Aptos-to-solidity-migration
 GOAL: Transform ANT Scoring system from Aptos/Move to Ethereum L2 (Abstract or Arbitrum)
 
 CONTRACTS TO MIGRATE:
-1. sources/clean_ant_scoring.move - ✅ COMPLETED
-2. sources/clean_deploy_ready.move - ⏳ Pending
-3. sources/clean_minimal_tri_lane.move - ⏳ Pending
+1. sources-clean/clean_ant_scoring.move - ✅ COMPLETED → ANTScoring.sol
+2. sources-clean/clean_deploy_ready.move - ✅ COMPLETED → CleanDeploy.sol (TriLaneSystem)
+3. sources-clean/clean_bonding_curve.move - ⏳ READY FOR MIGRATION (cleaned Nov 6, 2025)
+4. sources-clean/clean_cure_integration.move - ⏳ READY FOR MIGRATION (cleaned Nov 6, 2025)
+
+Note: clean_minimal_tri_lane.move SKIPPED - features already in clean_deploy_ready.move
 
 
 ================================================================================
@@ -336,9 +339,11 @@ Move → Solidity:
 
 
 ================================================================================
-PROJECT STATUS
+OCTOBER 17-20, 2025 - PHASE 1: ANT SCORING ANALYSIS
 ================================================================================
 
+PROJECT STATUS
+--------------
 ✅ clean_ant_scoring.move - 374 lines - FULLY UNDERSTOOD
 ⏳ clean_deploy_ready.move - 187 lines - Not yet analyzed
 ⏳ clean_minimal_tri_lane.move - 142 lines - Not yet analyzed (tri-lane tokenomics)
@@ -351,10 +356,8 @@ Progress:
 Phase 1 Status: ~65% complete (1 of 3 contracts fully understood)
 
 
-================================================================================
 PROJECT STRUCTURE
-================================================================================
-
+-----------------
 Repository Layout:
 - Keep original Move code in sources/
 - Create new solidity/ folder for Solidity contracts
@@ -363,9 +366,11 @@ Repository Layout:
 
 
 ================================================================================
-SOLIDITY CONTRACT STATUS: COMPLETE ✓
+OCTOBER 21-25, 2025 - PHASE 1: ANT SCORING MIGRATION
 ================================================================================
 
+SOLIDITY CONTRACT STATUS: COMPLETE ✓
+------------------------------------
 Contract: ANTScoring.sol (348 lines)
 Status: FULLY IMPLEMENTED
 
@@ -392,8 +397,45 @@ Key Features:
 Linter Status: No errors
 Ready For: Testing phase
 
+
 ================================================================================
-FUTURE IMPROVEMENTS (Before Mainnet Deployment)
+OCTOBER 26-NOVEMBER 5, 2025 - PHASE 2: TRI-LANE SYSTEM MIGRATION
+================================================================================
+
+SOLIDITY CONTRACT STATUS: COMPLETE ✓
+------------------------------------
+Contract: CleanDeploy.sol (TriLaneSystem) (168 lines)
+Status: FULLY IMPLEMENTED
+
+Implementation Includes:
+✓ 3 Structs (LabCredit, CUREHolder, SubDAOToken)
+✓ 4 State Variables (admin, counters)
+✓ 5 Mappings (ID-based Lab Credits and Sub-DAOs, user indexes)
+✓ 3 Constants (error codes)
+✓ 6 Events (all actions logged with indexed parameters)
+✓ 1 Modifier (onlyOwner)
+✓ 1 Constructor (initializes admin and counters)
+✓ 6 External Functions (Lab Credits, CURE tokens, Sub-DAOs, Phase 2, Bonding toggle)
+✓ 4 View Functions (system stats, getters for each lane)
+
+Key Features:
+- Lane 1: Lab Credits (non-transferable IP proof with title)
+- Lane 2: CURE Tokens (Phase 1 fixed → Phase 2 dynamic pricing)
+- Lane 3: Sub-DAOs (governance tokens with bonding curve toggle)
+- ID-based mappings (multiple credits/DAOs per user - architectural improvement over Move)
+- User index mappings for easy querying
+
+Key Architectural Decision:
+- Move contracts had "has key" limitation (1 resource per address)
+- Solidity uses ID-based mappings allowing unlimited resources per user
+- This was a significant improvement per Ilyssa's requirements
+
+Linter Status: No errors
+Ready For: Integration with BondingCurve.sol
+
+
+================================================================================
+OCTOBER 26-NOVEMBER 5, 2025 - FUTURE IMPROVEMENTS (Before Mainnet)
 ================================================================================
 
 1. ERROR HANDLING
@@ -461,6 +503,154 @@ Priority: Items 3, 5, 7, 8, 9, 10 are recommended but optional
 
 
 ================================================================================
-CURSOR PROMPTS LOG
+NOVEMBER 6, 2025- CLEANUP & ROADMAP
 ================================================================================
-[Track your work sessions here]
+
+CLEANUP WORK COMPLETED:
+-----------------------
+Problem: temp_sources/ folder had 3 Move contracts with git merge conflicts and 
+duplicate code from bad merges during the Aptos hackathon.
+
+Solutions:
+1. bonding_curve.move (588 lines) → CLEANED → clean_bonding_curve.move (280 lines)
+   - Removed merge conflict markers
+   - Removed duplicate module (lines 294-588)
+   - Kept complete bonding curve implementation with Bancor formula
+
+2. cure_integration.move (580 lines) → CLEANED → clean_cure_integration.move (276 lines)
+   - Removed merge conflict markers  
+   - Removed duplicate module
+   - Kept complete governance/staking implementation
+
+3. ant_scoring.move - NOT CLEANED (more complex version, defer to Phase 2)
+   - Has advanced features (Tables, SmartTables)
+   - clean_ant_scoring.move already migrated successfully
+   - Can revisit if needed
+
+FINAL MIGRATION ROADMAP:
+------------------------
+✅ Phase 1: ANT Scoring System
+   Contract: clean_ant_scoring.move → ANTScoring.sol
+   Status: COMPLETE
+   Features: Multi-judge proposal scoring, 5 weighted categories, authorization
+
+✅ Phase 2: Tri-Lane Token System  
+   Contract: clean_deploy_ready.move → CleanDeploy.sol
+   Status: COMPLETE
+   Features: Lab Credits (IP proof), CURE tokens (phase 1/2), Sub-DAOs (governance)
+
+⏳ Phase 3: Bonding Curve (STARTING TOMORROW)
+   Contract: clean_bonding_curve.move → BondingCurve.sol
+   Status: READY FOR MIGRATION
+   Lines: 280
+   Timeline: 2 days (Nov 7-8, 2025)
+   Features:
+   - Buy/sell ANT tokens with CURE
+   - Bancor bonding curve formula (simplified for gas)
+   - Reserve ratio: 50%
+   - Slippage protection
+   - Price discovery mechanism
+   Key Challenges:
+   - Mathematical precision in Solidity
+   - ERC20 integration for ANT token
+   - Safe math for bonding curve calculations
+
+⏳ Phase 4: CURE Integration (AFTER BONDING CURVE)
+   Contract: clean_cure_integration.move → CUREIntegration.sol
+   Status: READY FOR MIGRATION
+   Lines: 276
+   Timeline: 2-3 days
+   Features:
+   - Stake 1000+ CURE to become authorized scorer
+   - Create governance proposals (change scoring weights)
+   - Vote with CURE voting power
+   - Reward accurate scorers
+   - Community treasury & reward pool
+   Key Challenges:
+   - Mapping Tables to Solidity mappings
+   - Governance voting mechanism
+   - Reward distribution logic
+
+CONTRACT ARCHITECTURE:
+---------------------
+         ┌──────────────────────┐
+         │   CURE Token (ERC20) │
+         └──────┬───────────────┘
+                │
+                ▼ (stake)
+         ┌──────────────────────┐
+         │ CUREIntegration.sol  │
+         │ (governance/staking) │
+         └──────┬───────────────┘
+                │
+                ▼ (authorize)
+         ┌──────────────────────┐
+         │   ANTScoring.sol     │
+         │ (proposal scoring)   │
+         └──────────────────────┘
+                
+         ┌──────────────────────┐
+         │  CleanDeploy.sol     │
+         │  (Tri-Lane System)   │
+         └──────┬───────────────┘
+                │
+                ▼ (phase 2 pricing)
+         ┌──────────────────────┐
+         │  BondingCurve.sol    │
+         │  (ANT token pricing) │
+         └──────────────────────┘
+
+
+================================================================================
+WORK SESSION LOG
+================================================================================
+
+NOVEMBER 6, 2025
+----------------
+Session Focus: Cleanup temp_sources/ folder, prepare for Bonding Curve migration
+Duration: ~2 hours
+Completed:
+  ✓ Cleaned bonding_curve.move (588→280 lines) → clean_bonding_curve.move
+  ✓ Cleaned cure_integration.move (580→276 lines) → clean_cure_integration.move
+  ✓ Updated migration roadmap with 4-phase plan
+  ✓ Documented cleanup work
+  ✓ Added contract architecture diagram
+  ✓ Set timeline: Bonding Curve (Nov 7-8), CURE Integration (Nov 9-11)
+
+Next Session: Start BondingCurve.sol migration (Nov 7, 2025)
+
+
+OCTOBER 26 - NOVEMBER 5, 2025
+------------------------------
+Session Focus: Tri-Lane System migration (CleanDeploy.sol)
+Completed:
+  ✓ Analyzed clean_deploy_ready.move
+  ✓ Identified "has key" architectural limitation
+  ✓ Designed ID-based mapping solution
+  ✓ Implemented complete TriLaneSystem contract
+  ✓ Added user index mappings
+  ✓ Tested and pushed to GitHub
+
+
+OCTOBER 21-25, 2025
+-------------------
+Session Focus: ANT Scoring System migration (ANTScoring.sol)
+Completed:
+  ✓ Analyzed clean_ant_scoring.move (374 lines)
+  ✓ Documented all Move concepts
+  ✓ Designed Solidity architecture
+  ✓ Implemented complete ANTScoring contract (348 lines)
+  ✓ Added events for all state changes
+  ✓ Tested and pushed to GitHub
+
+
+OCTOBER 17-20, 2025
+-------------------
+Session Focus: Understanding Move language and ANT Scoring system
+Completed:
+  ✓ Set up project structure
+  ✓ Created migration branch
+  ✓ Analyzed clean_ant_scoring.move
+  ✓ Documented Move concepts vs Solidity
+  ✓ Created detailed migration notes
+  ✓ Understood proposal lifecycle and scoring algorithm
