@@ -40,6 +40,7 @@ contract BondingCurve2 {
     uint256 public totalSold;            // Total ANT tokens sold
     bool public curveActive;             // Is curve active for trading
     uint256 public launchTimestamp;      // When curve was launched
+    bool public paused;                  // Emergency pause status
 
     // Constants
     uint256 public constant RESERVE_RATIO = 500000;        // 50% reserve ratio (scaled by 1M)
@@ -73,7 +74,21 @@ contract BondingCurve2 {
      event BondingCurveInitialized(
         address indexed owner,
         uint256 timestamp
+     );
 
+     event ANTTransferred(
+        address indexed from,
+        address indexed to,
+        uint256 amount
+     );
+
+     event Paused(address indexed by);
+     
+     event Unpaused(address indexed by);
+     
+     event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
      );
 
     
@@ -86,11 +101,19 @@ contract BondingCurve2 {
     error CurveAlreadyInitialized();
     error NotOwner();
     error MaxSupplyExceeded();
+    error ContractPaused();
+    error InvalidAddress();
 
     // Modifiers
      modifier onlyOwner()  {
         if(msg.sender != owner) revert NotOwner();
-        _;}
+        _;
+     }
+ 
+     modifier whenNotPaused() {
+        if(paused) revert ContractPaused();
+        _;
+     }
  
     // Constructor
     constructor() {
@@ -101,6 +124,7 @@ contract BondingCurve2 {
         totalBought = 0;                 // No tokens bought yet
         totalSold = 0;                   // No tokens sold yet
         curveActive = false;             // Not active until initialized
+        paused = false;                  // Start unpaused
     }
 
         // Initialize the bonding curve (owner only, runs once)
@@ -118,7 +142,7 @@ contract BondingCurve2 {
       // Buy ANT tokens with CURE (bonding curve pricing)
      // cureAmount = Amount of CURE to spend
     // minAntOut = Minimum ANT tokens expected (slippage protection)
-    function buyANTTokens(uint256 cureAmount, uint256 minAntOut) external payable {
+    function buyANTTokens(uint256 cureAmount, uint256 minAntOut) external payable whenNotPaused {
         if(!curveActive) revert CurveNotInitialized();
         if(cureAmount == 0) revert InvalidAmount();
         
@@ -147,7 +171,7 @@ contract BondingCurve2 {
         // Sell ANT tokens for CURE (bonding curve pricing)
     // antAmount = Amount of ANT tokens to sell
     // minCureOut = Minimum CURE expected (slippage protection)
-    function sellANTTokens(uint256 antAmount, uint256 minCureOut) external {
+    function sellANTTokens(uint256 antAmount, uint256 minCureOut) external whenNotPaused {
         if(!curveActive) revert CurveNotInitialized();
         if(antAmount == 0) revert InvalidAmount();
         if(antBalances[msg.sender] < antAmount) revert InsufficientANT();
@@ -295,5 +319,44 @@ contract BondingCurve2 {
     // Returns: ANT token balance
     function getANTBalance(address account) external view returns (uint256) {
         return antBalances[account];
+    }
+
+    // ========== ADMIN & TRANSFER FUNCTIONS ==========
+    
+    // Transfer ANT tokens to another address
+    // to = Recipient address
+    // amount = Amount of ANT tokens to transfer
+    function transferANT(address to, uint256 amount) external {
+        if(to == address(0)) revert InvalidAddress();
+        if(amount == 0) revert InvalidAmount();
+        if(antBalances[msg.sender] < amount) revert InsufficientANT();
+        
+        antBalances[msg.sender] -= amount;
+        antBalances[to] += amount;
+        
+        emit ANTTransferred(msg.sender, to, amount);
+    }
+    
+    // Emergency pause trading (owner only)
+    function pause() external onlyOwner {
+        paused = true;
+        emit Paused(msg.sender);
+    }
+    
+    // Resume trading after pause (owner only)
+    function unpause() external onlyOwner {
+        paused = false;
+        emit Unpaused(msg.sender);
+    }
+    
+    // Transfer ownership to new address (owner only)
+    // newOwner = Address of new owner
+    function transferOwnership(address newOwner) external onlyOwner {
+        if(newOwner == address(0)) revert InvalidAddress();
+        
+        address oldOwner = owner;
+        owner = newOwner;
+        
+        emit OwnershipTransferred(oldOwner, newOwner);
     }
 }
