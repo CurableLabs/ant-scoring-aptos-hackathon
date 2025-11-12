@@ -1,0 +1,23 @@
+{
+  "name": "ant-scoring-solidity",
+  "version": "1.0.0",
+  "description": "Solidity contracts for ANT Scoring tri-lane tokenomics",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:coverage": "hardhat coverage",
+    "test:gas": "REPORT_GAS=true hardhat test",
+    "deploy:testnet": "hardhat run scripts/deploy.js --network sepolia",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost"
+  },
+  "keywords": ["solidity", "ethereum", "biotech", "tokenomics"],
+  "author": "Curable Labs Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.0",
+    "chai": "^4.3.10",
+    "ethers": "^6.9.0"
+  }
+}
+
