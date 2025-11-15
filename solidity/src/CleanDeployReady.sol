@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-/**
-* @title CleanDeployReady
-* @dev Tri-lane tokenomics system for Drug Discovery
-* @notice lane 1: Lab Credits (IP proof) / Lane 2: CURE Tokens (Funding) / Lane 3: Sub-DAOs (Marketplaces)
-* @author Curable Labs Team
-*/
+// CleanDeployReady - Tri-lane tokenomics system for Drug Discovery
+// Lane 1: Lab Credits (IP proof)
+// Lane 2: CURE Tokens (Funding)
+// Lane 3: Sub-DAOs (Marketplaces)
+// By Curable Labs Team
 
 
 contract CleanDeployReady {
@@ -14,11 +13,12 @@ contract CleanDeployReady {
     address public admin;
     uint64 public labCreditsIssued;
     uint256 public cureTotalSupply;
-    uint64 public subdaoCount; 
+    uint64 public subdaoCount;
+    uint64 public stakeLockPeriod;
 
     // Structs
 
-/// @dev Lab Credit - Non-transferable IP Proof 
+// Lab Credit - Non-transferable IP Proof 
     struct LabCredit {
         uint64 creditId;
         address inventor;
@@ -27,14 +27,14 @@ contract CleanDeployReady {
         bool exists;
     }
 
-/// @dev CURE Token Holder Information
+// CURE Token Holder Information
     struct CUREHolder {
         uint256 balance;
         uint256 staked;
         uint8 phase; // 1 = fixed pricing, 2 = dynamic pricing
     }
 
-/// @dev Sub-DAO token for disease-specific research 
+// Sub-DAO token for disease-specific research 
     struct SubDAOToken {
         uint64 daoId;
         uint256 tokenSupply;
@@ -47,6 +47,7 @@ contract CleanDeployReady {
    mapping(address => CUREHolder) public cureHolders;
    mapping(address => SubDAOToken) public subDAOTokens;
    mapping(uint64 => address) public subDAOById;
+   mapping(address => uint64) public stakeUnlockTime;
 
  // Events 
   
@@ -56,16 +57,21 @@ contract CleanDeployReady {
     event SubDAOCreated(uint64 indexed daoId, address indexed creator, uint256 initialSupply);
     event Phase2Activated(address indexed holder, uint256 timestamp);
     event BondingCurveToggled(uint64 indexed daoId, bool active);
+    event CUREUnstaked(address indexed staker, uint256 amount, uint256 remainingStaked);
+    event StakeLockPeriodUpdated(uint64 newLockPeriod);
+
 
  // Errors
 
-    error NotAdmin();
+    error NotAdmin(); 
     error InsufficientBalance();
     error InvalidAmount();
     error LabCreditAlreadyExists();
     error LabCreditNotFound();
     error CUREHolderNotFound();
     error SubDAONotFound();
+    error StakeLocked(uint64 unlockTime);
+    error InsufficientStaked();
 
  // modifiers
 
@@ -81,7 +87,8 @@ contract CleanDeployReady {
         labCreditsIssued = 0;
         cureTotalSupply = 0;
         subdaoCount = 0;
-    }
+        stakeLockPeriod = 365 days;
+}
 
         
 // ========================================
@@ -90,10 +97,8 @@ contract CleanDeployReady {
     
         
        
-    /**
-     * @notice Issue a non-transferable Lab Credit for intellectual property
-     * @param ipTitle Title/description of the intellectual property
-     */
+    // Issue a non-transferable Lab Credit for intellectual property
+    // ipTitle = Title/description of the intellectual property
     function issueLabCredit(string memory ipTitle) external {
         if(labCredits[msg.sender].exists) revert LabCreditAlreadyExists();
         if(bytes(ipTitle).length == 0) revert InvalidAmount();
@@ -117,10 +122,8 @@ contract CleanDeployReady {
 // ========================================
 
         
-    /**
-     * @notice Acquire CURE tokens for community participation
-     * @param amount Amount of CURE tokens to acquire
-     */
+    // Acquire CURE tokens for community participation
+    // amount = Amount of CURE tokens to acquire
     function acquireCURETokens(uint256 amount) external payable {
         if(amount == 0) revert InvalidAmount();
         
@@ -137,11 +140,8 @@ contract CleanDeployReady {
     }
 
 
-
-    /**
-     * @notice Stake CURE tokens on research proposals
-     * @param stakeAmount Amount of CURE tokens to stake
-     */
+    // Stake CURE tokens on research proposals
+    // stakeAmount = Amount of CURE tokens to stake
     function stakeCUREOnResearch(uint256 stakeAmount) external {
         if(stakeAmount == 0) revert InvalidAmount();
         
@@ -151,17 +151,40 @@ contract CleanDeployReady {
         holder.balance -= stakeAmount;
         holder.staked += stakeAmount;
         
+        // Set unlock time (first stake or extend existing lock)
+        uint64 newUnlockTime = uint64(block.timestamp) + stakeLockPeriod;
+        if(newUnlockTime > stakeUnlockTime[msg.sender]) {
+            stakeUnlockTime[msg.sender] = newUnlockTime;
+        }
+        
         emit CUREStaked(msg.sender, stakeAmount, holder.staked);
     }
+    
+   // unstake CURE tokens after lock period 
+   // amount = Amount of CURE tokens to unstake
+   function unstakeCURE(uint256 amount) external {
+        if(amount == 0) revert InvalidAmount();
+        
+        // Check if lock period has passed
+        if(block.timestamp < stakeUnlockTime[msg.sender]) revert StakeLocked(stakeUnlockTime[msg.sender]);
+        
+        CUREHolder storage holder = cureHolders[msg.sender];
+        if(holder.staked < amount) revert InsufficientStaked();
+        
+        // Move token from staked back to balance
+        holder.staked -= amount;
+        holder.balance += amount;
+        
+        emit CUREUnstaked(msg.sender, amount, holder.staked);
+    }
+    
     
     // ========================================
     // Lane 3: Sub-DAO Functions
     // ========================================
     
-    /**
-     * @notice Create a disease-specific Sub-DAO with its own token
-     * @param initialSupply Initial token supply for the Sub-DAO
-     */
+    // Create a disease-specific Sub-DAO with its own token
+    // initialSupply = Initial token supply for the Sub-DAO
     function createSubDAO(uint256 initialSupply) external {
         if(initialSupply == 0) revert InvalidAmount();
         
@@ -183,10 +206,8 @@ contract CleanDeployReady {
     // Admin Functions
     // ========================================
     
-    /**
-     * @notice Activate Phase 2 (dynamic pricing) for a CURE holder
-     * @param holder Address of the CURE token holder
-     */
+    // Activate Phase 2 (dynamic pricing) for a CURE holder
+    // holder = Address of the CURE token holder
     function activatePhase2(address holder) external onlyAdmin {
         CUREHolder storage cureHolder = cureHolders[holder];
         if(cureHolder.phase == 0) revert CUREHolderNotFound();
@@ -197,11 +218,9 @@ contract CleanDeployReady {
 
 
         
-    /**
-     * @notice Toggle bonding curve status for a Sub-DAO
-     * @param daoCreator Address of the Sub-DAO creator
-     * @param active New bonding curve status
-     */
+    // Toggle bonding curve status for a Sub-DAO
+    // daoCreator = Address of the Sub-DAO creator
+    // active = New bonding curve status
     function toggleBondingCurve(address daoCreator, bool active) external onlyAdmin {
         SubDAOToken storage subdao = subDAOTokens[daoCreator];
         if(subdao.daoId == 0) revert SubDAONotFound();
@@ -209,37 +228,37 @@ contract CleanDeployReady {
         subdao.bondingActive = active;
         emit BondingCurveToggled(subdao.daoId, active);
     }
+    // Update stake lock period (admin only)
+    // newLockPeriod = New lock period in seconds
+function updateStakeLockPeriod(uint64 newLockPeriod) external onlyAdmin {
+    stakeLockPeriod = newLockPeriod;
+    emit StakeLockPeriodUpdated(newLockPeriod);
+}
 
         
     // ========================================
     // View Functions
     // ========================================
     
-    /**
-     * @notice Get system-wide statistics
-     * @return Number of lab credits, total CURE supply, and number of Sub-DAOs
-     */
+    // Get system-wide statistics
+    // Returns: lab credits issued, total CURE supply, Sub-DAO count
     function getSystemStats() external view returns (uint64, uint256, uint64) {
         return (labCreditsIssued, cureTotalSupply, subdaoCount);
     }
 
         
-    /**
-     * @notice Get Lab Credit details for an inventor
-     * @param inventor Address of the inventor
-     * @return Lab Credit information
-     */
+    // Get Lab Credit details for an inventor
+    // inventor = Address of the inventor
+    // Returns: Lab Credit information
     function getLabCredit(address inventor) external view returns (LabCredit memory) {
         if(!labCredits[inventor].exists) revert LabCreditNotFound();
         return labCredits[inventor];
     }
 
         
-    /**
-     * @notice Get CURE token balance and staking info for a holder
-     * @param holder Address of the CURE holder
-     * @return Balance, staked amount, and phase
-     */
+    // Get CURE token balance and staking info for a holder
+    // holder = Address of the CURE holder
+    // Returns: balance, staked amount, and phase
     function getCUREBalance(address holder) external view returns (uint256, uint256, uint8) {
         CUREHolder memory holderInfo = cureHolders[holder];
         if(holderInfo.phase == 0) revert CUREHolderNotFound();
@@ -247,13 +266,27 @@ contract CleanDeployReady {
     }
 
     
-    /**
-     * @notice Get Sub-DAO information
-     * @param creator Address of the Sub-DAO creator
-     * @return Sub-DAO details
-     */
+    // Get Sub-DAO information
+    // creator = Address of the Sub-DAO creator
+    // Returns: Sub-DAO details
     function getSubDAOInfo(address creator) external view returns (SubDAOToken memory) {
         if(subDAOTokens[creator].daoId == 0) revert SubDAONotFound();
         return subDAOTokens[creator];
     }
+
+    // check when a user can unstake
+    // staker = Address of the staker
+   // Returns: Timestamp when unstaking becomes available
+   function getUnlockTime(address staker) external view returns (uint64) {
+    return stakeUnlockTime[staker];
+   }
+
+   // check if a user can currently unstake
+   // staker = Address of the staker
+   // Returns: True if can unstake now, false if still locked
+   function canUnstake(address staker) external view returns (bool) {
+    return block.timestamp >= stakeUnlockTime[staker];
+   }
+  
+
 }

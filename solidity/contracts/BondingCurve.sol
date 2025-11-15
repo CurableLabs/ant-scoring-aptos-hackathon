@@ -157,7 +157,7 @@ contract BondingCurve {
         uint256 supply,
         uint256 reserve,
         uint256 cureDeposit
-    ) internal view returns(uint256){
+    ) internal pure returns(uint256){
         if (supply == 0 ){
             return((cureDeposit * PRECISION) / INITIAL_PRICE);
         }
@@ -178,7 +178,7 @@ contract BondingCurve {
         uint256 supply,
         uint256 reserve,
         uint256 antToBurn
-    ) internal view returns(uint256){
+    ) internal pure returns(uint256){
         if (supply == 0 || supply <= antToBurn){
             return 0;
         }
@@ -198,7 +198,7 @@ contract BondingCurve {
     function calculateCurrentPrice(
         uint256 supply,
         uint256 reserve
-    ) internal view returns(uint256){
+    ) internal pure returns(uint256){
         if (supply == 0){
             return INITIAL_PRICE;
         }

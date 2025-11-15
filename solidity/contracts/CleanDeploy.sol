@@ -95,7 +95,7 @@ contract TriLaneSystem{
             cureHolders[msg.sender] = CUREHolder({
                 balance: amount,
                 staked: 0,
-                phase: 1,
+                phase: 1
             });
         } else {
             cureHolders[msg.sender].balance += amount;
