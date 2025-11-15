@@ -4,33 +4,33 @@
 
 ```
 solidity/
-├── contracts/          ✅ PRODUCTION CONTRACTS
-│   ├── ANTScoring.sol          ✅ Yours - Tested (13 tests passing)
-│   ├── BondingCurve.sol        ✅ Yours - Ready for testing
-│   ├── CleanDeploy.sol         ✅ Yours - Ready for testing
-│   ├── BondingCurve2.sol       🔵 Team member's work
-│   ├── CleanDeployReady.sol    🔵 Team member's work
-│   └── CUREIntegration2.sol    🔵 Team member's work
+├── contracts/                   Production Contracts
+│   ├── ANTScoring.sol          - Proposal scoring (13 tests passing)
+│   ├── BondingCurve.sol        - Token bonding curve
+│   └── CleanDeploy.sol         - Tri-lane system
 │
-├── src/                ⚠️ REFERENCE/ARCHIVE (older versions)
-│   └── See src/README.md for details
+├── src/                         Additional Contracts
+│   ├── BondingCurve2.sol       - Alternative bonding curve
+│   ├── CleanDeployReady.sol    - Advanced tri-lane
+│   └── CUREIntegration2.sol    - CURE integration
 │
-├── test/               ✅ YOUR TEST SUITES
-│   └── ANTScoring.t.sol        - 13 tests, 100% passing
+├── test/
+│   ├── foundry/                 Foundry Tests
+│   │   └── ANTScoring.t.sol    - 13 tests passing
+│   └── hardhat/                 Hardhat Tests
+│       └── CleanDeployReady.test.js
 │
-└── foundry.toml        ⚙️ Config (points to contracts/ directory)
+└── foundry.toml                 Foundry config
 ```
-
-**⚠️ IMPORTANT**: Always use `contracts/` for active development. The `src/` folder contains reference copies only.
 
 ---
 
 ## ✅ Test Status
 
-**ANTScoring Contract**: 13/13 tests passing ✅
-- Fixed 3 critical arithmetic overflow bugs
+**ANTScoring Contract**: 13/13 tests passing
+- Comprehensive Foundry test suite
 - 100% function coverage
-- Production-ready
+- All arithmetic overflow bugs fixed
 
 ---
 
