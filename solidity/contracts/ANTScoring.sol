@@ -284,13 +284,13 @@ contract ANTScoring {
         ResourceEfficiencyScores memory resourceEfficiency,
         OpenScienceScores memory openScience
     ) internal pure returns (uint8) {
-       uint8 scientificMeritAvg = (scientificMerit.novelty + scientificMerit.biologicalPlausibility + scientificMerit.priorEvidence) / 3;
-       uint8 feasibilityAvg = (feasibility.technicalViability + feasibility.dataQuality + feasibility.clarityOfProtocol) / 3;
-       uint8 communityAlignmentAvg = (communityAlignment.missionFit +communityAlignment.daoEngagement ) / 2;
-       uint8 resourceEfficiencyAvg = (resourceEfficiency.costEffectiveness + resourceEfficiency.agenticResourceUse) / 2;
-       uint8 openScienceAvg = (openScience.dataProtocolSharing + openScience.collaborativePotential) / 2;
+       uint8 scientificMeritAvg = uint8((uint256(scientificMerit.novelty) + scientificMerit.biologicalPlausibility + scientificMerit.priorEvidence) / 3);
+       uint8 feasibilityAvg = uint8((uint256(feasibility.technicalViability) + feasibility.dataQuality + feasibility.clarityOfProtocol) / 3);
+       uint8 communityAlignmentAvg = uint8((uint256(communityAlignment.missionFit) + communityAlignment.daoEngagement) / 2);
+       uint8 resourceEfficiencyAvg = uint8((uint256(resourceEfficiency.costEffectiveness) + resourceEfficiency.agenticResourceUse) / 2);
+       uint8 openScienceAvg = uint8((uint256(openScience.dataProtocolSharing) + openScience.collaborativePotential) / 2);
 
-       uint256 weightedFinal = (scientificMeritAvg * SCIENTIFIC_MERIT_WEIGHT + feasibilityAvg * FEASIBILITY_WEIGHT + communityAlignmentAvg * COMMUNITY_ALIGNMENT_WEIGHT + resourceEfficiencyAvg * RESOURCE_EFFICIENCY_WEIGHT + openScienceAvg * OPEN_SCIENCE_WEIGHT);
+       uint256 weightedFinal = (uint256(scientificMeritAvg) * SCIENTIFIC_MERIT_WEIGHT + uint256(feasibilityAvg) * FEASIBILITY_WEIGHT + uint256(communityAlignmentAvg) * COMMUNITY_ALIGNMENT_WEIGHT + uint256(resourceEfficiencyAvg) * RESOURCE_EFFICIENCY_WEIGHT + uint256(openScienceAvg) * OPEN_SCIENCE_WEIGHT);
        uint8 finalScore = uint8(weightedFinal / 100);
        return finalScore;
     }
@@ -304,32 +304,32 @@ contract ANTScoring {
         ResourceEfficiencyScores memory newResourceEfficiency,
         OpenScienceScores memory newOpenScience,
         uint8 newFinalScore
-    ) internal pure returns (ProposalScore memory) {
+    ) internal view returns (ProposalScore memory) {
       uint64 currentCount = existingScores.scorerCount;
       uint64 newCount = currentCount + 1;
       ScientificMeritScores memory avgScientificMerit =  ScientificMeritScores({
-        novelty: uint8((existingScores.scientificMerit.novelty * currentCount + newScientificMerit.novelty) / newCount),
-        biologicalPlausibility: uint8((existingScores.scientificMerit.biologicalPlausibility * currentCount + newScientificMerit.biologicalPlausibility) / newCount),
-        priorEvidence: uint8((existingScores.scientificMerit.priorEvidence * currentCount + newScientificMerit.priorEvidence) / newCount)
+        novelty: uint8((uint256(existingScores.scientificMerit.novelty) * currentCount + newScientificMerit.novelty) / newCount),
+        biologicalPlausibility: uint8((uint256(existingScores.scientificMerit.biologicalPlausibility) * currentCount + newScientificMerit.biologicalPlausibility) / newCount),
+        priorEvidence: uint8((uint256(existingScores.scientificMerit.priorEvidence) * currentCount + newScientificMerit.priorEvidence) / newCount)
       });
       FeasibilityScores memory avgFeasibility = FeasibilityScores({
-        technicalViability: uint8((existingScores.feasibility.technicalViability * currentCount + newFeasibility.technicalViability) / newCount),
-        dataQuality: uint8((existingScores.feasibility.dataQuality * currentCount + newFeasibility.dataQuality) / newCount),
-        clarityOfProtocol: uint8((existingScores.feasibility.clarityOfProtocol * currentCount + newFeasibility.clarityOfProtocol) / newCount)
+        technicalViability: uint8((uint256(existingScores.feasibility.technicalViability) * currentCount + newFeasibility.technicalViability) / newCount),
+        dataQuality: uint8((uint256(existingScores.feasibility.dataQuality) * currentCount + newFeasibility.dataQuality) / newCount),
+        clarityOfProtocol: uint8((uint256(existingScores.feasibility.clarityOfProtocol) * currentCount + newFeasibility.clarityOfProtocol) / newCount)
       });
       CommunityAlignmentScores memory avgCommunityAlignment = CommunityAlignmentScores({
-        missionFit: uint8((existingScores.communityAlignment.missionFit * currentCount + newCommunityAlignment.missionFit) / newCount),
-        daoEngagement: uint8((existingScores.communityAlignment.daoEngagement * currentCount + newCommunityAlignment.daoEngagement) / newCount)
+        missionFit: uint8((uint256(existingScores.communityAlignment.missionFit) * currentCount + newCommunityAlignment.missionFit) / newCount),
+        daoEngagement: uint8((uint256(existingScores.communityAlignment.daoEngagement) * currentCount + newCommunityAlignment.daoEngagement) / newCount)
       });
       ResourceEfficiencyScores memory avgResourceEfficiency = ResourceEfficiencyScores({
-        costEffectiveness: uint8((existingScores.resourceEfficiency.costEffectiveness * currentCount + newResourceEfficiency.costEffectiveness) / newCount),
-        agenticResourceUse: uint8((existingScores.resourceEfficiency.agenticResourceUse * currentCount + newResourceEfficiency.agenticResourceUse) / newCount)
+        costEffectiveness: uint8((uint256(existingScores.resourceEfficiency.costEffectiveness) * currentCount + newResourceEfficiency.costEffectiveness) / newCount),
+        agenticResourceUse: uint8((uint256(existingScores.resourceEfficiency.agenticResourceUse) * currentCount + newResourceEfficiency.agenticResourceUse) / newCount)
       });
       OpenScienceScores memory avgOpenScience = OpenScienceScores({
-        dataProtocolSharing: uint8((existingScores.openScience.dataProtocolSharing * currentCount + newOpenScience.dataProtocolSharing) / newCount),
-        collaborativePotential: uint8((existingScores.openScience.collaborativePotential * currentCount + newOpenScience.collaborativePotential) / newCount)
+        dataProtocolSharing: uint8((uint256(existingScores.openScience.dataProtocolSharing) * currentCount + newOpenScience.dataProtocolSharing) / newCount),
+        collaborativePotential: uint8((uint256(existingScores.openScience.collaborativePotential) * currentCount + newOpenScience.collaborativePotential) / newCount)
       });
-      uint8 avgFinalScore = uint8((existingScores.finalScore * currentCount + newFinalScore) / newCount);
+      uint8 avgFinalScore = uint8((uint256(existingScores.finalScore) * currentCount + newFinalScore) / newCount);
       
       return ProposalScore({
         scientificMerit: avgScientificMerit,

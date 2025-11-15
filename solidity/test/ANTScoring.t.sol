@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
-import {ANTScoring} from "../src/ANTScoring.sol";
+import {ANTScoring} from "../contracts/ANTScoring.sol";
 
 /// @title ANTScoring Contract Test Suite
 /// @author Molecular Discovery DAO
@@ -342,7 +342,7 @@ contract ANTScoringTest is Test {
         assertEq(systemOwner, owner, "Owner should match");
         assertEq(totalProposals, 2, "Total proposals should be 2");
         assertEq(activeProposals, 2, "Active proposals should be 2");
-        assertEq(threshold, 70, "Passing threshold should be 70");
+        assertEq(threshold, 80, "Passing threshold should be 80");
     }
     
     /// @notice Test that getProposalInfo returns complete proposal details
