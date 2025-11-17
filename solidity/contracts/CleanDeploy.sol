@@ -16,6 +16,7 @@ contract TriLaneSystem{
         uint256 balance;
         uint256 staked;
         uint8 phase; // 1 = fixed, 2 = dynamic
+        uint256 stakedTimestamp; // Track when they last staked
     }
 
     //Sub-DAO token
@@ -52,6 +53,7 @@ contract TriLaneSystem{
     event LabCreditIssued(uint256 indexed creditId, address indexed inventor, string ipTitle, uint256 timestamp);
     event CURETokensAcquired(address indexed holder, uint256 amount, uint256 timestamp);
     event CURETokensStaked(address indexed staker, uint256 amount, uint256 timestamp);
+    event CURETokensUnstaked(address indexed unstaker, uint256 amount, uint256 timestamp);
     event SubDAOCreated(address indexed creator,uint256 indexed daoId, uint256 tokenSupply, bool bondingActive);
     event Phase2Activated(address indexed holder, uint256 timestamp);
     event BondingCurveToggled(uint256 indexed daoId, bool bondingActive);
@@ -95,7 +97,8 @@ contract TriLaneSystem{
             cureHolders[msg.sender] = CUREHolder({
                 balance: amount,
                 staked: 0,
-                phase: 1
+                phase: 1,
+                stakedTimestamp: 0
             });
         } else {
             cureHolders[msg.sender].balance += amount;
@@ -110,7 +113,19 @@ contract TriLaneSystem{
         require (cureHolders[msg.sender].phase >=1, "CURE tokens must be in phase 1 to be staked");
         cureHolders[msg.sender].balance -= amount;
         cureHolders[msg.sender].staked += amount;
+        cureHolders[msg.sender].stakedTimestamp = block.timestamp;
         emit CURETokensStaked(msg.sender, amount, block.timestamp);
+    }
+
+    //Function to unstake CURE tokens(Lane 2)
+    function unstakeCURETokens(uint256 amount) external{
+        require(amount > 0, E_INVALID_AMOUNT);
+        require(cureHolders[msg.sender].staked >= amount, "Insufficient staked balance");
+        require(block.timestamp >= cureHolders[msg.sender].stakedTimestamp + 365 days, "Must wait 365 days before unstaking");
+        
+        cureHolders[msg.sender].staked -= amount;
+        cureHolders[msg.sender].balance += amount;
+        emit CURETokensUnstaked(msg.sender, amount, block.timestamp);
     }
 
     //Function to create Sub-DAO(Lane 3)
