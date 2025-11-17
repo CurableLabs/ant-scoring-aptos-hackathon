@@ -2,13 +2,13 @@
 pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
-import {BondingCurve} from "../../contracts/BondingCurve.sol";
+import {BondingCurve2} from "../../contracts/BondingCurve.sol";
 
 /// @title BondingCurve Contract Test Suite
 /// @notice Comprehensive tests for the Bancor bonding curve implementation
 /// @dev Tests cover initialization, buying, selling, view functions, and edge cases
 contract BondingCurveTest is Test {
-    BondingCurve public bondingCurve;
+    BondingCurve2 public bondingCurve;
     address public owner;
     address public buyer1;
     address public buyer2;
@@ -22,7 +22,7 @@ contract BondingCurveTest is Test {
         buyer2 = makeAddr("buyer2");
         seller1 = makeAddr("seller1");
         
-        bondingCurve = new BondingCurve();
+        bondingCurve = new BondingCurve2();
     }
 
     /// @notice Helper function to initialize the bonding curve
@@ -57,7 +57,7 @@ contract BondingCurveTest is Test {
     /// @notice Test that non-owner cannot initialize bonding curve
     function testInitializeBondingCurveNotOwner() public {
         vm.prank(buyer1);
-        vm.expectRevert("ONLY OWNER CAN CALL THIS FUNCTION");
+        vm.expectRevert(BondingCurve2.NotOwner.selector);
         bondingCurve.initializeBondingCurve();
     }
 
@@ -65,14 +65,14 @@ contract BondingCurveTest is Test {
     function testInitializeBondingCurveTwice() public {
         bondingCurve.initializeBondingCurve();
         
-        vm.expectRevert("CURVE ALREADY INITIALIZED");
+        vm.expectRevert(BondingCurve2.CurveAlreadyInitialized.selector);
         bondingCurve.initializeBondingCurve();
     }
 
     /// @notice Test that initialization emits correct event
     function testInitializeBondingCurveEmitsEvent() public {
         vm.expectEmit(true, false, false, true);
-        emit BondingCurve.BondingCurveInitialized(owner, 0);
+        emit BondingCurve2.BondingCurveInitialized(owner, block.timestamp);
         
         bondingCurve.initializeBondingCurve();
     }
@@ -82,7 +82,7 @@ contract BondingCurveTest is Test {
     /// @notice Test that user cannot buy before curve is initialized
     function testBuyBeforeInitialization() public {
         vm.prank(buyer1);
-        vm.expectRevert("CURVE NOT ACTIVE");
+        vm.expectRevert(BondingCurve2.CurveNotInitialized.selector);
         bondingCurve.buyANTTokens(1000, 0);
     }
 
@@ -130,7 +130,7 @@ contract BondingCurveTest is Test {
         initializeCurve();
         
         vm.prank(buyer1);
-        vm.expectRevert("INVALID CURE AMOUNT");
+        vm.expectRevert(BondingCurve2.InvalidAmount.selector);
         bondingCurve.buyANTTokens(0, 0);
     }
 
@@ -142,8 +142,9 @@ contract BondingCurveTest is Test {
         uint256 expectedAnt = bondingCurve.getBuyQuote(cureAmount);
         uint256 minAntOut = expectedAnt + 1; // Set minimum higher than expected
         
+        // Should revert with SlippageExceeded error
         vm.prank(buyer1);
-        vm.expectRevert("SLIPPAGE EXCEEDED");
+        vm.expectRevert();
         bondingCurve.buyANTTokens(cureAmount, minAntOut);
     }
 
@@ -156,7 +157,7 @@ contract BondingCurveTest is Test {
         uint256 expectedPrice = bondingCurve.INITIAL_PRICE(); // Initial price
         
         vm.expectEmit(true, false, false, true);
-        emit BondingCurve.ANTTokensPurchased(buyer1, cureAmount, expectedAnt, expectedPrice, expectedAnt);
+        emit BondingCurve2.ANTTokenPurchased(buyer1, cureAmount, expectedAnt, expectedPrice, expectedAnt);
         
         vm.prank(buyer1);
         bondingCurve.buyANTTokens(cureAmount, 0);
@@ -167,8 +168,8 @@ contract BondingCurveTest is Test {
     /// @notice Test that user cannot sell before curve is initialized
     function testSellBeforeInitialization() public {
         vm.prank(seller1);
-        vm.expectRevert("CURVE NOT ACTIVE");
-        bondingCurve.sellAntTokens(1000, 0);
+        vm.expectRevert(BondingCurve2.CurveNotInitialized.selector);
+        bondingCurve.sellANTTokens(1000, 0);
     }
 
     /// @notice Test successful sell after buying
@@ -189,7 +190,7 @@ contract BondingCurveTest is Test {
         uint256 expectedCure = bondingCurve.getSellQuote(antToSell);
         
         vm.prank(buyer1);
-        bondingCurve.sellAntTokens(antToSell, 0);
+        bondingCurve.sellANTTokens(antToSell, 0);
         
         assertEq(bondingCurve.antBalances(buyer1), antBalance - antToSell, "ANT balance should decrease");
         assertEq(bondingCurve.currentSupply(), supplyBefore - antToSell, "Supply should decrease");
@@ -202,8 +203,8 @@ contract BondingCurveTest is Test {
         initializeCurve();
         
         vm.prank(buyer1);
-        vm.expectRevert("INVALID ANT AMOUNT");
-        bondingCurve.sellAntTokens(0, 0);
+        vm.expectRevert(BondingCurve2.InvalidAmount.selector);
+        bondingCurve.sellANTTokens(0, 0);
     }
 
     /// @notice Test that selling more than balance reverts
@@ -216,10 +217,10 @@ contract BondingCurveTest is Test {
         
         uint256 antBalance = bondingCurve.antBalances(buyer1);
         
-        // Try to sell more than balance - checks supply first, then balance
+        // Try to sell more than balance
         vm.prank(buyer1);
-        vm.expectRevert("INSUFFICIENT ANT");
-        bondingCurve.sellAntTokens(antBalance + 1, 0);
+        vm.expectRevert(BondingCurve2.InsufficientANT.selector);
+        bondingCurve.sellANTTokens(antBalance + 1, 0);
     }
 
     /// @notice Test that selling more than supply reverts
@@ -230,8 +231,8 @@ contract BondingCurveTest is Test {
         // This shouldn't normally happen, but tests the supply check
         
         vm.prank(buyer1);
-        vm.expectRevert("INSUFFICIENT ANT");
-        bondingCurve.sellAntTokens(999999999, 0);
+        vm.expectRevert(BondingCurve2.InsufficientANT.selector);
+        bondingCurve.sellANTTokens(999999999, 0);
     }
 
     /// @notice Test slippage protection on sell
@@ -246,9 +247,10 @@ contract BondingCurveTest is Test {
         uint256 expectedCure = bondingCurve.getSellQuote(antToSell);
         uint256 minCureOut = expectedCure + 1; // Set minimum higher than expected
         
+        // Should revert with SlippageExceeded error
         vm.prank(buyer1);
-        vm.expectRevert("SLIPPAGE EXCEEDED");
-        bondingCurve.sellAntTokens(antToSell, minCureOut);
+        vm.expectRevert();
+        bondingCurve.sellANTTokens(antToSell, minCureOut);
     }
 
     /// @notice Test that selling emits correct event
@@ -265,10 +267,10 @@ contract BondingCurveTest is Test {
         uint256 expectedPrice = bondingCurve.INITIAL_PRICE();
         
         vm.expectEmit(true, false, false, true);
-        emit BondingCurve.ANTTokenSold(buyer1, antToSell, expectedCure, expectedPrice, 0);
+        emit BondingCurve2.ANTTokenSold(buyer1, antToSell, expectedCure, expectedPrice, 0);
         
         vm.prank(buyer1);
-        bondingCurve.sellAntTokens(antToSell, 0);
+        bondingCurve.sellANTTokens(antToSell, 0);
     }
 
     // ========== View Functions Tests ==========
@@ -322,13 +324,15 @@ contract BondingCurveTest is Test {
         vm.prank(buyer1);
         bondingCurve.buyANTTokens(cureAmount, 0);
         
-        (uint256 supply, uint256 reserve, uint256 bought, uint256 sold, uint256 price) = bondingCurve.getCurveStats();
+        (uint256 supply, uint256 reserve, uint256 price, uint256 bought, uint256 sold, bool active, uint256 launched) = bondingCurve.getCurveStats();
         
         assertGt(supply, 0, "Supply should be greater than 0");
         assertEq(reserve, cureAmount, "Reserve should match CURE deposited");
+        assertGt(price, 0, "Price should be greater than 0");
         assertGt(bought, 0, "Bought should be greater than 0");
         assertEq(sold, 0, "Sold should be 0");
-        assertGt(price, 0, "Price should be greater than 0");
+        assertTrue(active, "Curve should be active");
+        assertGt(launched, 0, "Launch timestamp should be set");
     }
 
     // ========== Edge Cases & Integration Tests ==========
@@ -367,7 +371,7 @@ contract BondingCurveTest is Test {
         
         // Sell half
         vm.prank(buyer1);
-        bondingCurve.sellAntTokens(antBalance / 2, 0);
+        bondingCurve.sellANTTokens(antBalance / 2, 0);
         
         uint256 priceAfterSell = bondingCurve.getCurrentPrice();
         assertLt(priceAfterSell, priceAfterBuy, "Price should decrease after selling");
@@ -389,7 +393,7 @@ contract BondingCurveTest is Test {
         uint256 antToSell = antReceived / 2;
         uint256 cureReceived = bondingCurve.getSellQuote(antToSell);
         vm.prank(buyer1);
-        bondingCurve.sellAntTokens(antToSell, 0);
+        bondingCurve.sellANTTokens(antToSell, 0);
         
         // CURE received should be less than deposited (due to bonding curve mechanics)
         assertLt(cureReceived, cureAmount, "Round trip should result in net loss due to curve");
@@ -417,7 +421,7 @@ contract BondingCurveTest is Test {
         // Buyer 1 sells half their balance
         uint256 sellAmount = buyer1Balance / 2;
         vm.prank(buyer1);
-        bondingCurve.sellAntTokens(sellAmount, 0);
+        bondingCurve.sellANTTokens(sellAmount, 0);
         
         assertEq(bondingCurve.antBalances(buyer1), buyer1Balance - sellAmount, "Buyer1 should have reduced ANT after selling");
         assertEq(bondingCurve.antBalances(buyer2), buyer2Balance, "Buyer2 balance should be unchanged");

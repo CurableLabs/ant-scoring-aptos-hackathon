@@ -1,0 +1,9 @@
+Compiler run failed:
+Error (6275): Source "src/Counter.sol" not found: File not found. Searched the following locations: "/Users/hp/Documents/GitHub/ant-scoring-aptos-hackathon/solidity".
+ParserError: Source "src/Counter.sol" not found: File not found. Searched the following locations: "/Users/hp/Documents/GitHub/ant-scoring-aptos-hackathon/solidity".
+ --> script/Counter.s.sol:5:1:
+  |
+5 | import {Counter} from "../src/Counter.sol";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Compilation failed
