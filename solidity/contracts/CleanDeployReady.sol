@@ -43,7 +43,7 @@ contract CleanDeployReady {
 
   // Mapping
 
-   mapping(address => LabCredit) public labCredits;
+   mapping(address => LabCredit[]) public inventorLabCredits;  // Multiple lab credits per inventor
    mapping(address => CUREHolder) public cureHolders;
    mapping(address => SubDAOToken) public subDAOTokens;
    mapping(uint64 => address) public subDAOById;
@@ -66,7 +66,6 @@ contract CleanDeployReady {
     error NotAdmin(); 
     error InsufficientBalance();
     error InvalidAmount();
-    error LabCreditAlreadyExists();
     error LabCreditNotFound();
     error CUREHolderNotFound();
     error SubDAONotFound();
@@ -99,19 +98,21 @@ contract CleanDeployReady {
        
     // Issue a non-transferable Lab Credit for intellectual property
     // ipTitle = Title/description of the intellectual property
+    // Users can issue multiple lab credits for different IPs
     function issueLabCredit(string memory ipTitle) external {
-        if(labCredits[msg.sender].exists) revert LabCreditAlreadyExists();
         if(bytes(ipTitle).length == 0) revert InvalidAmount();
         
         labCreditsIssued++;
         
-        labCredits[msg.sender] = LabCredit({
+        LabCredit memory newCredit = LabCredit({
             creditId: labCreditsIssued,
             inventor: msg.sender,
             ipTitle: ipTitle,
             timestamp: uint64(block.timestamp),
             exists: true
         });
+        
+        inventorLabCredits[msg.sender].push(newCredit);
         
         emit LabCreditIssued(labCreditsIssued, msg.sender, ipTitle, uint64(block.timestamp));
     }
@@ -247,12 +248,27 @@ function updateStakeLockPeriod(uint64 newLockPeriod) external onlyAdmin {
     }
 
         
-    // Get Lab Credit details for an inventor
+    // Get all Lab Credits for an inventor
     // inventor = Address of the inventor
+    // Returns: Array of all Lab Credits issued by this inventor
+    function getInventorLabCredits(address inventor) external view returns (LabCredit[] memory) {
+        return inventorLabCredits[inventor];
+    }
+
+    // Get total number of Lab Credits for an inventor
+    // inventor = Address of the inventor
+    // Returns: Number of lab credits
+    function getInventorLabCreditsCount(address inventor) external view returns (uint256) {
+        return inventorLabCredits[inventor].length;
+    }
+
+    // Get specific Lab Credit by index for an inventor
+    // inventor = Address of the inventor
+    // index = Index of the lab credit in the array
     // Returns: Lab Credit information
-    function getLabCredit(address inventor) external view returns (LabCredit memory) {
-        if(!labCredits[inventor].exists) revert LabCreditNotFound();
-        return labCredits[inventor];
+    function getLabCreditByIndex(address inventor, uint256 index) external view returns (LabCredit memory) {
+        if(index >= inventorLabCredits[inventor].length) revert LabCreditNotFound();
+        return inventorLabCredits[inventor][index];
     }
 
         

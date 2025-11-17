@@ -62,20 +62,38 @@ describe("CleanDeployReady Contract", function() {
             // Check that supply increased
             expect(await cleanDeployReady.labCreditsIssued()).to.equal(1);
             
-            // Check researcher's lab credit
-            const labCredit = await cleanDeployReady.labCredits(researcher.address);
+            // Check researcher has 1 lab credit
+            expect(await cleanDeployReady.getInventorLabCreditsCount(researcher.address)).to.equal(1);
+            
+            // Check researcher's lab credit details
+            const labCredit = await cleanDeployReady.getLabCreditByIndex(researcher.address, 0);
             expect(labCredit.ipTitle).to.equal("Cancer Cure Discovery");
             expect(labCredit.timestamp).to.be.gt(0);
+            expect(labCredit.inventor).to.equal(researcher.address);
         });
 
-        it("Should revert if researcher tries to issue duplicate lab credit", async function() {
+        it("Should allow researcher to issue multiple lab credits", async function() {
             // Issue first lab credit
             await cleanDeployReady.connect(researcher).issueLabCredit("Cancer Cure");
             
-            // Try to issue second lab credit (should fail)
-            await expect(
-                cleanDeployReady.connect(researcher).issueLabCredit("Diabetes Cure")
-            ).to.be.revertedWithCustomError(cleanDeployReady, "LabCreditAlreadyExists");
+            // Issue second lab credit (should succeed now!)
+            await cleanDeployReady.connect(researcher).issueLabCredit("Diabetes Cure");
+            
+            // Issue third lab credit
+            await cleanDeployReady.connect(researcher).issueLabCredit("Alzheimer's Treatment");
+            
+            // Check total supply increased
+            expect(await cleanDeployReady.labCreditsIssued()).to.equal(3);
+            
+            // Check researcher has 3 lab credits
+            expect(await cleanDeployReady.getInventorLabCreditsCount(researcher.address)).to.equal(3);
+            
+            // Check all three credits
+            const credits = await cleanDeployReady.getInventorLabCredits(researcher.address);
+            expect(credits.length).to.equal(3);
+            expect(credits[0].ipTitle).to.equal("Cancer Cure");
+            expect(credits[1].ipTitle).to.equal("Diabetes Cure");
+            expect(credits[2].ipTitle).to.equal("Alzheimer's Treatment");
         });
 
         it("Should revert if IP title is empty", async function() {
@@ -83,6 +101,58 @@ describe("CleanDeployReady Contract", function() {
             await expect(
                 cleanDeployReady.connect(researcher).issueLabCredit("")
             ).to.be.revertedWithCustomError(cleanDeployReady, "InvalidAmount");
+        });
+
+        it("Should allow multiple users to have multiple lab credits each", async function() {
+            // Researcher issues 2 credits
+            await cleanDeployReady.connect(researcher).issueLabCredit("Cancer Research");
+            await cleanDeployReady.connect(researcher).issueLabCredit("Heart Disease Study");
+            
+            // Holder issues 3 credits
+            await cleanDeployReady.connect(holder).issueLabCredit("Brain Research");
+            await cleanDeployReady.connect(holder).issueLabCredit("Liver Study");
+            await cleanDeployReady.connect(holder).issueLabCredit("Kidney Treatment");
+            
+            // Check researcher has 2 credits
+            expect(await cleanDeployReady.getInventorLabCreditsCount(researcher.address)).to.equal(2);
+            
+            // Check holder has 3 credits
+            expect(await cleanDeployReady.getInventorLabCreditsCount(holder.address)).to.equal(3);
+            
+            // Total lab credits issued should be 5
+            expect(await cleanDeployReady.labCreditsIssued()).to.equal(5);
+        });
+
+        it("Should get all lab credits for an inventor", async function() {
+            // Issue 3 lab credits
+            await cleanDeployReady.connect(researcher).issueLabCredit("Discovery 1");
+            await cleanDeployReady.connect(researcher).issueLabCredit("Discovery 2");
+            await cleanDeployReady.connect(researcher).issueLabCredit("Discovery 3");
+            
+            // Get all credits
+            const credits = await cleanDeployReady.getInventorLabCredits(researcher.address);
+            
+            // Verify all 3 are returned
+            expect(credits.length).to.equal(3);
+            expect(credits[0].ipTitle).to.equal("Discovery 1");
+            expect(credits[1].ipTitle).to.equal("Discovery 2");
+            expect(credits[2].ipTitle).to.equal("Discovery 3");
+        });
+
+        it("Should return empty array for inventor with no lab credits", async function() {
+            // Check inventor with no credits
+            const credits = await cleanDeployReady.getInventorLabCredits(researcher.address);
+            expect(credits.length).to.equal(0);
+        });
+
+        it("Should revert when getting lab credit with invalid index", async function() {
+            // Issue one credit
+            await cleanDeployReady.connect(researcher).issueLabCredit("Test Discovery");
+            
+            // Try to get index 1 (only index 0 exists)
+            await expect(
+                cleanDeployReady.getLabCreditByIndex(researcher.address, 1)
+            ).to.be.revertedWithCustomError(cleanDeployReady, "LabCreditNotFound");
         });
     });
 
