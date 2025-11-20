@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
 import {ANTScoring} from "../../contracts/ANTScoring.sol";
+import {TriLaneSystem} from "../../contracts/CleanDeploy.sol";
 
 /// @title ANTScoring Contract Test Suite
 /// @author Molecular Discovery DAO
@@ -13,6 +14,9 @@ contract ANTScoringTest is Test {
     
     /// @notice The ANTScoring contract instance being tested
     ANTScoring public antScoring;
+    
+    /// @notice The TriLaneSystem contract instance
+    TriLaneSystem public triLaneSystem;
     
     /// @notice Test address representing the contract owner/admin
     address public owner;
@@ -36,7 +40,14 @@ contract ANTScoringTest is Test {
         scorer2 = makeAddr("scorer2");
         submitter1 = makeAddr("submitter1");
     
-        antScoring = new ANTScoring();
+        // Deploy TriLaneSystem first
+        triLaneSystem = new TriLaneSystem();
+        
+        // Deploy ANTScoring with TriLaneSystem address
+        antScoring = new ANTScoring(address(triLaneSystem));
+        
+        // Authorize ANTScoring to issue badges
+        triLaneSystem.authorizeBadgeIssuer(address(antScoring));
     }
     
     // ============ HELPER FUNCTIONS ============
