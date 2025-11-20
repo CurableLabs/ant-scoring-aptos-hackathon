@@ -1,12 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./CleanDeploy.sol";
+import "./LabBadge.sol";
+
 contract ANTScoring {
     // State Variables 
     address public owner;
+    TriLaneSystem public triLaneSystem;
     uint256 public proposalCounter;
     uint256 public activeProposalCount;
     uint8 public passingThreshold;
+    
+    // Mapping from proposal ID to badge ID (after fulfillment)
+    mapping(uint256 => uint256) public proposalBadges;
+    
+    // Mapping from proposal ID to royalty pool ID (after commercialization)
+    mapping(uint256 => uint256) public proposalRoyaltyPools;
 
     //Structs
     struct ScientificMeritScores {
@@ -100,6 +110,20 @@ contract ANTScoring {
         address indexed scorer,
         address indexed removedBy
     );
+    
+    event BadgeIssued(
+        uint256 indexed proposalId,
+        uint256 indexed badgeId,
+        address indexed recipient,
+        LabBadge.BadgeLevel tier
+    );
+    
+    event ProposalCommercialized(
+        uint256 indexed proposalId,
+        string ipId,
+        uint256 indexed royaltyPoolId,
+        uint256[] badgeIds
+    );
 
     //Modifiers
     modifier onlyOwner() {
@@ -112,8 +136,9 @@ contract ANTScoring {
     }
      
      //Constructor
-    constructor(){
+    constructor(address _triLaneSystemAddress){
         owner = msg.sender;
+        triLaneSystem = TriLaneSystem(_triLaneSystemAddress);
         proposalCounter = 0;
         activeProposalCount = 0;
         passingThreshold = PASSING_THRESHOLD;
@@ -217,9 +242,9 @@ contract ANTScoring {
             finalScore
         );
 
-        proposal.scores.isPassing = finalScore >= PASSING_THRESHOLD;
+        proposal.scores.isPassing = proposal.scores.finalScore >= PASSING_THRESHOLD;
         proposal.scorers.push(scorer);
-        emit ProposalScored(proposalId, scorer, finalScore, proposal.scores.isPassing);
+        emit ProposalScored(proposalId, scorer, proposal.scores.finalScore, proposal.scores.isPassing);
     } 
 
     function fulfillProposal(uint256 proposalId) external{
@@ -229,8 +254,24 @@ contract ANTScoring {
         require(proposal.id !=0, "Proposal not found");
         require(proposal.scores.isPassing, "Proposal not passed the threshold");
         require(!proposal.scores.isFulfilled, "Proposal already fulfilled");
+        
+        // Calculate badge tier from score
+        LabBadge.BadgeLevel tier = calculateBadgeTier(proposal.scores.finalScore);
+        
+        // Issue badge automatically
+        uint256 badgeId = triLaneSystem.issueLabBadge(
+            proposal.submitter,
+            proposal.title,
+            tier
+        );
+        
+        // Store badge ID for this proposal
+        proposalBadges[proposalId] = badgeId;
+        
         proposal.scores.isFulfilled = true;
         activeProposalCount -=1;
+        
+        emit BadgeIssued(proposalId, badgeId, proposal.submitter, tier);
         emit ProposalFulfilled(proposalId, fulfiller, block.timestamp);
     }
 
@@ -343,5 +384,64 @@ contract ANTScoring {
         isPassing: false,
         isFulfilled: existingScores.isFulfilled
       });
+    }
+    
+    /**
+     * @notice Calculate badge tier based on proposal score
+     * @param score The final proposal score (0-100)
+     * @return Badge tier level
+     */
+    function calculateBadgeTier(uint8 score) internal pure returns (LabBadge.BadgeLevel) {
+        if (score >= 95) return LabBadge.BadgeLevel.DIAMOND;      // Exceptional (95-100)
+        if (score >= 90) return LabBadge.BadgeLevel.PLATINUM;     // Excellent (90-94)
+        if (score >= 85) return LabBadge.BadgeLevel.GOLD;         // Very Good (85-89)
+        if (score >= 80) return LabBadge.BadgeLevel.SILVER;       // Good (80-84)
+        return LabBadge.BadgeLevel.BRONZE;                        // Below threshold (shouldn't reach here)
+    }
+    
+    /**
+     * @notice Commercialize a fulfilled proposal and create royalty pool
+     * @param proposalId The proposal ID
+     * @param ipId IP identifier (e.g., "Patent #US12345")
+     * @param contributorBadgeIds All badge IDs that contributed to this IP
+     * @return poolId The created royalty pool ID
+     */
+    function commercializeProposal(
+        uint256 proposalId,
+        string memory ipId,
+        uint256[] memory contributorBadgeIds
+    ) external onlyOwner returns (uint256) {
+        Proposal storage proposal = proposals[proposalId];
+        require(proposal.id != 0, "Proposal not found");
+        require(proposal.scores.isFulfilled, "Proposal not fulfilled");
+        require(proposalRoyaltyPools[proposalId] == 0, "Proposal already commercialized");
+        
+        // Create royalty pool
+        uint256 poolId = triLaneSystem.createRoyaltyPool(ipId, contributorBadgeIds);
+        
+        // Store pool ID for this proposal
+        proposalRoyaltyPools[proposalId] = poolId;
+        
+        emit ProposalCommercialized(proposalId, ipId, poolId, contributorBadgeIds);
+        
+        return poolId;
+    }
+    
+    /**
+     * @notice Get badge ID for a fulfilled proposal
+     * @param proposalId The proposal ID
+     * @return The badge ID (0 if not fulfilled)
+     */
+    function getProposalBadge(uint256 proposalId) external view returns (uint256) {
+        return proposalBadges[proposalId];
+    }
+    
+    /**
+     * @notice Get royalty pool ID for a commercialized proposal
+     * @param proposalId The proposal ID
+     * @return The pool ID (0 if not commercialized)
+     */
+    function getProposalRoyaltyPool(uint256 proposalId) external view returns (uint256) {
+        return proposalRoyaltyPools[proposalId];
     }
 }
