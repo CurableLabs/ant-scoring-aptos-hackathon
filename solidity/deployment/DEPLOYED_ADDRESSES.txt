@@ -1,0 +1,65 @@
+=================================
+SEPOLIA TESTNET DEPLOYMENT
+Deployed: November 21, 2025
+=================================
+
+DEPLOYED CONTRACT ADDRESSES:
+----------------------------
+1. CUREToken:       0xDC2d8F77d22495A2298A02Ec5c8185aCE53F59E8
+2. TriLaneSystem:   0xC55c8D45ABf3D151ea6e2E96308cE6b32f21E5EE
+3. ANTScoring:      0xd2Df767CA136447a32a72e03AE1Fd8652755859f
+4. BondingCurve2:   0xC011916CB5472FddAe71D73216Be6DbbE8fc6383
+5. CUREIntegration: 0x6E661dB5b604623A4cC736EF555E80A132669e97
+
+ETHERSCAN EXPLORER LINKS:
+-------------------------
+CUREToken:
+https://sepolia.etherscan.io/address/0xDC2d8F77d22495A2298A02Ec5c8185aCE53F59E8
+
+TriLaneSystem:
+https://sepolia.etherscan.io/address/0xC55c8D45ABf3D151ea6e2E96308cE6b32f21E5EE
+
+ANTScoring:
+https://sepolia.etherscan.io/address/0xd2Df767CA136447a32a72e03AE1Fd8652755859f
+
+BondingCurve2:
+https://sepolia.etherscan.io/address/0xC011916CB5472FddAe71D73216Be6DbbE8fc6383
+
+CUREIntegration:
+https://sepolia.etherscan.io/address/0x6E661dB5b604623A4cC736EF555E80A132669e97
+
+TRANSACTION HASHES:
+-------------------
+CUREToken:       0x75a1a434e28e4076f57388e1d5f1be121a87e86789c5eae4b8c60228e339d4fc
+TriLaneSystem:   0xed84ea1f00c0c70588d37083eb1a1156809f84dfe91499b3d4d334a331208bdb
+ANTScoring:      0x97a6987006052efde4ee01f91c8874c4523b4e2f05026399b5c59e493d5bf76b
+BondingCurve2:   0x102c0c0c8ec7915493c755f9e7f7be6ced520cab866b9dbe2c0456ac8f2f20db
+CUREIntegration: 0xa427267c1d26e92c8cbc89c3dc1380347f442989fff0fe5c29e99d9ef08dd423
+
+DEPLOYER ADDRESS:
+-----------------
+0x03c7955A9168ffa6b314c5524279D717D1335074
+
+CONTRACT DEPENDENCIES:
+----------------------
+- ANTScoring requires TriLaneSystem address (passed in constructor)
+- All contracts are now deployed and ready for interaction
+
+NETWORK INFO:
+-------------
+Network: Sepolia Testnet
+Chain ID: 11155111
+RPC URL: https://0xrpc.io/sep
+
+STATUS:
+-------
+✅ All 5 contracts deployed successfully
+✅ All transactions confirmed on-chain
+✅ Contracts are live and can be interacted with
+⚠️  Contracts are NOT yet verified on Etherscan (source code not published)
+⚠️  Post-deployment configuration required (see POST_DEPLOYMENT_SETUP.md)
+
+=================================
+END OF DEPLOYMENT SUMMARY
+=================================
+
