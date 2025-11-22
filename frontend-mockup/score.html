@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANT Scoring - Score Proposals</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Ethers.js Library (Web3) -->
+    <script src="ethers.min.js"></script>
+</head>
+<body>
+    <!-- Role Simulator -->
+    <div class="role-simulator">
+        <div class="simulator-title">🎭 ROLE SIMULATOR (Demo Only)</div>
+        <div class="role-buttons">
+            <button onclick="switchRole('none')" class="role-btn">Not Connected</button>
+            <button onclick="switchRole('researcher')" class="role-btn">Researcher</button>
+            <button onclick="switchRole('scorer')" class="role-btn">Authorized Scorer</button>
+            <button onclick="switchRole('admin')" class="role-btn">Admin</button>
+        </div>
+        <div id="current-role" class="current-role">Current: Not Connected</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo">🔬</span>
+            <span class="brand-name">ANT Scoring System</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit.html" class="nav-link researcher-only">Submit</a>
+            <a href="score.html" class="nav-link active scorer-only">Score</a>
+            <a href="profile.html" class="nav-link wallet-only">Profile</a>
+            <a href="#" class="nav-link admin-only">Admin</a>
+            <button id="connect-btn" class="connect-btn">Connect Wallet</button>
+            <div id="wallet-info" class="wallet-info">
+                <span class="wallet-icon">🦊</span>
+                <span class="wallet-address">0x03c7...5074</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Not Authorized Message -->
+        <div id="not-authorized-message" class="alert alert-error">
+            <h2>🚫 Not Authorized</h2>
+            <p>You must be an <strong>authorized scorer</strong> to access this page.</p>
+            <p>Contact the system administrator to get authorized as a scorer.</p>
+            <button class="btn-secondary" onclick="window.location.href='index.html'">Back to Home</button>
+        </div>
+
+        <!-- Scoring Interface (only for authorized scorers) -->
+        <div id="scoring-interface" class="scoring-container">
+            <div class="page-header">
+                <h1>Score Proposals</h1>
+                <p>Review and score research proposals assigned to you</p>
+            </div>
+
+            <!-- Scoring Stats -->
+            <div class="scoring-stats">
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Pending Reviews</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">28</div>
+                    <div class="stat-label">Total Scored</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">92%</div>
+                    <div class="stat-label">Agreement Rate</div>
+                </div>
+            </div>
+
+            <!-- Proposals to Score -->
+            <div class="proposals-to-score">
+                <h2>Proposals Awaiting Your Review</h2>
+                
+                <!-- Proposal to Score 1 -->
+                <div class="score-card">
+                    <div class="score-card-header">
+                        <div class="score-card-title">
+                            <span class="proposal-id">#1234</span>
+                            <h3>Screen 1000 compounds against cancer cell lines</h3>
+                        </div>
+                        <span class="deadline">⏱️ 2 days left</span>
+                    </div>
+                    
+                    <div class="score-card-meta">
+                        <span>📅 Submitted: Nov 20, 2025</span>
+                        <span>👤 Researcher: 0x03c7...8abc</span>
+                        <span>💰 Budget: 5000 CURE</span>
+                    </div>
+                    
+                    <div class="score-card-content">
+                        <p><strong>Protocol:</strong></p>
+                        <p>Sample protocol: Screen 1000 compounds against cancer cell lines using automated high-throughput screening. Will use robotic liquid handling systems and automated imaging...</p>
+                        
+                        <div class="ipfs-link">
+                            <a href="#" target="_blank">📄 View Full Protocol on IPFS</a>
+                        </div>
+                    </div>
+                    
+                    <div class="score-card-scoring">
+                        <div class="current-scores">
+                            <strong>Current Scores:</strong>
+                            <div class="score-badges">
+                                <span class="score-badge">Dr. Chen: 88</span>
+                                <span class="score-badge">Prof. Smith: 85</span>
+                                <span class="score-badge-pending">Awaiting your score</span>
+                            </div>
+                            <div class="average-score">Average: 86.5/100</div>
+                        </div>
+                        
+                        <div class="scoring-form">
+                            <label>Your Score (0-100):</label>
+                            <div class="score-input-group">
+                                <input type="range" min="0" max="100" value="85" class="score-slider" id="score-1" oninput="updateScoreValue('score-1', 'score-value-1')">
+                                <input type="number" min="0" max="100" value="85" class="score-input" id="score-value-1" oninput="updateScoreSlider('score-1', 'score-value-1')">
+                            </div>
+                            
+                            <label>Comments (Optional):</label>
+                            <textarea rows="3" placeholder="Provide feedback on methodology, feasibility, etc..."></textarea>
+                            
+                            <button class="btn-primary">Submit Score</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proposal to Score 2 -->
+                <div class="score-card">
+                    <div class="score-card-header">
+                        <div class="score-card-title">
+                            <span class="proposal-id">#1235</span>
+                            <h3>Novel protein folding prediction algorithm</h3>
+                        </div>
+                        <span class="deadline">⏱️ 5 days left</span>
+                    </div>
+                    
+                    <div class="score-card-meta">
+                        <span>📅 Submitted: Nov 21, 2025</span>
+                        <span>👤 Researcher: 0x1f2e...3d4c</span>
+                        <span>💰 Budget: 8000 CURE</span>
+                    </div>
+                    
+                    <div class="score-card-content">
+                        <p><strong>Protocol:</strong></p>
+                        <p>Develop and validate a new machine learning algorithm for predicting protein tertiary structure. Will train on PDB database and benchmark against AlphaFold2...</p>
+                        
+                        <div class="ipfs-link">
+                            <a href="#" target="_blank">📄 View Full Protocol on IPFS</a>
+                        </div>
+                    </div>
+                    
+                    <div class="score-card-scoring">
+                        <div class="current-scores">
+                            <strong>Current Scores:</strong>
+                            <div class="score-badges">
+                                <span class="score-badge-pending">Awaiting scores from 3 reviewers</span>
+                            </div>
+                        </div>
+                        
+                        <div class="scoring-form">
+                            <label>Your Score (0-100):</label>
+                            <div class="score-input-group">
+                                <input type="range" min="0" max="100" value="80" class="score-slider" id="score-2" oninput="updateScoreValue('score-2', 'score-value-2')">
+                                <input type="number" min="0" max="100" value="80" class="score-input" id="score-value-2" oninput="updateScoreSlider('score-2', 'score-value-2')">
+                            </div>
+                            
+                            <label>Comments (Optional):</label>
+                            <textarea rows="3" placeholder="Provide feedback on methodology, feasibility, etc..."></textarea>
+                            
+                            <button class="btn-primary">Submit Score</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proposal to Score 3 -->
+                <div class="score-card">
+                    <div class="score-card-header">
+                        <div class="score-card-title">
+                            <span class="proposal-id">#1236</span>
+                            <h3>CRISPR off-target analysis pipeline</h3>
+                        </div>
+                        <span class="deadline urgent">⏱️ 12 hours left</span>
+                    </div>
+                    
+                    <div class="score-card-meta">
+                        <span>📅 Submitted: Nov 18, 2025</span>
+                        <span>👤 Researcher: 0x9a8b...7c6d</span>
+                        <span>💰 Budget: 3500 CURE</span>
+                    </div>
+                    
+                    <div class="score-card-content">
+                        <p><strong>Protocol:</strong></p>
+                        <p>Comprehensive bioinformatics pipeline for detecting and quantifying CRISPR off-target effects. Uses whole genome sequencing and custom algorithms...</p>
+                        
+                        <div class="ipfs-link">
+                            <a href="#" target="_blank">📄 View Full Protocol on IPFS</a>
+                        </div>
+                    </div>
+                    
+                    <div class="score-card-scoring">
+                        <div class="current-scores">
+                            <strong>Current Scores:</strong>
+                            <div class="score-badges">
+                                <span class="score-badge">Dr. Garcia: 91</span>
+                                <span class="score-badge">Dr. Zhang: 89</span>
+                                <span class="score-badge-pending">Awaiting your score</span>
+                            </div>
+                            <div class="average-score">Average: 90/100</div>
+                        </div>
+                        
+                        <div class="scoring-form">
+                            <label>Your Score (0-100):</label>
+                            <div class="score-input-group">
+                                <input type="range" min="0" max="100" value="90" class="score-slider" id="score-3" oninput="updateScoreValue('score-3', 'score-value-3')">
+                                <input type="number" min="0" max="100" value="90" class="score-input" id="score-value-3" oninput="updateScoreSlider('score-3', 'score-value-3')">
+                            </div>
+                            
+                            <label>Comments (Optional):</label>
+                            <textarea rows="3" placeholder="Provide feedback on methodology, feasibility, etc..."></textarea>
+                            
+                            <button class="btn-primary">Submit Score</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Section -->
+            <div class="admin-only admin-section">
+                <h3>🛠️ Admin: Scorer Management</h3>
+                <div class="admin-actions">
+                    <button class="btn-secondary">Add Authorized Scorer</button>
+                    <button class="btn-secondary">Remove Scorer</button>
+                    <button class="btn-secondary">View All Scorers</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 ANT Scoring System - Powered by Ethereum</p>
+        <div class="footer-links">
+            <a href="#">Docs</a>
+            <a href="#">GitHub</a>
+            <a href="#">Discord</a>
+        </div>
+    </footer>
+
+    <script src="contracts.js"></script>
+    <script src="web3.js"></script>
+    <script src="script.js"></script>
+    <script src="score-handler.js"></script>
+</body>
+</html>
+

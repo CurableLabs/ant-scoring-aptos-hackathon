@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANT Scoring - Profile</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Ethers.js Library (Web3) -->
+    <script src="ethers.min.js"></script>
+</head>
+<body>
+    <!-- Role Simulator -->
+    <div class="role-simulator">
+        <div class="simulator-title">🎭 ROLE SIMULATOR (Demo Only)</div>
+        <div class="role-buttons">
+            <button onclick="switchRole('none')" class="role-btn">Not Connected</button>
+            <button onclick="switchRole('researcher')" class="role-btn">Researcher</button>
+            <button onclick="switchRole('scorer')" class="role-btn">Authorized Scorer</button>
+            <button onclick="switchRole('admin')" class="role-btn">Admin</button>
+        </div>
+        <div id="current-role" class="current-role">Current: Not Connected</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo">🔬</span>
+            <span class="brand-name">ANT Scoring System</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit.html" class="nav-link researcher-only">Submit</a>
+            <a href="score.html" class="nav-link scorer-only">Score</a>
+            <a href="profile.html" class="nav-link active wallet-only">Profile</a>
+            <a href="#" class="nav-link admin-only">Admin</a>
+            <button id="connect-btn" class="connect-btn">Connect Wallet</button>
+            <div id="wallet-info" class="wallet-info">
+                <span class="wallet-icon">🦊</span>
+                <span class="wallet-address">0x03c7...5074</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Not Connected Message -->
+        <div id="not-connected-message" class="alert alert-warning">
+            <h2>🔒 Connect Your Wallet</h2>
+            <p>Connect your wallet to view your profile and activity.</p>
+            <button class="btn-primary">Connect Wallet</button>
+        </div>
+
+        <!-- Profile Content -->
+        <div id="profile-container" class="profile-container">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <div class="avatar-circle">👤</div>
+                </div>
+                <div class="profile-info">
+                    <h1>0x03c7db4ccfAF42e0f7B3E8335D835057f5074</h1>
+                    <div class="profile-roles">
+                        <span class="role-badge researcher-badge">🔬 Researcher</span>
+                        <span class="role-badge scorer-badge scorer-only">⭐ Authorized Scorer</span>
+                        <span class="role-badge admin-badge admin-only">👑 Admin</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Stats -->
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Proposals Submitted</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Approved</div>
+                </div>
+                <div class="stat-card scorer-only">
+                    <div class="stat-number">28</div>
+                    <div class="stat-label">Proposals Scored</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">245</div>
+                    <div class="stat-label">Reputation Points</div>
+                </div>
+            </div>
+
+            <!-- Badges Section -->
+            <section class="badges-section">
+                <h2>🏅 Your Research Badges (NFTs)</h2>
+                <p class="section-desc">Soulbound NFTs earned for validated research contributions</p>
+                
+                <div class="badges-grid">
+                    <!-- Diamond Badge -->
+                    <div class="badge-card badge-diamond">
+                        <div class="badge-icon">💎</div>
+                        <h3>Diamond Badge</h3>
+                        <div class="badge-id">#1287</div>
+                        <div class="badge-points">100 Points</div>
+                        <div class="badge-meta">
+                            <div>Awarded: Nov 15, 2025</div>
+                            <div>Protocol #1180</div>
+                        </div>
+                        <button class="btn-secondary btn-small">View NFT</button>
+                    </div>
+
+                    <!-- Gold Badge -->
+                    <div class="badge-card badge-gold">
+                        <div class="badge-icon">🥇</div>
+                        <h3>Gold Badge</h3>
+                        <div class="badge-id">#1156</div>
+                        <div class="badge-points">50 Points</div>
+                        <div class="badge-meta">
+                            <div>Awarded: Oct 28, 2025</div>
+                            <div>Protocol #1105</div>
+                        </div>
+                        <button class="btn-secondary btn-small">View NFT</button>
+                    </div>
+
+                    <!-- Silver Badge -->
+                    <div class="badge-card badge-silver">
+                        <div class="badge-icon">🥈</div>
+                        <h3>Silver Badge</h3>
+                        <div class="badge-id">#1089</div>
+                        <div class="badge-points">30 Points</div>
+                        <div class="badge-meta">
+                            <div>Awarded: Sep 12, 2025</div>
+                            <div>Protocol #998</div>
+                        </div>
+                        <button class="btn-secondary btn-small">View NFT</button>
+                    </div>
+                </div>
+
+                <div class="badge-info">
+                    <p>💡 <strong>Badge Tiers:</strong> Bronze (10pts) → Silver (30pts) → Gold (50pts) → Platinum (75pts) → Diamond (100pts)</p>
+                    <p>🎯 <strong>Purpose:</strong> Badges represent validated research contributions and are used for IP attribution and royalty distribution</p>
+                </div>
+            </section>
+
+            <!-- My Proposals Section -->
+            <section class="my-proposals-section">
+                <h2>📄 My Proposals</h2>
+                
+                <div class="proposals-list">
+                    <!-- Proposal 1 - Can be fulfilled -->
+                    <div class="my-proposal-card status-passed">
+                        <div class="proposal-status-badge">✅ Passed - Ready to Fulfill</div>
+                        <div class="proposal-header">
+                            <h3>#1233 - CRISPR gene editing validation protocol</h3>
+                            <span class="proposal-date">Nov 18, 2025</span>
+                        </div>
+                        <div class="proposal-score">
+                            <strong>Final Score:</strong> 92/100 (5/5 scores)
+                        </div>
+                        <div class="proposal-actions">
+                            <button class="btn-secondary">View Details</button>
+                            <button class="btn-primary">🎉 Fulfill & Claim Badge</button>
+                        </div>
+                    </div>
+
+                    <!-- Proposal 2 - Active -->
+                    <div class="my-proposal-card status-active">
+                        <div class="proposal-status-badge">⏳ Active - Being Scored</div>
+                        <div class="proposal-header">
+                            <h3>#1234 - Screen 1000 compounds against cancer cell lines</h3>
+                            <span class="proposal-date">Nov 20, 2025</span>
+                        </div>
+                        <div class="proposal-score">
+                            <strong>Current Score:</strong> 86.5/100 (2/3 scores)
+                        </div>
+                        <div class="proposal-actions">
+                            <button class="btn-secondary">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Proposal 3 - Fulfilled -->
+                    <div class="my-proposal-card status-fulfilled">
+                        <div class="proposal-status-badge">🏅 Fulfilled - Badge Claimed</div>
+                        <div class="proposal-header">
+                            <h3>#1180 - Novel drug discovery platform</h3>
+                            <span class="proposal-date">Nov 10, 2025</span>
+                        </div>
+                        <div class="proposal-score">
+                            <strong>Final Score:</strong> 95/100 (5/5 scores)
+                        </div>
+                        <div class="badge-earned">
+                            Badge Earned: 💎 Diamond #1287
+                        </div>
+                        <div class="proposal-actions">
+                            <button class="btn-secondary">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Proposal 4 - Failed -->
+                    <div class="my-proposal-card status-failed">
+                        <div class="proposal-status-badge">❌ Did Not Pass</div>
+                        <div class="proposal-header">
+                            <h3>#1150 - Automated cell sorting system</h3>
+                            <span class="proposal-date">Oct 25, 2025</span>
+                        </div>
+                        <div class="proposal-score">
+                            <strong>Final Score:</strong> 72/100 (3/3 scores) - Below threshold (80)
+                        </div>
+                        <div class="proposal-actions">
+                            <button class="btn-secondary">View Details</button>
+                            <button class="btn-secondary">Resubmit Improved</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scoring History (Scorer Only) -->
+            <section class="scoring-history scorer-only">
+                <h2>⭐ My Scoring History</h2>
+                
+                <div class="scoring-stats-detailed">
+                    <div class="stat-card">
+                        <div class="stat-number">28</div>
+                        <div class="stat-label">Total Scored</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">92%</div>
+                        <div class="stat-label">Agreement Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">86.5</div>
+                        <div class="stat-label">Avg Score Given</div>
+                    </div>
+                </div>
+
+                <div class="scoring-history-list">
+                    <div class="history-item">
+                        <div class="history-header">
+                            <span class="proposal-id">#1230</span>
+                            <span class="history-date">Nov 19, 2025</span>
+                        </div>
+                        <div class="history-title">Protein crystallization automation</div>
+                        <div class="history-score">Your Score: <strong>88</strong> | Final: <strong>87</strong></div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-header">
+                            <span class="proposal-id">#1225</span>
+                            <span class="history-date">Nov 17, 2025</span>
+                        </div>
+                        <div class="history-title">RNA sequencing pipeline optimization</div>
+                        <div class="history-score">Your Score: <strong>91</strong> | Final: <strong>90</strong></div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-header">
+                            <span class="proposal-id">#1220</span>
+                            <span class="history-date">Nov 15, 2025</span>
+                        </div>
+                        <div class="history-title">High-throughput antibody screening</div>
+                        <div class="history-score">Your Score: <strong>85</strong> | Final: <strong>83</strong></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Admin Dashboard (Admin Only) -->
+            <section class="admin-dashboard admin-only">
+                <h2>👑 Admin Dashboard</h2>
+                
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">247</div>
+                        <div class="stat-label">Total Proposals</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Authorized Scorers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">1,245</div>
+                        <div class="stat-label">Badges Issued</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">89,450</div>
+                        <div class="stat-label">CURE Distributed</div>
+                    </div>
+                </div>
+
+                <div class="admin-actions-grid">
+                    <button class="admin-action-card">
+                        <div class="action-icon">👥</div>
+                        <div class="action-title">Manage Scorers</div>
+                        <div class="action-desc">Add or remove authorized scorers</div>
+                    </button>
+                    <button class="admin-action-card">
+                        <div class="action-icon">🏅</div>
+                        <div class="action-title">Badge Issuers</div>
+                        <div class="action-desc">Authorize badge issuing contracts</div>
+                    </button>
+                    <button class="admin-action-card">
+                        <div class="action-icon">⚙️</div>
+                        <div class="action-title">System Settings</div>
+                        <div class="action-desc">Configure thresholds and parameters</div>
+                    </button>
+                    <button class="admin-action-card">
+                        <div class="action-icon">📊</div>
+                        <div class="action-title">View Analytics</div>
+                        <div class="action-desc">System-wide statistics and insights</div>
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 ANT Scoring System - Powered by Ethereum</p>
+        <div class="footer-links">
+            <a href="#">Docs</a>
+            <a href="#">GitHub</a>
+            <a href="#">Discord</a>
+        </div>
+    </footer>
+
+    <script src="contracts.js"></script>
+    <script src="web3.js"></script>
+    <script src="script.js"></script>
+    <script src="profile-handler.js"></script>
+</body>
+</html>
+

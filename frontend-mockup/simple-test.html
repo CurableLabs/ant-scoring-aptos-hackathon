@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Wallet Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 50px;
+            background: #f0f0f0;
+        }
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover { background: #5568d3; }
+        .result { 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .good { background: #d4edda; color: #155724; }
+        .bad { background: #f8d7da; color: #721c24; }
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Ultra-Simple Wallet Test</h1>
+    
+    <div class="box">
+        <h2>Step 1: Check Basics</h2>
+        <button onclick="checkBasics()">Run Basic Checks</button>
+        <div id="basics"></div>
+    </div>
+
+    <div class="box">
+        <h2>Step 2: Try to Connect</h2>
+        <button onclick="tryConnect()">Connect Wallet</button>
+        <div id="connect"></div>
+    </div>
+
+    <div class="box">
+        <h2>Step 3: Debug Info</h2>
+        <button onclick="showDebug()">Show Full Debug Info</button>
+        <div id="debug"></div>
+    </div>
+
+    <script>
+        function checkBasics() {
+            const output = document.getElementById('basics');
+            let html = '';
+
+            // Check 1: window.ethereum
+            if (typeof window.ethereum === 'undefined') {
+                html += `<div class="result bad">
+                    ❌ <strong>window.ethereum is undefined</strong><br><br>
+                    This means:<br>
+                    • No wallet extension detected<br>
+                    • MetaMask/Rabby not installed OR not enabled<br><br>
+                    <strong>FIX:</strong><br>
+                    1. Make sure MetaMask or Rabby is installed<br>
+                    2. Check browser extensions page (make sure it's enabled)<br>
+                    3. Close ALL browser windows<br>
+                    4. Open browser again<br>
+                    5. Try this page again
+                </div>`;
+            } else {
+                html += `<div class="result good">
+                    ✅ <strong>window.ethereum EXISTS!</strong><br>
+                    Wallet extension is detected!
+                </div>`;
+
+                // More details
+                html += `<div class="result good">
+                    <strong>Wallet Type:</strong><br>
+                    MetaMask: ${window.ethereum.isMetaMask ? 'Yes ✅' : 'No'}<br>
+                    Rabby: ${window.ethereum.isRabby ? 'Yes ✅' : 'No'}<br>
+                    <br>
+                    <strong>Already connected:</strong><br>
+                    ${window.ethereum.selectedAddress || 'Not yet connected'}
+                </div>`;
+            }
+
+            output.innerHTML = html;
+        }
+
+        async function tryConnect() {
+            const output = document.getElementById('connect');
+            
+            // First check if ethereum exists
+            if (typeof window.ethereum === 'undefined') {
+                output.innerHTML = `<div class="result bad">
+                    ❌ <strong>Cannot connect - No wallet detected!</strong><br><br>
+                    Run Step 1 first to diagnose the issue.
+                </div>`;
+                return;
+            }
+
+            output.innerHTML = `<div class="result">⏳ Requesting connection...</div>`;
+
+            try {
+                // Request accounts
+                const accounts = await window.ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+
+                // Get chain ID
+                const chainId = await window.ethereum.request({
+                    method: 'eth_chainId'
+                });
+
+                output.innerHTML = `<div class="result good">
+                    ✅ <strong>CONNECTION SUCCESSFUL!</strong><br><br>
+                    <strong>Address:</strong><br>
+                    ${accounts[0]}<br><br>
+                    <strong>Chain ID:</strong><br>
+                    ${chainId} (${parseInt(chainId, 16)})<br><br>
+                    <strong>Sepolia?</strong><br>
+                    ${parseInt(chainId, 16) === 11155111 ? 'Yes ✅' : 'No - You need to switch to Sepolia'}<br><br>
+                    🎉 <strong>Your wallet works! You can use the main app now.</strong>
+                </div>`;
+
+            } catch (error) {
+                output.innerHTML = `<div class="result bad">
+                    ❌ <strong>CONNECTION FAILED</strong><br><br>
+                    <strong>Error Message:</strong><br>
+                    ${error.message}<br><br>
+                    <strong>Error Code:</strong><br>
+                    ${error.code || 'N/A'}<br><br>
+                    <strong>Common Reasons:</strong><br>
+                    • You clicked "Reject" in the popup<br>
+                    • Wallet is locked (unlock it first)<br>
+                    • Extension is having issues<br><br>
+                    <strong>Try:</strong><br>
+                    1. Unlock your wallet (open extension, enter password)<br>
+                    2. Click the button again<br>
+                    3. Click "Connect" in the popup
+                </div>`;
+            }
+        }
+
+        function showDebug() {
+            const output = document.getElementById('debug');
+            
+            const debugInfo = {
+                'Browser': navigator.userAgent,
+                'window.ethereum exists': typeof window.ethereum !== 'undefined',
+                'window.ethereum value': window.ethereum,
+                'ethereum.isMetaMask': window.ethereum?.isMetaMask,
+                'ethereum.isRabby': window.ethereum?.isRabby,
+                'ethereum.selectedAddress': window.ethereum?.selectedAddress,
+                'ethereum.chainId': window.ethereum?.chainId,
+                'Document ready state': document.readyState,
+                'Page URL': window.location.href
+            };
+
+            let html = '<div class="result"><strong>Full Debug Information:</strong><br><br><pre>';
+            html += JSON.stringify(debugInfo, null, 2);
+            html += '</pre></div>';
+
+            // Also log to console
+            console.log('=== FULL DEBUG INFO ===');
+            console.log(debugInfo);
+            console.log('=== RAW window.ethereum ===');
+            console.log(window.ethereum);
+            console.log('=== END DEBUG ===');
+
+            html += `<div class="result">
+                ℹ️ Debug info also logged to browser console (Press F12 to see)
+            </div>`;
+
+            output.innerHTML = html;
+        }
+
+        // Auto-run basic check on page load
+        window.addEventListener('load', () => {
+            setTimeout(checkBasics, 500);
+        });
+    </script>
+</body>
+</html>
+

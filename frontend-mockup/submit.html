@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANT Scoring - Submit Proposal</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Ethers.js Library (Web3) -->
+    <script src="ethers.min.js"></script>
+</head>
+<body>
+    <!-- Role Simulator -->
+    <div class="role-simulator">
+        <div class="simulator-title">🎭 ROLE SIMULATOR (Demo Only)</div>
+        <div class="role-buttons">
+            <button onclick="switchRole('none')" class="role-btn">Not Connected</button>
+            <button onclick="switchRole('researcher')" class="role-btn">Researcher</button>
+            <button onclick="switchRole('scorer')" class="role-btn">Authorized Scorer</button>
+            <button onclick="switchRole('admin')" class="role-btn">Admin</button>
+        </div>
+        <div id="current-role" class="current-role">Current: Not Connected</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo">🔬</span>
+            <span class="brand-name">ANT Scoring System</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit.html" class="nav-link active researcher-only">Submit</a>
+            <a href="score.html" class="nav-link scorer-only">Score</a>
+            <a href="profile.html" class="nav-link wallet-only">Profile</a>
+            <a href="#" class="nav-link admin-only">Admin</a>
+            <button id="connect-btn" class="connect-btn">Connect Wallet</button>
+            <div id="wallet-info" class="wallet-info">
+                <span class="wallet-icon">🦊</span>
+                <span class="wallet-address">0x03c7...5074</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Not Connected Message -->
+        <div id="not-connected-message" class="alert alert-warning">
+            <h2>🔒 Connect Your Wallet</h2>
+            <p>You need to connect your wallet to submit a research proposal.</p>
+            <button class="btn-primary">Connect Wallet</button>
+        </div>
+
+        <!-- Submit Form (only visible when connected) -->
+        <div id="submit-form-container" class="form-container">
+            <div class="page-header">
+                <h1>Submit Research Proposal</h1>
+                <p>Submit your protocol for peer review and scoring</p>
+            </div>
+
+            <form class="proposal-form">
+                <!-- Protocol Description -->
+                <div class="form-group">
+                    <label for="protocol">Protocol Description *</label>
+                    <textarea 
+                        id="protocol" 
+                        rows="6" 
+                        placeholder="Describe your research protocol in detail. Include methodology, expected outcomes, and validation criteria..."
+                        required
+                    ></textarea>
+                    <span class="form-hint">Be detailed - this will be reviewed by authorized scorers</span>
+                </div>
+
+                <!-- IPFS Hash -->
+                <div class="form-group">
+                    <label for="ipfs">IPFS Hash (Optional)</label>
+                    <input 
+                        type="text" 
+                        id="ipfs" 
+                        placeholder="QmXx... (Link to full protocol document on IPFS)"
+                    />
+                    <span class="form-hint">Upload your full protocol to IPFS for permanent storage</span>
+                </div>
+
+                <!-- Budget Request -->
+                <div class="form-group">
+                    <label for="budget">Budget Request (CURE tokens)</label>
+                    <input 
+                        type="number" 
+                        id="budget" 
+                        placeholder="1000"
+                        min="0"
+                    />
+                    <span class="form-hint">Amount of CURE tokens you're requesting for this research</span>
+                </div>
+
+                <!-- Scorers Selection -->
+                <div class="form-group">
+                    <label>Select Scorers (3 required) *</label>
+                    <div class="scorer-list">
+                        <label class="scorer-item">
+                            <input type="checkbox" name="scorer" value="0x1234">
+                            <span class="scorer-info">
+                                <span class="scorer-name">Dr. Sarah Chen</span>
+                                <span class="scorer-specialty">Cancer Research</span>
+                            </span>
+                        </label>
+                        <label class="scorer-item">
+                            <input type="checkbox" name="scorer" value="0x5678">
+                            <span class="scorer-info">
+                                <span class="scorer-name">Prof. John Smith</span>
+                                <span class="scorer-specialty">Molecular Biology</span>
+                            </span>
+                        </label>
+                        <label class="scorer-item">
+                            <input type="checkbox" name="scorer" value="0x9abc">
+                            <span class="scorer-info">
+                                <span class="scorer-name">Dr. Maria Garcia</span>
+                                <span class="scorer-specialty">Drug Discovery</span>
+                            </span>
+                        </label>
+                        <label class="scorer-item">
+                            <input type="checkbox" name="scorer" value="0xdef0">
+                            <span class="scorer-info">
+                                <span class="scorer-name">Dr. Wei Zhang</span>
+                                <span class="scorer-specialty">Biochemistry</span>
+                            </span>
+                        </label>
+                    </div>
+                    <span class="form-hint">Select exactly 3 authorized scorers to review your proposal</span>
+                </div>
+
+                <!-- Research Category -->
+                <div class="form-group">
+                    <label for="category">Research Category</label>
+                    <select id="category">
+                        <option value="">Select a category</option>
+                        <option value="drug-discovery">Drug Discovery</option>
+                        <option value="cancer">Cancer Research</option>
+                        <option value="crispr">CRISPR/Gene Editing</option>
+                        <option value="protein">Protein Science</option>
+                        <option value="screening">High-Throughput Screening</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Expected Timeline -->
+                <div class="form-group">
+                    <label for="timeline">Expected Timeline (weeks)</label>
+                    <input 
+                        type="number" 
+                        id="timeline" 
+                        placeholder="12"
+                        min="1"
+                    />
+                </div>
+
+                <!-- Gas Estimate -->
+                <div class="gas-estimate">
+                    <div class="gas-label">Estimated Gas Fee:</div>
+                    <div class="gas-value">~0.002 ETH ($6.50)</div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="window.location.href='index.html'">Cancel</button>
+                    <button type="submit" class="btn-primary">Submit Proposal</button>
+                </div>
+            </form>
+
+            <!-- Admin Only Section -->
+            <div class="admin-only admin-section">
+                <h3>🛠️ Admin Tools</h3>
+                <div class="admin-actions">
+                    <button class="btn-secondary">View All Submissions</button>
+                    <button class="btn-secondary">Manage Scorers</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 ANT Scoring System - Powered by Ethereum</p>
+        <div class="footer-links">
+            <a href="#">Docs</a>
+            <a href="#">GitHub</a>
+            <a href="#">Discord</a>
+        </div>
+    </footer>
+
+    <script src="contracts.js"></script>
+    <script src="web3.js"></script>
+    <script src="script.js"></script>
+    <script src="submit-handler.js"></script>
+</body>
+</html>
+

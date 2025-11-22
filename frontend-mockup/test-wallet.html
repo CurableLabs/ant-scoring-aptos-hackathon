@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .result {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Wallet Connection Diagnostic Test</h1>
+    <p>This page will help diagnose why wallet connection isn't working.</p>
+
+    <div class="test-box">
+        <h2>Test 1: Browser Environment</h2>
+        <div id="test1"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>Test 2: Wallet Extension Detection</h2>
+        <div id="test2"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>Test 3: Ethers.js Library</h2>
+        <div id="test3"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>Test 4: Connect Wallet</h2>
+        <button onclick="testConnect()">Try Connecting Wallet</button>
+        <div id="test4"></div>
+    </div>
+
+    <!-- Load ethers.js -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+
+    <script>
+        // Test 1: Browser Environment
+        function test1() {
+            const results = [];
+            
+            results.push({
+                test: 'window object exists',
+                pass: typeof window !== 'undefined',
+                value: typeof window
+            });
+            
+            results.push({
+                test: 'document object exists',
+                pass: typeof document !== 'undefined',
+                value: typeof document
+            });
+            
+            results.push({
+                test: 'Browser detected',
+                pass: true,
+                value: navigator.userAgent.split(' ').slice(-2).join(' ')
+            });
+            
+            displayResults('test1', results);
+        }
+
+        // Test 2: Wallet Detection
+        function test2() {
+            const results = [];
+            
+            results.push({
+                test: 'window.ethereum exists',
+                pass: typeof window.ethereum !== 'undefined',
+                value: typeof window.ethereum
+            });
+            
+            if (window.ethereum) {
+                results.push({
+                    test: 'Is MetaMask',
+                    pass: window.ethereum.isMetaMask === true,
+                    value: window.ethereum.isMetaMask ? 'Yes' : 'No'
+                });
+                
+                results.push({
+                    test: 'Is Rabby',
+                    pass: window.ethereum.isRabby === true,
+                    value: window.ethereum.isRabby ? 'Yes' : 'No'
+                });
+                
+                results.push({
+                    test: 'Already connected',
+                    pass: true,
+                    value: window.ethereum.selectedAddress || 'Not connected'
+                });
+            } else {
+                results.push({
+                    test: 'Wallet Extension',
+                    pass: false,
+                    value: '❌ NO WALLET DETECTED! Install MetaMask or Rabby.'
+                });
+            }
+            
+            displayResults('test2', results);
+        }
+
+        // Test 3: Ethers.js
+        function test3() {
+            const results = [];
+            
+            results.push({
+                test: 'ethers library loaded',
+                pass: typeof ethers !== 'undefined',
+                value: typeof ethers
+            });
+            
+            if (typeof ethers !== 'undefined') {
+                results.push({
+                    test: 'ethers version',
+                    pass: true,
+                    value: ethers.version || 'Unknown'
+                });
+                
+                results.push({
+                    test: 'BrowserProvider available',
+                    pass: typeof ethers.BrowserProvider !== 'undefined',
+                    value: typeof ethers.BrowserProvider
+                });
+            } else {
+                results.push({
+                    test: 'Ethers.js CDN',
+                    pass: false,
+                    value: '❌ Failed to load! Check internet connection.'
+                });
+            }
+            
+            displayResults('test3', results);
+        }
+
+        // Test 4: Connection
+        async function testConnect() {
+            const container = document.getElementById('test4');
+            container.innerHTML = '<div class="info">Attempting to connect...</div>';
+            
+            try {
+                // Check if wallet exists
+                if (typeof window.ethereum === 'undefined') {
+                    container.innerHTML = `
+                        <div class="error">
+                            <strong>❌ NO WALLET DETECTED!</strong><br><br>
+                            <strong>Solution:</strong><br>
+                            1. Install MetaMask: <a href="https://metamask.io/download/" target="_blank">metamask.io/download</a><br>
+                            2. Or install Rabby: <a href="https://rabby.io/" target="_blank">rabby.io</a><br>
+                            3. Restart your browser<br>
+                            4. Try again
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Request connection
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                // Success!
+                container.innerHTML = `
+                    <div class="success">
+                        <strong>✅ CONNECTION SUCCESSFUL!</strong><br><br>
+                        <strong>Connected Address:</strong><br>
+                        ${accounts[0]}<br><br>
+                        <strong>Network Chain ID:</strong><br>
+                        ${window.ethereum.chainId || 'Unknown'}<br><br>
+                        🎉 Your wallet is working! You can now use the main app.
+                    </div>
+                `;
+                
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="error">
+                        <strong>❌ CONNECTION FAILED</strong><br><br>
+                        <strong>Error:</strong><br>
+                        ${error.message}<br><br>
+                        <strong>Common causes:</strong><br>
+                        • User rejected connection<br>
+                        • Wallet is locked (unlock it first)<br>
+                        • Extension is disabled<br>
+                    </div>
+                `;
+            }
+        }
+
+        // Display results helper
+        function displayResults(containerId, results) {
+            const container = document.getElementById(containerId);
+            let html = '';
+            
+            results.forEach(result => {
+                const className = result.pass ? 'success' : 'error';
+                const icon = result.pass ? '✅' : '❌';
+                html += `
+                    <div class="${className}">
+                        ${icon} <strong>${result.test}:</strong> ${result.value}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Run tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                test1();
+                test2();
+                test3();
+            }, 500); // Small delay to ensure everything is loaded
+        });
+    </script>
+</body>
+</html>
+

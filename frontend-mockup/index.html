@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANT Scoring - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Ethers.js Library (Web3) -->
+    <script src="ethers.min.js"></script>
+</head>
+<body>
+    <!-- Role Simulator (for demo purposes only) -->
+    <div class="role-simulator">
+        <div class="simulator-title">🎭 ROLE SIMULATOR (Demo Only)</div>
+        <div class="role-buttons">
+            <button onclick="switchRole('none')" class="role-btn">Not Connected</button>
+            <button onclick="switchRole('researcher')" class="role-btn">Researcher</button>
+            <button onclick="switchRole('scorer')" class="role-btn">Authorized Scorer</button>
+            <button onclick="switchRole('admin')" class="role-btn">Admin</button>
+        </div>
+        <div id="current-role" class="current-role">Current: Not Connected</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo">🔬</span>
+            <span class="brand-name">ANT Scoring System</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link active">Home</a>
+            <a href="submit.html" class="nav-link researcher-only">Submit</a>
+            <a href="score.html" class="nav-link scorer-only">Score</a>
+            <a href="profile.html" class="nav-link wallet-only">Profile</a>
+            <a href="#" class="nav-link admin-only">Admin</a>
+            <button id="connect-btn" class="connect-btn">Connect Wallet</button>
+            <div id="wallet-info" class="wallet-info">
+                <span class="wallet-icon">🦊</span>
+                <span class="wallet-address">0x03c7...5074</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Decentralized Science Research Scoring</h1>
+            <p>Submit protocols, score research, earn reputation badges</p>
+            
+            <!-- Call to Action (changes based on role) -->
+            <div id="cta-section" class="cta-section">
+                <div class="cta-not-connected">
+                    <p class="cta-text">Connect your wallet to participate in research validation</p>
+                    <button class="btn-primary">Connect Wallet</button>
+                </div>
+                
+                <div class="cta-researcher">
+                    <p class="cta-text">Ready to submit your research protocol?</p>
+                    <a href="submit.html" class="btn-primary">Submit Proposal</a>
+                </div>
+                
+                <div class="cta-scorer">
+                    <p class="cta-text">You have <strong>3 proposals</strong> waiting for your review</p>
+                    <a href="score.html" class="btn-primary">Score Proposals</a>
+                </div>
+                
+                <div class="cta-admin">
+                    <p class="cta-text">System admin controls available</p>
+                    <button class="btn-primary">Manage System</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats">
+            <div class="stat-card">
+                <div class="stat-number">247</div>
+                <div class="stat-label">Total Proposals</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">189</div>
+                <div class="stat-label">Approved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Active Scorers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1,245</div>
+                <div class="stat-label">Badges Issued</div>
+            </div>
+        </section>
+
+        <!-- Recent Proposals -->
+        <section class="proposals-section">
+            <div class="section-header">
+                <h2>Recent Proposals</h2>
+                <a href="#" class="view-all">View All →</a>
+            </div>
+            
+            <div class="proposals-grid">
+                <!-- Proposal Card 1 -->
+                <div class="proposal-card">
+                    <div class="proposal-header">
+                        <span class="proposal-id">#1234</span>
+                        <span class="status-badge status-active">Active</span>
+                    </div>
+                    <h3 class="proposal-title">Screen 1000 compounds against cancer cell lines</h3>
+                    <p class="proposal-desc">High-throughput screening protocol for identifying potential cancer therapeutics...</p>
+                    <div class="proposal-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Score:</span>
+                            <span class="meta-value">85/100</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Votes:</span>
+                            <span class="meta-value">3/5</span>
+                        </div>
+                    </div>
+                    <div class="proposal-actions">
+                        <button class="btn-secondary">View Details</button>
+                        <button class="btn-primary scorer-only">Score This</button>
+                    </div>
+                </div>
+
+                <!-- Proposal Card 2 -->
+                <div class="proposal-card">
+                    <div class="proposal-header">
+                        <span class="proposal-id">#1233</span>
+                        <span class="status-badge status-passed">Passed</span>
+                    </div>
+                    <h3 class="proposal-title">CRISPR gene editing validation protocol</h3>
+                    <p class="proposal-desc">Standardized methodology for validating CRISPR off-target effects...</p>
+                    <div class="proposal-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Score:</span>
+                            <span class="meta-value">92/100</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Votes:</span>
+                            <span class="meta-value">5/5</span>
+                        </div>
+                    </div>
+                    <div class="proposal-actions">
+                        <button class="btn-secondary">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Proposal Card 3 -->
+                <div class="proposal-card">
+                    <div class="proposal-header">
+                        <span class="proposal-id">#1232</span>
+                        <span class="status-badge status-active">Active</span>
+                    </div>
+                    <h3 class="proposal-title">Protein crystallization automation</h3>
+                    <p class="proposal-desc">Automated protein crystallization protocol using robotic systems...</p>
+                    <div class="proposal-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Score:</span>
+                            <span class="meta-value">78/100</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Votes:</span>
+                            <span class="meta-value">2/5</span>
+                        </div>
+                    </div>
+                    <div class="proposal-actions">
+                        <button class="btn-secondary">View Details</button>
+                        <button class="btn-primary scorer-only">Score This</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 ANT Scoring System - Powered by Ethereum</p>
+        <div class="footer-links">
+            <a href="#">Docs</a>
+            <a href="#">GitHub</a>
+            <a href="#">Discord</a>
+        </div>
+    </footer>
+
+    <script src="contracts.js"></script>
+    <script src="web3.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CDN Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+    <h1>Testing ethers.js CDN</h1>
+    <div id="result"></div>
+    
+    <script>
+        const result = document.getElementById('result');
+        
+        if (typeof ethers !== 'undefined') {
+            result.innerHTML = '<p style="color: green;">✅ ethers.js LOADED! Version: ' + ethers.version + '</p>';
+            console.log('ethers object:', ethers);
+        } else {
+            result.innerHTML = '<p style="color: red;">❌ ethers.js NOT LOADED</p>';
+        }
+        
+        if (typeof window.ethereum !== 'undefined') {
+            result.innerHTML += '<p style="color: green;">✅ Wallet detected!</p>';
+        } else {
+            result.innerHTML += '<p style="color: red;">❌ No wallet detected</p>';
+        }
+    </script>
+</body>
+</html>
+
