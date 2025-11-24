@@ -24,6 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
  * how the UI changes based on wallet connection and permissions
  */
 function switchRole(role) {
+    // Prevent role switching if real wallet is connected
+    if (window.web3State && window.web3State.isConnected) {
+        alert('🔒 Role Simulator Disabled\n\nA real wallet is connected. Your role is determined by on-chain data.\n\nDisconnect your wallet to use the simulator.');
+        return;
+    }
+    
     currentRole = role;
     
     // Update role display
@@ -50,8 +56,16 @@ function switchRole(role) {
  * Show/hide elements based on user role
  */
 function applyRoleVisibility(role) {
-    // Reset all visibility
+    // NAVIGATION LINKS: Always visible and clickable (can navigate anywhere)
+    // Only blur/disable CONTENT inside pages, not the nav links themselves
+    
+    // Reset all non-nav role-based elements
     document.querySelectorAll('.researcher-only, .scorer-only, .admin-only, .wallet-only').forEach(el => {
+        // Skip nav links - they should always be accessible
+        if (el.classList.contains('nav-link')) {
+            return;
+        }
+        // Hide page content that requires permissions
         el.style.display = 'none';
     });
     
@@ -71,27 +85,35 @@ function applyRoleVisibility(role) {
             walletInfo.style.display = 'flex';
         }
         
-        // Show wallet-only elements
+        // Show wallet-only page content
         document.querySelectorAll('.wallet-only').forEach(el => {
-            el.style.display = '';
+            if (!el.classList.contains('nav-link')) {
+                el.style.display = '';
+            }
         });
     }
     
     if (role === 'researcher' || role === 'scorer' || role === 'admin') {
         document.querySelectorAll('.researcher-only').forEach(el => {
-            el.style.display = '';
+            if (!el.classList.contains('nav-link')) {
+                el.style.display = '';
+            }
         });
     }
     
     if (role === 'scorer' || role === 'admin') {
         document.querySelectorAll('.scorer-only').forEach(el => {
-            el.style.display = '';
+            if (!el.classList.contains('nav-link')) {
+                el.style.display = '';
+            }
         });
     }
     
     if (role === 'admin') {
         document.querySelectorAll('.admin-only').forEach(el => {
-            el.style.display = '';
+            if (!el.classList.contains('nav-link')) {
+                el.style.display = '';
+            }
         });
     }
     
@@ -123,6 +145,11 @@ function handlePageSpecificLogic(role) {
     // PROFILE PAGE (profile.html)
     if (currentPage === 'profile.html') {
         handleProfilePage(role);
+    }
+    
+    // ADMIN PAGE (admin.html)
+    if (currentPage === 'admin.html') {
+        handleAdminPage(role);
     }
 }
 
@@ -205,6 +232,41 @@ function handleProfilePage(role) {
         // Show profile
         if (notConnectedMsg) notConnectedMsg.style.display = 'none';
         if (profileContainer) profileContainer.style.display = 'block';
+    }
+}
+
+/**
+ * Admin page specific logic
+ */
+function handleAdminPage(role) {
+    const notAuthorizedMsg = document.getElementById('not-authorized-message');
+    const adminDashboard = document.getElementById('admin-dashboard');
+    
+    if (role === 'admin') {
+        // Show admin dashboard
+        if (notAuthorizedMsg) notAuthorizedMsg.style.display = 'none';
+        if (adminDashboard) {
+            adminDashboard.style.display = 'block';
+            
+            // Load system stats if web3 is available
+            if (typeof loadSystemStats === 'function' && web3State.isConnected) {
+                loadSystemStats();
+            }
+            
+            // Load contract owner
+            if (typeof loadContractOwner === 'function' && web3State.isConnected) {
+                loadContractOwner();
+            }
+        }
+    } else {
+        // Show "not authorized" message
+        if (notAuthorizedMsg) notAuthorizedMsg.style.display = 'block';
+        if (adminDashboard) adminDashboard.style.display = 'none';
+        
+        // Still load contract owner for display
+        if (typeof loadContractOwner === 'function' && web3State.isConnected) {
+            loadContractOwner();
+        }
     }
 }
 

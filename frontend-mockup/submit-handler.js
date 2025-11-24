@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // Get form values
+            const title = document.getElementById('title')?.value.trim() || 'Research Proposal';
             const protocol = document.getElementById('protocol').value.trim();
             const ipfsHash = document.getElementById('ipfs').value.trim();
             
@@ -26,33 +27,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            // Get selected scorers
-            const checkedScorers = Array.from(
-                proposalForm.querySelectorAll('input[name="scorer"]:checked')
-            );
-            
-            // Validate scorer count
-            if (checkedScorers.length !== 3) {
-                alert(`❌ Please select exactly 3 scorers!\n\nYou've selected: ${checkedScorers.length}`);
-                return;
-            }
-            
-            // Get scorer addresses
-            const scorerAddresses = checkedScorers.map(input => input.value);
-            
             // Confirm submission
             const confirm = window.confirm(
                 `📝 Submit Proposal?\n\n` +
-                `Protocol: ${protocol.substring(0, 100)}...\n` +
-                `IPFS: ${ipfsHash || 'None'}\n` +
-                `Scorers: ${scorerAddresses.length}\n\n` +
+                `Title: ${title}\n` +
+                `Protocol: ${protocol.substring(0, 100)}${protocol.length > 100 ? '...' : ''}\n` +
+                `IPFS: ${ipfsHash || 'None'}\n\n` +
                 `This will create a transaction. Continue?`
             );
             
             if (!confirm) return;
             
-            // Submit to blockchain
-            const proposalId = await submitProposal(protocol, ipfsHash, scorerAddresses);
+            // Submit to blockchain (title, description, ipfsHash)
+            const proposalId = await submitProposal(title, protocol, ipfsHash);
             
             if (proposalId) {
                 // Success - redirect to profile

@@ -30,11 +30,11 @@ const CONTRACTS = {
                 "type": "function",
                 "name": "submitProposal",
                 "inputs": [
-                    {"name": "protocolDesc", "type": "string"},
-                    {"name": "ipfsHash", "type": "string"},
-                    {"name": "scorers", "type": "address[]"}
+                    {"name": "title", "type": "string"},
+                    {"name": "description", "type": "string"},
+                    {"name": "ipfsHash", "type": "string"}
                 ],
-                "outputs": [{"name": "", "type": "uint256"}],
+                "outputs": [],
                 "stateMutability": "nonpayable"
             },
             // Score Proposal
@@ -43,7 +43,48 @@ const CONTRACTS = {
                 "name": "scoreProposal",
                 "inputs": [
                     {"name": "proposalId", "type": "uint256"},
-                    {"name": "scoreValue", "type": "uint256"}
+                    {
+                        "name": "scientificMerit",
+                        "type": "tuple",
+                        "components": [
+                            {"name": "novelty", "type": "uint8"},
+                            {"name": "biologicalPlausibility", "type": "uint8"},
+                            {"name": "priorEvidence", "type": "uint8"}
+                        ]
+                    },
+                    {
+                        "name": "feasibility",
+                        "type": "tuple",
+                        "components": [
+                            {"name": "technicalViability", "type": "uint8"},
+                            {"name": "dataQuality", "type": "uint8"},
+                            {"name": "clarityOfProtocol", "type": "uint8"}
+                        ]
+                    },
+                    {
+                        "name": "communityAlignment",
+                        "type": "tuple",
+                        "components": [
+                            {"name": "missionFit", "type": "uint8"},
+                            {"name": "daoEngagement", "type": "uint8"}
+                        ]
+                    },
+                    {
+                        "name": "resourceEfficiency",
+                        "type": "tuple",
+                        "components": [
+                            {"name": "costEffectiveness", "type": "uint8"},
+                            {"name": "agenticResourceUse", "type": "uint8"}
+                        ]
+                    },
+                    {
+                        "name": "openScience",
+                        "type": "tuple",
+                        "components": [
+                            {"name": "dataProtocolSharing", "type": "uint8"},
+                            {"name": "collaborativePotential", "type": "uint8"}
+                        ]
+                    }
                 ],
                 "outputs": [],
                 "stateMutability": "nonpayable"
@@ -67,12 +108,13 @@ const CONTRACTS = {
                 ],
                 "outputs": [
                     {"name": "id", "type": "uint256"},
-                    {"name": "creator", "type": "address"},
-                    {"name": "protocol", "type": "string"},
-                    {"name": "ipfs", "type": "string"},
-                    {"name": "totalScore", "type": "uint256"},
-                    {"name": "numScores", "type": "uint256"},
-                    {"name": "fulfilled", "type": "bool"}
+                    {"name": "title", "type": "string"},
+                    {"name": "description", "type": "string"},
+                    {"name": "ipfsHash", "type": "string"},
+                    {"name": "finalScore", "type": "uint8"},
+                    {"name": "isPassing", "type": "bool"},
+                    {"name": "isFulfilled", "type": "bool"},
+                    {"name": "scorerCount", "type": "uint64"}
                 ],
                 "stateMutability": "view"
             },
@@ -84,6 +126,43 @@ const CONTRACTS = {
                     {"name": "scorer", "type": "address"}
                 ],
                 "outputs": [{"name": "", "type": "bool"}],
+                "stateMutability": "view"
+            },
+            // Get User Proposals
+            {
+                "type": "function",
+                "name": "userProposals",
+                "inputs": [{"name": "user", "type": "address"}, {"name": "index", "type": "uint256"}],
+                "outputs": [{"name": "", "type": "uint256"}],
+                "stateMutability": "view"
+            },
+            // Get Proposal Submitter (access proposals mapping directly)
+            {
+                "type": "function",
+                "name": "proposals",
+                "inputs": [{"name": "proposalId", "type": "uint256"}],
+                "outputs": [
+                    {"name": "id", "type": "uint256"},
+                    {"name": "submitter", "type": "address"},
+                    {"name": "title", "type": "string"},
+                    {"name": "description", "type": "string"},
+                    {"name": "ipfsHash", "type": "string"},
+                    {"name": "scores", "type": "tuple", "components": [
+                        {"name": "scientificMerit", "type": "tuple"},
+                        {"name": "feasibility", "type": "tuple"},
+                        {"name": "communityAlignment", "type": "tuple"},
+                        {"name": "resourceEfficiency", "type": "tuple"},
+                        {"name": "openScience", "type": "tuple"},
+                        {"name": "finalScore", "type": "uint8"},
+                        {"name": "isPassing", "type": "bool"},
+                        {"name": "isFulfilled", "type": "bool"},
+                        {"name": "timestamp", "type": "uint64"},
+                        {"name": "scorerCount", "type": "uint64"}
+                    ]},
+                    {"name": "scorers", "type": "address[]"},
+                    {"name": "isActive", "type": "bool"},
+                    {"name": "submissionTime", "type": "uint256"}
+                ],
                 "stateMutability": "view"
             },
             // Get Active Proposal Count

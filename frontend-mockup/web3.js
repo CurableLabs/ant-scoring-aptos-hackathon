@@ -69,6 +69,15 @@ async function connectWallet() {
 
         // Update UI
         updateWalletUI();
+        
+        // If on profile page, load profile data
+        const currentPage = window.location.pathname.split('/').pop();
+        if (currentPage === 'profile.html' && typeof loadResearcherProfile === 'function') {
+            console.log('🔄 Triggering profile data load after wallet connection...');
+            setTimeout(() => {
+                loadResearcherProfile();
+            }, 500);
+        }
 
         // Listen for account changes
         window.ethereum.on('accountsChanged', handleAccountsChanged);
@@ -193,6 +202,15 @@ async function checkUserRoles() {
         if (web3State.isAdmin) role = 'admin';
         else if (web3State.isScorer) role = 'scorer';
         
+        // Store role in web3State
+        web3State.currentRole = role;
+        
+        // Disable role simulator when real wallet is connected
+        disableRoleSimulator();
+        
+        // Show detected role
+        updateRoleDisplay(role);
+        
         applyRoleVisibility(role);
 
     } catch (error) {
@@ -203,6 +221,42 @@ async function checkUserRoles() {
 // ============================================
 // UI UPDATES
 // ============================================
+
+function disableRoleSimulator() {
+    const roleSimulator = document.querySelector('.role-simulator');
+    const roleButtons = document.querySelectorAll('.role-btn');
+    const simulatorTitle = document.querySelector('.simulator-title');
+    
+    if (roleSimulator) {
+        roleSimulator.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+    }
+    
+    if (simulatorTitle) {
+        simulatorTitle.textContent = '🔒 ROLE SIMULATOR DISABLED (Real Wallet Connected)';
+    }
+    
+    // Disable all role buttons
+    roleButtons.forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+    });
+}
+
+function updateRoleDisplay(role) {
+    const roleDisplay = document.getElementById('current-role');
+    const roleNames = {
+        'researcher': '✅ RESEARCHER (Regular User)',
+        'scorer': '✅ AUTHORIZED SCORER',
+        'admin': '✅ ADMIN (Contract Owner)'
+    };
+    
+    if (roleDisplay) {
+        roleDisplay.textContent = roleNames[role] || 'Connected';
+        roleDisplay.style.fontWeight = 'bold';
+        roleDisplay.style.fontSize = '14px';
+    }
+}
 
 function updateWalletUI() {
     const connectBtn = document.getElementById('connect-btn');
@@ -250,7 +304,7 @@ function handleChainChanged(chainId) {
 // ============================================
 
 // Submit Proposal
-async function submitProposal(protocolDesc, ipfsHash, scorerAddresses) {
+async function submitProposal(title, description, ipfsHash) {
     try {
         if (!web3State.isConnected) {
             alert('Please connect your wallet first!');
@@ -259,10 +313,11 @@ async function submitProposal(protocolDesc, ipfsHash, scorerAddresses) {
 
         showLoading('Submitting proposal to blockchain...');
 
+        // Contract signature: submitProposal(string title, string description, string ipfsHash)
         const tx = await web3State.contracts.antScoring.submitProposal(
-            protocolDesc,
-            ipfsHash || '',
-            scorerAddresses
+            title,
+            description,
+            ipfsHash || ''
         );
 
         showLoading('⏳ Waiting for confirmation...');
@@ -322,9 +377,42 @@ async function scoreProposal(proposalId, score) {
 
         showLoading(`Submitting score for proposal #${proposalId}...`);
 
+        // Convert single score to all 5 categories (evenly distributed)
+        // Contract expects: ScientificMerit, Feasibility, CommunityAlignment, ResourceEfficiency, OpenScience
+        const scientificMerit = {
+            novelty: score,
+            biologicalPlausibility: score,
+            priorEvidence: score
+        };
+        
+        const feasibility = {
+            technicalViability: score,
+            dataQuality: score,
+            clarityOfProtocol: score
+        };
+        
+        const communityAlignment = {
+            missionFit: score,
+            daoEngagement: score
+        };
+        
+        const resourceEfficiency = {
+            costEffectiveness: score,
+            agenticResourceUse: score
+        };
+        
+        const openScience = {
+            dataProtocolSharing: score,
+            collaborativePotential: score
+        };
+
         const tx = await web3State.contracts.antScoring.scoreProposal(
             proposalId,
-            score
+            scientificMerit,
+            feasibility,
+            communityAlignment,
+            resourceEfficiency,
+            openScience
         );
 
         showLoading('⏳ Waiting for confirmation...');
@@ -483,17 +571,24 @@ function hideLoading() {
 // INITIALIZATION
 // ============================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Add connect button handler
     const connectBtn = document.getElementById('connect-btn');
     if (connectBtn) {
         connectBtn.addEventListener('click', connectWallet);
     }
 
-    // Check if already connected (MetaMask auto-connection)
-    if (window.ethereum && window.ethereum.selectedAddress) {
-        connectWallet();
-    }
+    // Auto-reconnect if wallet was previously connected
+    // Small delay to ensure page is fully loaded
+    setTimeout(async () => {
+        if (window.ethereum && window.ethereum.selectedAddress) {
+            console.log('🔄 Auto-reconnecting wallet...');
+            await connectWallet();
+        } else {
+            // No wallet connected, show default "none" state
+            applyRoleVisibility('none');
+        }
+    }, 100);
 });
 
 // Export functions for use in HTML

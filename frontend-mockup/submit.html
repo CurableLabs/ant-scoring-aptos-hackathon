@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANT Scoring - Submit Proposal</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=6">
     
     <!-- Ethers.js Library (Web3) -->
     <script src="ethers.min.js"></script>
@@ -33,7 +33,7 @@
             <a href="submit.html" class="nav-link active researcher-only">Submit</a>
             <a href="score.html" class="nav-link scorer-only">Score</a>
             <a href="profile.html" class="nav-link wallet-only">Profile</a>
-            <a href="#" class="nav-link admin-only">Admin</a>
+            <a href="admin.html" class="nav-link admin-only">Admin</a>
             <button id="connect-btn" class="connect-btn">Connect Wallet</button>
             <div id="wallet-info" class="wallet-info">
                 <span class="wallet-icon">🦊</span>
@@ -59,6 +59,19 @@
             </div>
 
             <form class="proposal-form">
+                <!-- Title -->
+                <div class="form-group">
+                    <label for="title">Proposal Title *</label>
+                    <input 
+                        type="text" 
+                        id="title" 
+                        class="form-input"
+                        placeholder="e.g., High-Throughput Screening of Cancer Drug Candidates"
+                        required
+                    >
+                    <span class="form-hint">A clear, concise title for your research proposal</span>
+                </div>
+
                 <!-- Protocol Description -->
                 <div class="form-group">
                     <label for="protocol">Protocol Description *</label>
@@ -92,42 +105,6 @@
                         min="0"
                     />
                     <span class="form-hint">Amount of CURE tokens you're requesting for this research</span>
-                </div>
-
-                <!-- Scorers Selection -->
-                <div class="form-group">
-                    <label>Select Scorers (3 required) *</label>
-                    <div class="scorer-list">
-                        <label class="scorer-item">
-                            <input type="checkbox" name="scorer" value="0x1234">
-                            <span class="scorer-info">
-                                <span class="scorer-name">Dr. Sarah Chen</span>
-                                <span class="scorer-specialty">Cancer Research</span>
-                            </span>
-                        </label>
-                        <label class="scorer-item">
-                            <input type="checkbox" name="scorer" value="0x5678">
-                            <span class="scorer-info">
-                                <span class="scorer-name">Prof. John Smith</span>
-                                <span class="scorer-specialty">Molecular Biology</span>
-                            </span>
-                        </label>
-                        <label class="scorer-item">
-                            <input type="checkbox" name="scorer" value="0x9abc">
-                            <span class="scorer-info">
-                                <span class="scorer-name">Dr. Maria Garcia</span>
-                                <span class="scorer-specialty">Drug Discovery</span>
-                            </span>
-                        </label>
-                        <label class="scorer-item">
-                            <input type="checkbox" name="scorer" value="0xdef0">
-                            <span class="scorer-info">
-                                <span class="scorer-name">Dr. Wei Zhang</span>
-                                <span class="scorer-specialty">Biochemistry</span>
-                            </span>
-                        </label>
-                    </div>
-                    <span class="form-hint">Select exactly 3 authorized scorers to review your proposal</span>
                 </div>
 
                 <!-- Research Category -->
@@ -189,10 +166,10 @@
         </div>
     </footer>
 
-    <script src="contracts.js"></script>
-    <script src="web3.js"></script>
-    <script src="script.js"></script>
-    <script src="submit-handler.js"></script>
+    <script src="contracts.js?v=9"></script>
+    <script src="web3.js?v=9"></script>
+    <script src="script.js?v=9"></script>
+    <script src="submit-handler.js?v=9"></script>
 </body>
 </html>
 

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANT Scoring - Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css?v=3">
+    
+    <!-- Ethers.js Library (Web3) -->
+    <script src="ethers.min.js"></script>
+</head>
+<body>
+    <!-- Role Simulator -->
+    <div class="role-simulator">
+        <div class="simulator-title">🎭 ROLE SIMULATOR (Demo Only)</div>
+        <div class="role-buttons">
+            <button onclick="switchRole('none')" class="role-btn">Not Connected</button>
+            <button onclick="switchRole('researcher')" class="role-btn">Researcher</button>
+            <button onclick="switchRole('scorer')" class="role-btn">Authorized Scorer</button>
+            <button onclick="switchRole('admin')" class="role-btn">Admin</button>
+        </div>
+        <div id="current-role" class="current-role">Current: Not Connected</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo">🔬</span>
+            <span class="brand-name">ANT Scoring System</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit.html" class="nav-link researcher-only">Submit</a>
+            <a href="score.html" class="nav-link scorer-only">Score</a>
+            <a href="profile.html" class="nav-link wallet-only">Profile</a>
+            <a href="admin.html" class="nav-link active admin-only">Admin</a>
+            <button id="connect-btn" class="connect-btn">Connect Wallet</button>
+            <div id="wallet-info" class="wallet-info">
+                <span class="wallet-icon">🦊</span>
+                <span class="wallet-address">0x03c7...5074</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Not Authorized Message -->
+        <div id="not-authorized-message" class="alert alert-danger">
+            <h2>🔒 Admin Access Required</h2>
+            <p>You need to be the contract owner to access this dashboard.</p>
+            <p><strong>Current Admin:</strong> <span id="contract-owner">Loading...</span></p>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="admin-dashboard" style="display: none;">
+            <h1>⚙️ Admin Dashboard</h1>
+            <p class="subtitle">System management and configuration</p>
+
+            <!-- System Stats -->
+            <section class="stats-section">
+                <h2>📊 System Statistics</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-proposals">0</div>
+                        <div class="stat-label">Total Proposals</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="active-proposals">0</div>
+                        <div class="stat-label">Active Proposals</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-scorers">0</div>
+                        <div class="stat-label">Authorized Scorers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="passing-threshold">80</div>
+                        <div class="stat-label">Passing Threshold</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scorer Management -->
+            <section class="admin-section">
+                <h2>👥 Scorer Management</h2>
+                
+                <!-- Add Scorer -->
+                <div class="admin-card">
+                    <h3>➕ Add Authorized Scorer</h3>
+                    <div class="form-group">
+                        <label for="new-scorer-address">Wallet Address</label>
+                        <input 
+                            type="text" 
+                            id="new-scorer-address" 
+                            placeholder="0x..." 
+                            class="form-input"
+                        >
+                    </div>
+                    <button onclick="addScorer()" class="btn-primary">Add Scorer</button>
+                </div>
+
+                <!-- Remove Scorer -->
+                <div class="admin-card">
+                    <h3>➖ Remove Authorized Scorer</h3>
+                    <div class="form-group">
+                        <label for="remove-scorer-address">Wallet Address</label>
+                        <input 
+                            type="text" 
+                            id="remove-scorer-address" 
+                            placeholder="0x..." 
+                            class="form-input"
+                        >
+                    </div>
+                    <button onclick="removeScorer()" class="btn-danger">Remove Scorer</button>
+                </div>
+
+                <!-- Check Scorer Status -->
+                <div class="admin-card">
+                    <h3>🔍 Check Scorer Status</h3>
+                    <div class="form-group">
+                        <label for="check-scorer-address">Wallet Address</label>
+                        <input 
+                            type="text" 
+                            id="check-scorer-address" 
+                            placeholder="0x..." 
+                            class="form-input"
+                        >
+                    </div>
+                    <button onclick="checkScorerStatus()" class="btn-secondary">Check Status</button>
+                    <div id="scorer-status-result" class="status-result"></div>
+                </div>
+            </section>
+
+            <!-- Badge Issuer Management -->
+            <section class="admin-section">
+                <h2>🎖️ Badge Issuer Management</h2>
+                
+                <!-- Authorize Badge Issuer -->
+                <div class="admin-card">
+                    <h3>➕ Authorize Badge Issuer</h3>
+                    <p class="help-text">Allow a contract to issue LAB Badge NFTs</p>
+                    <div class="form-group">
+                        <label for="new-issuer-address">Contract Address</label>
+                        <input 
+                            type="text" 
+                            id="new-issuer-address" 
+                            placeholder="0x..." 
+                            class="form-input"
+                        >
+                    </div>
+                    <button onclick="authorizeBadgeIssuer()" class="btn-primary">Authorize Issuer</button>
+                </div>
+
+                <!-- Revoke Badge Issuer -->
+                <div class="admin-card">
+                    <h3>➖ Revoke Badge Issuer</h3>
+                    <div class="form-group">
+                        <label for="revoke-issuer-address">Contract Address</label>
+                        <input 
+                            type="text" 
+                            id="revoke-issuer-address" 
+                            placeholder="0x..." 
+                            class="form-input"
+                        >
+                    </div>
+                    <button onclick="revokeBadgeIssuer()" class="btn-danger">Revoke Issuer</button>
+                </div>
+            </section>
+
+            <!-- All Proposals View -->
+            <section class="admin-section">
+                <h2>📋 All Proposals (System-Wide)</h2>
+                <button onclick="loadAllProposals()" class="btn-secondary">🔄 Refresh Proposals</button>
+                <div id="all-proposals-list" class="proposals-list">
+                    <p class="loading-text">Click "Refresh Proposals" to load all submissions...</p>
+                </div>
+            </section>
+
+            <!-- Contract Addresses -->
+            <section class="admin-section">
+                <h2>📜 Contract Addresses</h2>
+                <div class="admin-card">
+                    <div class="contract-address-list">
+                        <div class="contract-item">
+                            <strong>ANTScoring:</strong>
+                            <a href="https://sepolia.etherscan.io/address/${CONTRACTS.ADDRESSES.ANTScoring}" target="_blank" id="ant-scoring-address">
+                                ${CONTRACTS.ADDRESSES.ANTScoring}
+                            </a>
+                        </div>
+                        <div class="contract-item">
+                            <strong>TriLaneSystem:</strong>
+                            <a href="https://sepolia.etherscan.io/address/${CONTRACTS.ADDRESSES.TriLaneSystem}" target="_blank" id="trilane-address">
+                                ${CONTRACTS.ADDRESSES.TriLaneSystem}
+                            </a>
+                        </div>
+                        <div class="contract-item">
+                            <strong>CUREToken:</strong>
+                            <a href="https://sepolia.etherscan.io/address/${CONTRACTS.ADDRESSES.CUREToken}" target="_blank" id="cure-token-address">
+                                ${CONTRACTS.ADDRESSES.CUREToken}
+                            </a>
+                        </div>
+                        <div class="contract-item">
+                            <strong>BondingCurve2:</strong>
+                            <a href="https://sepolia.etherscan.io/address/${CONTRACTS.ADDRESSES.BondingCurve2}" target="_blank" id="bonding-curve-address">
+                                ${CONTRACTS.ADDRESSES.BondingCurve2}
+                            </a>
+                        </div>
+                        <div class="contract-item">
+                            <strong>CUREIntegration:</strong>
+                            <a href="https://sepolia.etherscan.io/address/${CONTRACTS.ADDRESSES.CUREIntegration}" target="_blank" id="cure-integration-address">
+                                ${CONTRACTS.ADDRESSES.CUREIntegration}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 ANT Scoring System - Decentralized Science Research</p>
+            <p class="footer-links">
+                <a href="https://sepolia.etherscan.io" target="_blank">Sepolia Explorer</a> • 
+                <a href="#">Documentation</a> • 
+                <a href="#">GitHub</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="contracts.js?v=9"></script>
+    <script src="web3.js?v=9"></script>
+    <script src="script.js?v=9"></script>
+    <script src="admin-handler.js?v=9"></script>
+</body>
+</html>
+
