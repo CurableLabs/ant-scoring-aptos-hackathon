@@ -199,6 +199,24 @@ const CONTRACTS = {
                 "outputs": [],
                 "stateMutability": "nonpayable"
             },
+            // Remove Authorized Scorer
+            {
+                "type": "function",
+                "name": "removeAuthorizedScorer",
+                "inputs": [
+                    {"name": "scorer", "type": "address"}
+                ],
+                "outputs": [],
+                "stateMutability": "nonpayable"
+            },
+            // Get Passing Threshold
+            {
+                "type": "function",
+                "name": "passingThreshold",
+                "inputs": [],
+                "outputs": [{"name": "", "type": "uint8"}],
+                "stateMutability": "view"
+            },
             // Events
             {
                 "type": "event",

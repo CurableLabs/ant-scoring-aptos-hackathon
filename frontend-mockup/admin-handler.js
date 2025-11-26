@@ -13,9 +13,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (web3State.isConnected && web3State.isAdmin) {
             console.log('Loading system stats...');
             await loadSystemStats();
+            await loadAllProposals(); // Auto-load proposals for admins
         } else if (web3State.isConnected) {
             // Still load contract owner even if not admin
             await loadContractOwner();
+            await loadAllProposals(); // Anyone can view proposals
         }
     }, 500);
 });
@@ -289,7 +291,7 @@ async function loadAllProposals() {
     const listDiv = document.getElementById('all-proposals-list');
     
     if (!web3State.isConnected) {
-        alert('❌ Please connect your wallet first');
+        listDiv.innerHTML = '<p class="empty-state">❌ Please connect your wallet to view proposals</p>';
         return;
     }
     
@@ -305,17 +307,25 @@ async function loadAllProposals() {
         }
         
         let proposalsHTML = '';
+        const threshold = await web3State.contracts.antScoring.passingThreshold();
         
         // Load all proposals
         for (let i = 1; i <= totalProposals; i++) {
             try {
-                const proposal = await web3State.contracts.antScoring.getProposalInfo(i);
+                // Get proposal info
+                const info = await web3State.contracts.antScoring.getProposalInfo(i);
+                // Get submitter from proposals mapping
+                const proposalData = await web3State.contracts.antScoring.proposals(i);
                 
-                const statusClass = proposal.scores.isFulfilled ? 'fulfilled' : 
-                                  proposal.scores.isPassing ? 'passing' : 'pending';
+                // info returns: id, title, description, ipfsHash, finalScore, isPassing, isFulfilled, scorerCount
+                const [id, title, description, ipfsHash, finalScore, isPassing, isFulfilled, scorerCount] = info;
+                const submitter = proposalData.submitter;
                 
-                const statusText = proposal.scores.isFulfilled ? '✅ Fulfilled' :
-                                 proposal.scores.isPassing ? '🎯 Passed' : '⏳ Pending';
+                const statusClass = isFulfilled ? 'fulfilled' : 
+                                  isPassing ? 'passing' : 'pending';
+                
+                const statusText = isFulfilled ? '✅ Fulfilled' :
+                                 isPassing ? '🎯 Passed' : '⏳ Pending';
                 
                 proposalsHTML += `
                     <div class="proposal-card ${statusClass}">
@@ -323,14 +333,16 @@ async function loadAllProposals() {
                             <span class="proposal-id">ID: ${i}</span>
                             <span class="proposal-status">${statusText}</span>
                         </div>
-                        <h3>${proposal.title}</h3>
-                        <p class="proposal-submitter">Submitted by: ${proposal.submitter.slice(0, 6)}...${proposal.submitter.slice(-4)}</p>
+                        <h3>${title}</h3>
+                        <p class="proposal-desc">${description.substring(0, 100)}${description.length > 100 ? '...' : ''}</p>
+                        <p class="proposal-submitter">Submitted by: ${submitter.slice(0, 6)}...${submitter.slice(-4)}</p>
                         <div class="proposal-score">
-                            <strong>Score:</strong> ${proposal.scores.finalScore}/100
-                            <span class="threshold-info">(Threshold: ${await web3State.contracts.antScoring.passingThreshold()})</span>
+                            <strong>Score:</strong> ${finalScore}/100
+                            <span class="threshold-info">(Threshold: ${threshold})</span>
+                            <span class="scorer-count">| ${scorerCount} scorer(s)</span>
                         </div>
                         <div class="proposal-meta">
-                            <small>IPFS: ${proposal.ipfsHash}</small>
+                            <small>IPFS: ${ipfsHash}</small>
                         </div>
                     </div>
                 `;
@@ -340,6 +352,7 @@ async function loadAllProposals() {
         }
         
         listDiv.innerHTML = proposalsHTML || '<p class="empty-state">No proposals found.</p>';
+        console.log(`✅ Loaded ${totalProposals} proposals`);
         
     } catch (error) {
         console.error('Error loading proposals:', error);

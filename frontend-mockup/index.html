@@ -4,22 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANT Scoring - Home</title>
-    <link rel="stylesheet" href="styles.css?v=6">
+    <link rel="stylesheet" href="styles.css?v=23">
     
     <!-- Ethers.js Library (Web3) -->
     <script src="ethers.min.js"></script>
 </head>
 <body>
-    <!-- Role Simulator (for demo purposes only) -->
-    <div class="role-simulator">
-        <div class="simulator-title">🎭 ROLE SIMULATOR (Demo Only)</div>
-        <div class="role-buttons">
-            <button onclick="switchRole('none')" class="role-btn">Not Connected</button>
-            <button onclick="switchRole('researcher')" class="role-btn">Researcher</button>
-            <button onclick="switchRole('scorer')" class="role-btn">Authorized Scorer</button>
-            <button onclick="switchRole('admin')" class="role-btn">Admin</button>
+    <!-- Curable Labs Banner -->
+    <div class="curable-banner">
+        <div class="banner-content">
+            <span class="lab-icon">🔬</span>
+            <span class="lab-name">CURABLE LABS</span>
+            <span class="banner-separator">|</span>
+            <span id="wallet-role" class="wallet-role">NOT CONNECTED</span>
         </div>
-        <div id="current-role" class="current-role">Current: Not Connected</div>
     </div>
 
     <!-- Navigation -->
@@ -185,9 +183,9 @@
         </div>
     </footer>
 
-    <script src="contracts.js?v=9"></script>
-    <script src="web3.js?v=9"></script>
-    <script src="script.js?v=9"></script>
+    <script src="contracts.js?v=24"></script>
+    <script src="web3.js?v=23"></script>
+    <script src="script.js?v=23"></script>
 </body>
 </html>
 

@@ -9,14 +9,6 @@ let currentRole = 'none';
 document.addEventListener('DOMContentLoaded', () => {
     // Set default role to 'none' (not connected)
     switchRole('none');
-    
-    // Add event listeners for connect button
-    const connectBtn = document.getElementById('connect-btn');
-    if (connectBtn) {
-        connectBtn.addEventListener('click', () => {
-            alert('In the real app, this would open MetaMask/WalletConnect to connect your wallet!');
-        });
-    }
 });
 
 /**
@@ -294,59 +286,11 @@ function updateScoreSlider(sliderId, inputId) {
     }
 }
 
-/**
- * Form submission handlers (simulated)
- */
-document.addEventListener('DOMContentLoaded', () => {
-    // Submit proposal form
-    const proposalForm = document.querySelector('.proposal-form');
-    if (proposalForm) {
-        proposalForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Check if 3 scorers are selected
-            const checkedScorers = proposalForm.querySelectorAll('input[name="scorer"]:checked');
-            if (checkedScorers.length !== 3) {
-                alert('Please select exactly 3 scorers!');
-                return;
-            }
-            
-            // Simulate blockchain transaction
-            alert('🔄 Transaction submitted to blockchain!\n\n' +
-                  'In the real app, MetaMask would pop up here to sign the transaction.\n\n' +
-                  '⏳ Waiting for confirmation...\n\n' +
-                  '✅ Proposal submitted successfully!\n' +
-                  'Proposal ID: #' + Math.floor(Math.random() * 1000 + 1200));
-        });
-    }
-    
-    // Score submission buttons
-    document.querySelectorAll('.scoring-form .btn-primary').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const scoreInput = btn.closest('.scoring-form').querySelector('.score-input');
-            const score = scoreInput ? scoreInput.value : '85';
-            
-            alert('🔄 Submitting score to blockchain...\n\n' +
-                  'Your Score: ' + score + '/100\n\n' +
-                  '⏳ Waiting for confirmation...\n\n' +
-                  '✅ Score submitted successfully!');
-        });
-    });
-    
-    // Fulfill proposal buttons
-    document.querySelectorAll('button').forEach(btn => {
-        if (btn.textContent.includes('Fulfill')) {
-            btn.addEventListener('click', () => {
-                alert('🎉 Fulfilling proposal...\n\n' +
-                      '⏳ Minting your LAB Badge NFT...\n\n' +
-                      '✅ Success!\n\n' +
-                      'You\'ve been awarded a Gold Badge!\n' +
-                      'Badge ID: #' + Math.floor(Math.random() * 100 + 1300) + '\n\n' +
-                      'This soulbound NFT represents your validated research contribution.');
-            });
-        }
-    });
-});
+// Form submission handlers are now handled by dedicated handler files:
+// - submit-handler.js for proposal submissions
+// - score-handler.js for scoring
+// - profile-handler.js for profile data
+// - admin-handler.js for admin functions
 
 // Export for use in HTML onclick handlers
 window.switchRole = switchRole;

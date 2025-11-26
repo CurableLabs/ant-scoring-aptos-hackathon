@@ -223,38 +223,46 @@ async function checkUserRoles() {
 // ============================================
 
 function disableRoleSimulator() {
-    const roleSimulator = document.querySelector('.role-simulator');
-    const roleButtons = document.querySelectorAll('.role-btn');
-    const simulatorTitle = document.querySelector('.simulator-title');
-    
-    if (roleSimulator) {
-        roleSimulator.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
-    }
-    
-    if (simulatorTitle) {
-        simulatorTitle.textContent = '🔒 ROLE SIMULATOR DISABLED (Real Wallet Connected)';
-    }
-    
-    // Disable all role buttons
-    roleButtons.forEach(btn => {
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-        btn.style.cursor = 'not-allowed';
-    });
+    // Update connection status - handled by updateRoleDisplay
 }
 
 function updateRoleDisplay(role) {
-    const roleDisplay = document.getElementById('current-role');
-    const roleNames = {
-        'researcher': '✅ RESEARCHER (Regular User)',
-        'scorer': '✅ AUTHORIZED SCORER',
-        'admin': '✅ ADMIN (Contract Owner)'
-    };
+    const roleElement = document.getElementById('wallet-role');
+    const banner = document.querySelector('.curable-banner');
     
-    if (roleDisplay) {
-        roleDisplay.textContent = roleNames[role] || 'Connected';
-        roleDisplay.style.fontWeight = 'bold';
-        roleDisplay.style.fontSize = '14px';
+    if (roleElement) {
+        const roleNames = {
+            'researcher': '✅ CONNECTED AS: RESEARCHER',
+            'scorer': '✅ CONNECTED AS: AUTHORIZED SCORER',
+            'admin': '✅ CONNECTED AS: ADMIN (CONTRACT OWNER)'
+        };
+        
+        roleElement.textContent = roleNames[role] || '✅ WALLET CONNECTED';
+        roleElement.classList.add('connected');
+    }
+    
+    // Change banner to green when connected
+    if (banner) {
+        banner.classList.add('connected');
+    }
+}
+
+function updateConnectionStatus(isConnected, role = null) {
+    const roleElement = document.getElementById('wallet-role');
+    const banner = document.querySelector('.curable-banner');
+    
+    if (roleElement) {
+        if (isConnected && role) {
+            updateRoleDisplay(role);
+        } else if (!isConnected) {
+            roleElement.textContent = '❌ NOT CONNECTED';
+            roleElement.classList.remove('connected');
+            
+            // Change banner to purple when disconnected
+            if (banner) {
+                banner.classList.remove('connected');
+            }
+        }
     }
 }
 
@@ -572,6 +580,9 @@ function hideLoading() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize connection status as NOT CONNECTED
+    updateConnectionStatus(false);
+    
     // Add connect button handler
     const connectBtn = document.getElementById('connect-btn');
     if (connectBtn) {
@@ -587,6 +598,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             // No wallet connected, show default "none" state
             applyRoleVisibility('none');
+            updateConnectionStatus(false);
         }
     }, 100);
 });
