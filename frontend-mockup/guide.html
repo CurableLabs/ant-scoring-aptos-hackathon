@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Guide - ANT Scoring</title>
+    <link rel="stylesheet" href="styles.css?v=25">
+</head>
+<body>
+    <div class="curable-banner" id="connection-status">
+        <span class="banner-text">CURABLE LABS</span>
+        <button class="connect-btn" id="connectWalletBtn">CONNECT WALLET</button>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo">🔬</span>
+            <span class="brand-name">ANT Scoring System</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit.html" class="nav-link researcher-only">Submit</a>
+            <a href="score.html" class="nav-link scorer-only">Score</a>
+            <a href="profile.html" class="nav-link wallet-only">Profile</a>
+            <a href="admin.html" class="nav-link admin-only">Admin</a>
+            <a href="guide.html" class="nav-link active">Testing Guide</a>
+            <button id="connect-btn" class="connect-btn">Connect Wallet</button>
+            <div id="wallet-info" class="wallet-info">
+                <span id="wallet-address"></span>
+                <button id="disconnect-btn" class="disconnect-btn">Disconnect</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="guide-header">
+            <h1>🧪 Testing Guide</h1>
+            <p class="guide-subtitle">Follow these steps to test the ANT Scoring System</p>
+        </div>
+
+        <!-- Setup Section -->
+        <div class="guide-section">
+            <h2>📱 1. SETUP (2 minutes)</h2>
+            <div class="guide-steps">
+                <div class="guide-step">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <h3>Install MetaMask</h3>
+                        <p>Download from <a href="https://metamask.io/" target="_blank">metamask.io</a></p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <h3>Switch to Sepolia Testnet</h3>
+                        <p>In MetaMask: Networks → Show test networks → Select Sepolia</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <h3>Get Test ETH</h3>
+                        <p>Free test ETH: <a href="https://sepoliafaucet.com/" target="_blank">sepoliafaucet.com</a></p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <h3>Connect Your Wallet</h3>
+                        <p>Click "Connect Wallet" at the top of this page</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Researcher Flow -->
+        <div class="guide-section">
+            <h2>🔬 2. TEST AS RESEARCHER</h2>
+            <div class="guide-steps">
+                <div class="guide-step">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <h3>Submit a Proposal</h3>
+                        <p>Go to "Submit Proposal" → Fill form → Click Submit</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <h3>Confirm Transaction</h3>
+                        <p>Approve in MetaMask → Wait ~15 seconds for confirmation</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <h3>Check Your Profile</h3>
+                        <p>Go to "My Profile" → See your proposal and stats</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scorer Flow -->
+        <div class="guide-section">
+            <h2>⭐ 3. TEST AS SCORER</h2>
+            <div class="guide-steps">
+                <div class="guide-step">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <h3>View Proposals</h3>
+                        <p>Go to "Score Proposals" → Browse active research</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <h3>Review Research</h3>
+                        <p>Click "View Full Details" to read proposal & IPFS link</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <h3>Submit Score</h3>
+                        <p>Rate 5 criteria (1-5 stars) → Submit → Confirm transaction</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <h3>Check Stats</h3>
+                        <p>Go to "My Profile" → See scoring activity</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Flow -->
+        <div class="guide-section">
+            <h2>⚙️ 4. TEST AS ADMIN</h2>
+            <div class="guide-steps">
+                <div class="guide-step">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <h3>Access Dashboard</h3>
+                        <p>Go to "Admin" → View system stats</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <h3>Manage Scorers</h3>
+                        <p>Add/remove authorized scorers using wallet addresses</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <h3>Update Settings</h3>
+                        <p>Adjust passing threshold or view all proposals</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- What to Test -->
+        <div class="guide-section">
+            <h2>✅ WHAT TO TEST</h2>
+            <div class="checklist">
+                <div class="checklist-item">
+                    <input type="checkbox" id="test1">
+                    <label for="test1">Wallet connects properly (banner turns green)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="test2">
+                    <label for="test2">Proposals submit successfully</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="test3">
+                    <label for="test3">Scoring system works (all 5 criteria)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="test4">
+                    <label for="test4">Profile shows correct data (proposals, stats)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="test5">
+                    <label for="test5">Admin controls functional</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="test6">
+                    <label for="test6">UI is clear and intuitive</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="test7">
+                    <label for="test7">Transactions confirm within 30 seconds</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="test8">
+                    <label for="test8">Role-based access works correctly</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Issues -->
+        <div class="guide-section">
+            <h2>🐛 REPORT BUGS/FEEDBACK</h2>
+            <div class="feedback-box">
+                <p><strong>Found something?</strong> Let us know:</p>
+                <ul>
+                    <li>🔴 Anything broken or not working?</li>
+                    <li>❓ Confusing flows or unclear instructions?</li>
+                    <li>💡 Missing features or improvements?</li>
+                    <li>🎨 UI/UX feedback?</li>
+                </ul>
+                <p class="feedback-cta">Drop your feedback in the team chat!</p>
+            </div>
+        </div>
+
+        <!-- Quick Reference -->
+        <div class="guide-section">
+            <h2>📋 QUICK REFERENCE</h2>
+            <div class="quick-ref">
+                <div class="ref-card">
+                    <h3>Network</h3>
+                    <p>Sepolia Testnet</p>
+                </div>
+                <div class="ref-card">
+                    <h3>Test ETH</h3>
+                    <p><a href="https://sepoliafaucet.com/" target="_blank">Get Free ETH</a></p>
+                </div>
+                <div class="ref-card">
+                    <h3>Browser</h3>
+                    <p>Chrome/Brave + MetaMask</p>
+                </div>
+                <div class="ref-card">
+                    <h3>Time</h3>
+                    <p>~15 sec per transaction</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="contracts.js?v=25"></script>
+    <script src="web3.js?v=25"></script>
+    <script src="script.js?v=25"></script>
+</body>
+</html>
+
