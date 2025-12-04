@@ -144,7 +144,7 @@
 
 ---
 
-**Status:** ✅ PRODUCTION-READY - Enhanced beyond Move contract with security features!
+**Status:**  PRODUCTION-READY - Enhanced beyond Move contract with security features!
 
 **Contract:** Fully functional bonding curve with:
 - All trading, math, and query functions

@@ -66,3 +66,5 @@ credentials.json
 
 # Deployment-specific
 .render/
+# Personal projects (not part of team repo)
+monad-tools/

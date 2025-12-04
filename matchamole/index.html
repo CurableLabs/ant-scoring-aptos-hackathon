@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchAMole - Molecule Discovery Platform</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <h1 class="loading-title">🧬 MatchAMole Elite</h1>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p class="loading-text">Loading molecular intelligence...</p>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app" style="display: none;">
+        <!-- Desktop Sidebar (always visible on desktop) -->
+        <aside class="desktop-sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">🧬 MatchAMole Elite</h1>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <h3 class="nav-section-title">Navigation</h3>
+                <a href="#molecules" class="menu-item active" data-section="molecules">
+                    🧬 Molecules
+                </a>
+                <a href="#dashboard" class="menu-item" data-section="dashboard">
+                    📊 Dashboard
+                </a>
+                <a href="#research" class="menu-item" data-section="research">
+                    🔬 Research
+                </a>
+                <a href="#portfolio" class="menu-item" data-section="portfolio">
+                    💼 Portfolio
+                </a>
+            </nav>
+            
+            <div class="sidebar-bottom">
+                <h3 class="nav-section-title">Account</h3>
+                <a href="#settings" class="menu-item" data-section="settings">
+                    ⚙️ Settings
+                </a>
+                <a href="#profile" class="menu-item" data-section="profile">
+                    👤 Profile
+                </a>
+                
+                <div class="user-section">
+                    <p class="user-info">Connected: Guest</p>
+                    <button class="connect-btn">Connect Wallet</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Mobile Header (only shows on mobile) -->
+        <header class="mobile-header">
+            <h1 class="logo">🧬 MatchAMole Elite</h1>
+            <button class="menu-button" id="menuButton">☰</button>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="main-workspace">
+            <!-- Molecule Card Container -->
+            <div class="card-container" id="cardContainer">
+                <!-- Molecule cards will be inserted here by JavaScript -->
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn pass-btn" id="passBtn">
+                    <span class="btn-icon">❌</span>
+                    <span class="btn-text">Pass</span>
+                </button>
+                <button class="action-btn buy-btn" id="buyBtn">
+                    <span class="btn-icon">💰</span>
+                    <span class="btn-text">Buy</span>
+                </button>
+                <button class="action-btn stake-btn" id="stakeBtn">
+                    <span class="btn-icon">⭐</span>
+                    <span class="btn-text">Stake</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- Sidebar Overlay (backdrop) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <!-- Sidebar (Mobile Menu for Settings/Profile) -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <button class="close-btn" id="closeBtn">✕</button>
+                <div class="sidebar-menu">
+                    <a href="#" class="menu-item active">🧬 Molecules</a>
+                    <a href="#" class="menu-item">📊 Dashboard</a>
+                    <a href="#" class="menu-item">🔬 Research</a>
+                    <a href="#" class="menu-item">💼 Portfolio</a>
+                </div>
+                <div class="sidebar-footer">
+                    <p class="user-info">Connected: Guest</p>
+                    <button class="connect-btn">Connect Wallet</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Notification Container -->
+        <div id="notificationContainer" class="notification-container"></div>
+    </div>
+
+    <!-- Buy Modal -->
+    <div id="buyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirm Purchase</h2>
+                <button class="modal-close" id="closeBuyModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="buyModalContent">
+                    <!-- Content will be filled by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBuy">Cancel</button>
+                <button class="btn btn-primary" id="confirmBuy">Confirm Buy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stake Modal -->
+    <div id="stakeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Stake on Molecule</h2>
+                <button class="modal-close" id="closeStakeModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="stakeModalContent">
+                    <!-- Content will be filled by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelStake">Cancel</button>
+                <button class="btn btn-primary" id="confirmStake">Confirm Stake</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/gestures.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
+
