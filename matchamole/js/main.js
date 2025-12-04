@@ -117,21 +117,6 @@ function showMolecule(molecule) {
             </div>
         </div>
         
-        <!-- Mobile-only buttons inside card -->
-        <div class="card-mobile-buttons">
-            <button class="card-btn card-pass-btn" id="cardPassBtn">
-                <span class="card-btn-icon">«</span>
-                <span class="card-btn-label">Pass</span>
-            </button>
-            <button class="card-btn card-buy-btn" id="cardBuyBtn">
-                <span class="card-btn-icon">💰</span>
-                <span class="card-btn-label">Buy</span>
-            </button>
-            <button class="card-btn card-stake-btn" id="cardStakeBtn">
-                <span class="card-btn-label">Stake</span>
-                <span class="card-btn-icon">»</span>
-            </button>
-        </div>
     `;
     
     cardContainer.appendChild(card);
@@ -153,23 +138,6 @@ function showMolecule(molecule) {
     }
     
     gestureHandler = new GestureHandler(card, gestureCallbacks);
-    
-    // Add event listeners for mobile card buttons
-    const cardPassBtn = card.querySelector('#cardPassBtn');
-    const cardBuyBtn = card.querySelector('#cardBuyBtn');
-    const cardStakeBtn = card.querySelector('#cardStakeBtn');
-    
-    if (cardPassBtn) {
-        cardPassBtn.addEventListener('click', handlePass);
-    }
-    
-    if (cardBuyBtn) {
-        cardBuyBtn.addEventListener('click', handleBuy);
-    }
-    
-    if (cardStakeBtn) {
-        cardStakeBtn.addEventListener('click', handleStake);
-    }
 }
 
 // ====================================
@@ -689,6 +657,11 @@ window.switchSection = function(sectionName) {
         if (sectionName === 'dashboard') {
             renderDashboard();
         }
+        
+        // Render portfolio if navigating to it
+        if (sectionName === 'portfolio') {
+            renderPortfolio();
+        }
     }
 }
 
@@ -828,6 +801,135 @@ function formatTimeAgo(timestamp) {
 }
 
 // ====================================
+// PORTFOLIO RENDERING
+// ====================================
+
+function renderPortfolio() {
+    const container = document.querySelector('#portfolioSection .section-placeholder');
+    
+    // Group investments by molecule
+    const holdingsByMolecule = {};
+    portfolio.investments.forEach(inv => {
+        if (!holdingsByMolecule[inv.moleculeId]) {
+            holdingsByMolecule[inv.moleculeId] = {
+                name: inv.moleculeName,
+                emoji: inv.moleculeEmoji,
+                totalAmount: 0,
+                transactions: []
+            };
+        }
+        holdingsByMolecule[inv.moleculeId].totalAmount += inv.amount;
+        holdingsByMolecule[inv.moleculeId].transactions.push(inv);
+    });
+    
+    const holdings = Object.values(holdingsByMolecule);
+    
+    // All transactions sorted by time
+    const allTransactions = [...portfolio.investments, ...portfolio.stakes]
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    
+    container.innerHTML = `
+        <div class="portfolio-container">
+            <div class="portfolio-header">
+                <h1 class="portfolio-title">💼 Portfolio</h1>
+                <button class="back-to-molecules-btn" onclick="switchSection('molecules')">
+                    ← Back to Molecules
+                </button>
+            </div>
+            
+            ${holdings.length > 0 ? `
+            <!-- Holdings Section -->
+            <div class="portfolio-section">
+                <h2 class="section-title">📦 Your Holdings</h2>
+                <div class="holdings-table">
+                    <div class="table-header">
+                        <div class="table-cell">Molecule</div>
+                        <div class="table-cell">Amount</div>
+                        <div class="table-cell">Transactions</div>
+                    </div>
+                    ${holdings.map(holding => `
+                        <div class="table-row">
+                            <div class="table-cell">
+                                <span class="molecule-emoji-small">${holding.emoji}</span>
+                                <span class="molecule-name-small">${holding.name}</span>
+                            </div>
+                            <div class="table-cell">
+                                <span class="amount-value">${holding.totalAmount.toFixed(2)} CURE</span>
+                            </div>
+                            <div class="table-cell">
+                                <span class="transaction-count">${holding.transactions.length}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+            
+            ${portfolio.stakes.length > 0 ? `
+            <!-- Stakes Section -->
+            <div class="portfolio-section">
+                <h2 class="section-title">⭐ Active Stakes</h2>
+                <div class="stakes-table">
+                    <div class="table-header">
+                        <div class="table-cell">Molecule</div>
+                        <div class="table-cell">Amount</div>
+                        <div class="table-cell">Date</div>
+                    </div>
+                    ${portfolio.stakes.map(stake => `
+                        <div class="table-row">
+                            <div class="table-cell">
+                                <span class="molecule-emoji-small">${stake.moleculeEmoji}</span>
+                                <span class="molecule-name-small">${stake.moleculeName}</span>
+                            </div>
+                            <div class="table-cell">
+                                <span class="amount-value">${stake.amount.toFixed(2)} CURE</span>
+                            </div>
+                            <div class="table-cell">
+                                <span class="date-value">${new Date(stake.timestamp).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+            
+            ${allTransactions.length > 0 ? `
+            <!-- Transaction History -->
+            <div class="portfolio-section">
+                <h2 class="section-title">📋 Transaction History</h2>
+                <div class="transaction-history">
+                    ${allTransactions.map(tx => `
+                        <div class="transaction-item">
+                            <div class="transaction-icon ${tx.type}">
+                                ${tx.type === 'buy' ? '💰' : '⭐'}
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-molecule">${tx.moleculeEmoji} ${tx.moleculeName}</div>
+                                <div class="transaction-date">${new Date(tx.timestamp).toLocaleString()}</div>
+                            </div>
+                            <div class="transaction-info">
+                                <div class="transaction-type">${tx.type === 'buy' ? 'Buy' : 'Stake'}</div>
+                                <div class="transaction-amount">${tx.amount} CURE</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            ` : `
+            <div class="empty-state">
+                <div class="empty-icon">💼</div>
+                <h3>No Transactions Yet</h3>
+                <p>Start investing in molecules to build your portfolio!</p>
+                <button class="btn-primary" onclick="switchSection('molecules')" style="margin-top: 1rem; padding: 0.75rem 1.5rem; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--primary-blue), var(--success-green)); color: white; font-weight: 600; cursor: pointer;">
+                    Browse Molecules
+                </button>
+            </div>
+            `}
+        </div>
+    `;
+}
+
+// ====================================
 // EVENT LISTENERS
 // ====================================
 
@@ -885,6 +987,30 @@ function setupEventListeners() {
     sidebarOverlay.addEventListener('click', () => {
         sidebar.classList.remove('active');
         sidebarOverlay.classList.remove('visible');
+    });
+    
+    // Mobile sidebar navigation
+    const mobileMenuItems = document.querySelectorAll('.sidebar .menu-item');
+    mobileMenuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Remove active from all
+            mobileMenuItems.forEach(i => i.classList.remove('active'));
+            // Add active to clicked
+            item.classList.add('active');
+            
+            // Close mobile sidebar
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('visible');
+            
+            // Get section from href
+            const href = item.getAttribute('href');
+            if (href === '#' || !href) return;
+            
+            const section = href.replace('#', '');
+            switchSection(section);
+        });
     });
     
     // Buy modal

@@ -1339,22 +1339,181 @@ body {
 
 /* Section Placeholder */
 .section-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-    text-align: center;
+    width: 100%;
 }
 
-.section-placeholder h2 {
-    font-size: 3rem;
+/* ====================================
+   PORTFOLIO
+   ==================================== */
+.portfolio-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+}
+
+.portfolio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.portfolio-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-blue), var(--success-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Portfolio Section */
+.portfolio-section {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
     margin-bottom: var(--spacing-md);
 }
 
-.section-placeholder p {
-    font-size: 1.25rem;
+/* Tables */
+.holdings-table,
+.stakes-table {
+    width: 100%;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 600;
+    font-size: 0.875rem;
     color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    margin-bottom: var(--spacing-xs);
+    transition: all var(--transition-fast);
+    align-items: center;
+}
+
+.table-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(5px);
+}
+
+.table-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.amount-value {
+    font-weight: 700;
+    color: var(--success-green);
+}
+
+.transaction-count {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-blue);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.date-value {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Transaction History */
+.transaction-history {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    transition: all var(--transition-fast);
+}
+
+.transaction-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.transaction-icon {
+    font-size: 1.5rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.transaction-icon.buy {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.transaction-icon.stake {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.transaction-details {
+    flex: 1;
+}
+
+.transaction-molecule {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.transaction-date {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.transaction-info {
+    text-align: right;
+}
+
+.transaction-type {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.transaction-amount {
+    font-weight: 700;
+    color: var(--text-primary);
 }
 
 /* ====================================
@@ -1427,7 +1586,7 @@ body {
     }
     
     .card-container {
-        height: 620px;
+        height: 650px;
     }
     
     /* Enable scrolling on mobile */
@@ -1449,36 +1608,28 @@ body {
     }
     
     /* Show mobile buttons inside card */
-    .card-mobile-buttons {
+    
+    /* Keep action buttons but hide Pass and Stake on mobile */
+    /* Show action buttons below card on mobile */
+    .action-buttons {
         display: flex;
-        justify-content: space-between;
+        width: 100%;
         gap: var(--spacing-xs);
         margin-top: var(--spacing-md);
-        padding-top: var(--spacing-md);
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    .card-btn {
+    .action-btn {
         flex: 1;
-        justify-content: center;
+        padding: var(--spacing-sm);
         font-size: 0.875rem;
-        padding: 10px 8px;
     }
     
-    .card-btn-icon {
+    .btn-icon {
         font-size: 1.25rem;
     }
     
-    /* Keep action buttons but hide Pass and Stake on mobile */
-    /* Hide entire action buttons container on mobile */
-    .action-buttons {
-        display: none;
-    }
-    
-    /* All three buttons now inside card on mobile */
-    #buyBtn {
-        display: flex;
-        padding: 15px 40px;
+    .btn-text {
+        font-size: 0.875rem;
     }
     
     /* Mobile slide-in sidebar (for Settings/Profile) */
@@ -1490,6 +1641,137 @@ body {
     
     .sidebar.active {
         right: 0;
+    }
+    
+    /* ====================================
+       DASHBOARD MOBILE STYLES
+       ==================================== */
+    .dashboard-container {
+        padding: var(--spacing-sm);
+        overflow-y: auto;
+        max-width: 100%;
+    }
+    
+    .dashboard-header {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .dashboard-title {
+        font-size: 1.75rem;
+    }
+    
+    .back-to-molecules-btn {
+        padding: var(--spacing-xs) var(--spacing-md);
+        font-size: 0.875rem;
+    }
+    
+    /* Stats Grid Mobile - Keep 2x2 grid like desktop */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-xs);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .stat-card {
+        padding: var(--spacing-sm);
+    }
+    
+    .stat-label {
+        font-size: 0.7rem;
+    }
+    
+    .stat-value {
+        font-size: 1.25rem;
+    }
+    
+    .stat-change,
+    .stat-subtitle {
+        font-size: 0.7rem;
+    }
+    
+    /* Dashboard Sections Mobile */
+    .dashboard-section {
+        padding: var(--spacing-sm);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .dashboard-section .section-title {
+        font-size: 1.125rem;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    /* ====================================
+       PORTFOLIO MOBILE STYLES
+       ==================================== */
+    .portfolio-container {
+        padding: var(--spacing-sm);
+    }
+    
+    .portfolio-header {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .portfolio-title {
+        font-size: 1.75rem;
+    }
+    
+    .portfolio-section {
+        padding: var(--spacing-sm);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .portfolio-section .section-title {
+        font-size: 1.125rem;
+    }
+    
+    /* Tables Mobile */
+    .table-header {
+        font-size: 0.7rem;
+        padding: var(--spacing-xs);
+        gap: var(--spacing-xs);
+    }
+    
+    .table-row {
+        padding: var(--spacing-xs);
+        gap: var(--spacing-xs);
+        font-size: 0.875rem;
+    }
+    
+    .table-cell {
+        gap: 0.25rem;
+    }
+    
+    .transaction-count {
+        font-size: 0.75rem;
+        padding: 0.125rem 0.5rem;
+    }
+    
+    /* Transaction History Mobile */
+    .transaction-item {
+        gap: var(--spacing-xs);
+        padding: var(--spacing-xs);
+    }
+    
+    .transaction-icon {
+        font-size: 1.25rem;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .transaction-molecule {
+        font-size: 0.875rem;
+    }
+    
+    .transaction-date {
+        font-size: 0.7rem;
+    }
+    
+    .transaction-type {
+        font-size: 0.7rem;
+    }
+    
+    .transaction-amount {
+        font-size: 0.875rem;
     }
 }
 
