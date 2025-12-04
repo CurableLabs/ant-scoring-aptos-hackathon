@@ -247,6 +247,58 @@ body {
     margin-top: var(--spacing-md);
 }
 
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.1);
+}
+
+/* Collapsed Sidebar State */
+.desktop-sidebar.collapsed {
+    width: 60px;
+    padding: var(--spacing-md) 8px;
+}
+
+.desktop-sidebar.collapsed .logo {
+    display: none;
+}
+
+.desktop-sidebar.collapsed .sidebar-toggle {
+    transform: rotate(180deg);
+    margin: 0 auto;
+}
+
+.desktop-sidebar.collapsed .sidebar-nav,
+.desktop-sidebar.collapsed .sidebar-bottom {
+    display: none;
+}
+
+.desktop-sidebar.collapsed .sidebar-header {
+    justify-content: center;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /* Mobile Header (hidden on desktop) */
 .mobile-header {
     display: none;
@@ -456,6 +508,166 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* ====================================
+   TAB NAVIGATION
+   ==================================== */
+.tab-navigation {
+    display: flex;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) 0;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: var(--spacing-md);
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.tab-navigation::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+
+.tab-btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.tab-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, var(--primary-blue), var(--success-green));
+    color: white;
+    border-color: transparent;
+}
+
+/* ====================================
+   TAB CONTENT
+   ==================================== */
+.tab-content-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: var(--spacing-md);
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tab-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.section-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-text {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Study Items */
+.study-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.study-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.study-details {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    font-size: 0.875rem;
+}
+
+.study-phase {
+    color: var(--primary-blue);
+}
+
+.study-patients {
+    color: var(--text-secondary);
+}
+
+.study-status {
+    color: var(--success-green);
+}
+
+/* Milestone Items */
+.milestone-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.milestone-date {
+    font-weight: 600;
+    color: var(--primary-blue);
+    font-size: 0.875rem;
+}
+
+.milestone-event {
+    flex: 1;
+    padding: 0 var(--spacing-sm);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+.milestone-status {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--success-green);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
 .property-item:last-child {
     border-bottom: none;
 }
@@ -489,6 +701,12 @@ body {
     background: rgba(239, 68, 68, 0.2);
     border: 1px solid rgba(239, 68, 68, 0.3);
     color: var(--danger-red);
+}
+
+.card-buy-btn {
+    background: rgba(34, 197, 94, 0.2);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: var(--success-green);
 }
 
 .card-stake-btn {
@@ -867,6 +1085,279 @@ body {
 }
 
 /* ====================================
+   SECTION MANAGEMENT
+   ==================================== */
+.app-section {
+    display: none;
+    width: 100%;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.app-section.active {
+    display: block;
+}
+
+#moleculesSection.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: var(--spacing-lg);
+}
+
+/* ====================================
+   DASHBOARD
+   ==================================== */
+.dashboard-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.dashboard-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-blue), var(--success-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.back-to-molecules-btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.back-to-molecules-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(-5px);
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.stat-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+    transition: transform var(--transition-fast);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-change {
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.stat-change.positive {
+    color: var(--success-green);
+}
+
+.stat-change.negative {
+    color: var(--danger-red);
+}
+
+.stat-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* Dashboard Sections */
+.dashboard-section {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.dashboard-section .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+}
+
+/* Top Molecules */
+.top-molecules-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.top-molecule-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    transition: all var(--transition-fast);
+}
+
+.top-molecule-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.molecule-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.molecule-emoji-small {
+    font-size: 1.5rem;
+}
+
+.molecule-name-small {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.molecule-amount {
+    font-weight: 700;
+    color: var(--success-green);
+}
+
+/* Activity List */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+}
+
+.activity-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.activity-icon.buy {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.activity-icon.stake {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.activity-details {
+    flex: 1;
+}
+
+.activity-molecule {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.activity-time {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.activity-amount {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-xl);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+}
+
+.empty-state p {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Section Placeholder */
+.section-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    text-align: center;
+}
+
+.section-placeholder h2 {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.section-placeholder p {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+}
+
+/* ====================================
    NOTIFICATIONS
    ==================================== */
 .notification-container {
@@ -936,7 +1427,7 @@ body {
     }
     
     .card-container {
-        height: 650px;
+        height: 620px;
     }
     
     /* Enable scrolling on mobile */
@@ -944,27 +1435,13 @@ body {
         overflow-y: auto;
         overflow-x: hidden;
         padding-bottom: var(--spacing-lg);
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
     }
     
-    /* Custom scrollbar for mobile card */
+    /* Hide scrollbar for Chrome/Safari */
     .molecule-card::-webkit-scrollbar {
-        width: 6px;
-    }
-    
-    .molecule-card::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 10px;
-        margin: 4px 0;
-    }
-    
-    .molecule-card::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(34, 197, 94, 0.4));
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .molecule-card::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(34, 197, 94, 0.6));
+        display: none;
     }
     
     .molecule-name {
@@ -975,7 +1452,7 @@ body {
     .card-mobile-buttons {
         display: flex;
         justify-content: space-between;
-        gap: var(--spacing-sm);
+        gap: var(--spacing-xs);
         margin-top: var(--spacing-md);
         padding-top: var(--spacing-md);
         border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -983,26 +1460,22 @@ body {
     
     .card-btn {
         flex: 1;
+        justify-content: center;
+        font-size: 0.875rem;
+        padding: 10px 8px;
+    }
+    
+    .card-btn-icon {
+        font-size: 1.25rem;
     }
     
     /* Keep action buttons but hide Pass and Stake on mobile */
+    /* Hide entire action buttons container on mobile */
     .action-buttons {
-        width: 100%;
-        justify-content: center;
-        margin-bottom: var(--spacing-md);
-    }
-    
-    .action-btn {
-        flex: 0;
-    }
-    
-    /* Hide Pass and Stake buttons outside card on mobile */
-    #passBtn,
-    #stakeBtn {
         display: none;
     }
     
-    /* Keep Buy button visible */
+    /* All three buttons now inside card on mobile */
     #buyBtn {
         display: flex;
         padding: 15px 40px;

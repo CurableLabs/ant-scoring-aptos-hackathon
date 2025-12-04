@@ -24,6 +24,7 @@
         <aside class="desktop-sidebar">
             <div class="sidebar-header">
                 <h1 class="logo">🧬 MatchAMole Elite</h1>
+                <button class="sidebar-toggle" id="sidebarToggle">‹</button>
             </div>
             
             <nav class="sidebar-nav">
@@ -66,25 +67,51 @@
 
         <!-- Main Workspace -->
         <main class="main-workspace">
-            <!-- Molecule Card Container -->
-            <div class="card-container" id="cardContainer">
-                <!-- Molecule cards will be inserted here by JavaScript -->
+            <!-- Molecules Section -->
+            <div id="moleculesSection" class="app-section active">
+                <!-- Molecule Card Container -->
+                <div class="card-container" id="cardContainer">
+                    <!-- Molecule cards will be inserted here by JavaScript -->
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn pass-btn" id="passBtn">
+                        <span class="btn-icon">❌</span>
+                        <span class="btn-text">Pass</span>
+                    </button>
+                    <button class="action-btn buy-btn" id="buyBtn">
+                        <span class="btn-icon">💰</span>
+                        <span class="btn-text">Buy</span>
+                    </button>
+                    <button class="action-btn stake-btn" id="stakeBtn">
+                        <span class="btn-icon">⭐</span>
+                        <span class="btn-text">Stake</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button class="action-btn pass-btn" id="passBtn">
-                    <span class="btn-icon">❌</span>
-                    <span class="btn-text">Pass</span>
-                </button>
-                <button class="action-btn buy-btn" id="buyBtn">
-                    <span class="btn-icon">💰</span>
-                    <span class="btn-text">Buy</span>
-                </button>
-                <button class="action-btn stake-btn" id="stakeBtn">
-                    <span class="btn-icon">⭐</span>
-                    <span class="btn-text">Stake</span>
-                </button>
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" class="app-section">
+                <div class="dashboard-container">
+                    <!-- Dashboard content will be inserted here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Research Section (Placeholder) -->
+            <div id="researchSection" class="app-section">
+                <div class="section-placeholder">
+                    <h2>🔬 Research</h2>
+                    <p>Coming soon...</p>
+                </div>
+            </div>
+
+            <!-- Portfolio Section (Placeholder) -->
+            <div id="portfolioSection" class="app-section">
+                <div class="section-placeholder">
+                    <h2>💼 Portfolio</h2>
+                    <p>Coming soon...</p>
+                </div>
             </div>
         </main>
 

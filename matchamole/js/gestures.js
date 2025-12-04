@@ -26,6 +26,26 @@ class GestureHandler {
     }
     
     handleTouchStart(e) {
+        // Check if touch started on tab navigation buttons or mobile card buttons
+        const target = e.target;
+        
+        // Only disable swipe gestures on tab buttons and mobile action buttons
+        const noSwipeElements = [
+            '.tab-btn',
+            '.card-mobile-buttons',
+            '.card-btn'
+        ];
+        
+        // If touch started on a tab button or mobile button, don't start dragging
+        const isNoSwipeArea = noSwipeElements.some(selector => 
+            target.closest(selector) !== null
+        );
+        
+        if (isNoSwipeArea) {
+            this.isDragging = false;
+            return;
+        }
+        
         this.startX = e.touches[0].clientX;
         this.startY = e.touches[0].clientY;
         this.isDragging = true;
