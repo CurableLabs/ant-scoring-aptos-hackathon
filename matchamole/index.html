@@ -46,10 +46,7 @@
             <div class="sidebar-bottom">
                 <h3 class="nav-section-title">Account</h3>
                 <a href="#settings" class="menu-item" data-section="settings">
-                    ⚙️ Settings
-                </a>
-                <a href="#profile" class="menu-item" data-section="profile">
-                    👤 Profile
+                    ⚙️ Settings & Profile
                 </a>
                 
                 <div class="user-section">
@@ -193,6 +190,156 @@
                     <!-- Portfolio content will be inserted here by JavaScript -->
                 </div>
             </div>
+
+            <!-- Settings Section -->
+            <div id="settingsSection" class="app-section">
+                <div class="settings-container">
+                    <div class="settings-header">
+                        <h2>⚙️ Settings & Profile</h2>
+                        <p class="settings-subtitle">Manage your account and preferences</p>
+                    </div>
+
+                    <!-- User Profile Card -->
+                    <div class="settings-card profile-card">
+                        <div class="card-header">
+                            <h3>👤 User Profile</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="profile-info">
+                                <div class="profile-avatar">
+                                    <div class="avatar-circle">👤</div>
+                                    <div class="contributor-badge" id="contributorBadge">Guest</div>
+                                </div>
+                                <div class="profile-details">
+                                    <div class="profile-name" id="profileName">Guest User</div>
+                                    <div class="profile-email" id="profileEmail">Not connected</div>
+                                    <div class="profile-joined">Member since: Today</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wallet Connection Card -->
+                    <div class="settings-card wallet-card">
+                        <div class="card-header">
+                            <h3>💰 Wallet Connection</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="wallet-status" id="walletStatus">
+                                <div class="status-indicator disconnected"></div>
+                                <div class="status-text">Not Connected</div>
+                            </div>
+                            <button class="connect-wallet-btn" id="connectWalletBtn">
+                                <span class="btn-icon">🔗</span>
+                                <span>Connect Wallet</span>
+                            </button>
+                            <p class="wallet-info">Connect your wallet to start investing in molecules</p>
+                        </div>
+                    </div>
+
+                    <!-- User Mode Selector -->
+                    <div class="settings-card mode-card">
+                        <div class="card-header">
+                            <h3>🎯 User Mode</h3>
+                            <p class="card-subtitle">Choose your primary role</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="mode-selector">
+                                <button class="mode-btn active" data-mode="investor">
+                                    <span class="mode-icon">💼</span>
+                                    <span class="mode-name">Investor</span>
+                                    <span class="mode-desc">Focus on returns & portfolio</span>
+                                </button>
+                                <button class="mode-btn" data-mode="researcher">
+                                    <span class="mode-icon">🔬</span>
+                                    <span class="mode-name">Researcher</span>
+                                    <span class="mode-desc">Deep-dive scientific data</span>
+                                </button>
+                                <button class="mode-btn" data-mode="patient">
+                                    <span class="mode-icon">❤️</span>
+                                    <span class="mode-name">Patient</span>
+                                    <span class="mode-desc">Patient impact & outcomes</span>
+                                </button>
+                                <button class="mode-btn" data-mode="gamer">
+                                    <span class="mode-icon">🎮</span>
+                                    <span class="mode-name">Gamer</span>
+                                    <span class="mode-desc">Gamified experience</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preferences Card -->
+                    <div class="settings-card preferences-card">
+                        <div class="card-header">
+                            <h3>🎨 Preferences</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="preference-item">
+                                <div class="preference-label">
+                                    <span class="label-text">Show Tutorial</span>
+                                    <span class="label-desc">Display helpful tips for new users</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="showTutorial" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="preference-item">
+                                <div class="preference-label">
+                                    <span class="label-text">Sound Effects</span>
+                                    <span class="label-desc">Play sounds for actions</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="soundEffects">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="preference-item">
+                                <div class="preference-label">
+                                    <span class="label-text">Email Notifications</span>
+                                    <span class="label-desc">Receive updates via email</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="emailNotifications" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="preference-item">
+                                <div class="preference-label">
+                                    <span class="label-text">Auto-refresh Data</span>
+                                    <span class="label-desc">Update prices automatically</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="autoRefresh" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Actions Card -->
+                    <div class="settings-card actions-card">
+                        <div class="card-header">
+                            <h3>🔐 Account Actions</h3>
+                        </div>
+                        <div class="card-body">
+                            <button class="action-btn-setting">
+                                <span class="btn-icon">🔄</span>
+                                <span>Reset Portfolio</span>
+                            </button>
+                            <button class="action-btn-setting">
+                                <span class="btn-icon">📥</span>
+                                <span>Export Data</span>
+                            </button>
+                            <button class="action-btn-setting danger">
+                                <span class="btn-icon">🚪</span>
+                                <span>Disconnect Account</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
 
         <!-- Sidebar Overlay (backdrop) -->
@@ -203,10 +350,11 @@
             <div class="sidebar-content">
                 <button class="close-btn" id="closeBtn">✕</button>
                 <div class="sidebar-menu">
-                    <a href="#molecules" class="menu-item active">🧬 Molecules</a>
-                    <a href="#dashboard" class="menu-item">📊 Dashboard</a>
-                    <a href="#research" class="menu-item">🔬 Research</a>
-                    <a href="#portfolio" class="menu-item">💼 Portfolio</a>
+                    <a href="#molecules" class="menu-item active" data-section="molecules">🧬 Molecules</a>
+                    <a href="#dashboard" class="menu-item" data-section="dashboard">📊 Dashboard</a>
+                    <a href="#research" class="menu-item" data-section="research">🔬 Research</a>
+                    <a href="#portfolio" class="menu-item" data-section="portfolio">💼 Portfolio</a>
+                    <a href="#settings" class="menu-item" data-section="settings">⚙️ Settings</a>
                 </div>
                 <div class="sidebar-footer">
                     <p class="user-info">Connected: Guest</p>

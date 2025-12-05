@@ -849,12 +849,18 @@ window.switchSection = function(sectionName) {
         'molecules': 'moleculesSection',
         'dashboard': 'dashboardSection',
         'research': 'researchSection',
-        'portfolio': 'portfolioSection'
+        'portfolio': 'portfolioSection',
+        'settings': 'settingsSection'
     };
     
     const sectionId = sectionMap[sectionName];
     if (sectionId) {
         document.getElementById(sectionId).classList.add('active');
+        
+        // Clear back button if navigating to molecules normally
+        if (sectionName === 'molecules') {
+            clearPreviousSection();
+        }
         
         // Render dashboard if navigating to it
         if (sectionName === 'dashboard') {
@@ -1457,11 +1463,17 @@ function applyFiltersAndSort() {
     });
 }
 
+// Track previous section for back navigation
+let previousSection = null;
+
 // View Molecule Details (Go back to molecules section and show specific molecule)
 function viewMoleculeDetails(moleculeId) {
     // Find the molecule index
     const index = molecules.findIndex(m => m.id === moleculeId);
     if (index === -1) return;
+
+    // Track that we came from research
+    previousSection = 'research';
 
     // Set current molecule index
     currentMoleculeIndex = index;
@@ -1471,6 +1483,43 @@ function viewMoleculeDetails(moleculeId) {
 
     // Display the molecule
     showMolecule(getCurrentMolecule());
+    
+    // Show back to research button
+    showBackButton();
+}
+
+// Show back to previous section button
+function showBackButton() {
+    // Remove existing back button if any
+    const existingBtn = document.getElementById('backToSectionBtn');
+    if (existingBtn) existingBtn.remove();
+    
+    if (previousSection === 'research') {
+        const mainWorkspace = document.querySelector('.main-workspace');
+        const moleculesSection = document.getElementById('moleculesSection');
+        
+        const backBtn = document.createElement('button');
+        backBtn.id = 'backToSectionBtn';
+        backBtn.className = 'back-to-research-btn';
+        backBtn.innerHTML = '← Back to Research';
+        backBtn.onclick = () => {
+            previousSection = null;
+            showSection('research');
+            backBtn.remove();
+        };
+        
+        // Insert at the beginning of molecules section
+        if (moleculesSection && moleculesSection.firstChild) {
+            moleculesSection.insertBefore(backBtn, moleculesSection.firstChild);
+        }
+    }
+}
+
+// Clear previous section when navigating normally
+function clearPreviousSection() {
+    previousSection = null;
+    const existingBtn = document.getElementById('backToSectionBtn');
+    if (existingBtn) existingBtn.remove();
 }
 
 // Toggle View (Grid/List)
@@ -1541,6 +1590,126 @@ function setupResearchListeners() {
 
 // Initialize Research Section
 setupResearchListeners();
+
+// ====================================
+// SETTINGS SECTION
+// ====================================
+
+// User mode selection
+let currentUserMode = localStorage.getItem('userMode') || 'investor';
+
+// Setup settings event listeners
+function setupSettingsListeners() {
+    // Connect Wallet button
+    const connectWalletBtn = document.getElementById('connectWalletBtn');
+    if (connectWalletBtn) {
+        connectWalletBtn.addEventListener('click', () => {
+            showNotification('Wallet connection coming soon! 🔗', 'info');
+        });
+    }
+
+    // Mode selector buttons
+    const modeButtons = document.querySelectorAll('.mode-btn');
+    modeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const mode = btn.dataset.mode;
+            setUserMode(mode);
+        });
+    });
+
+    // Preferences toggles
+    const preferences = ['showTutorial', 'soundEffects', 'emailNotifications', 'autoRefresh'];
+    preferences.forEach(prefId => {
+        const toggle = document.getElementById(prefId);
+        if (toggle) {
+            // Load saved preference
+            const saved = localStorage.getItem(prefId);
+            if (saved !== null) {
+                toggle.checked = saved === 'true';
+            }
+
+            // Save on change
+            toggle.addEventListener('change', () => {
+                localStorage.setItem(prefId, toggle.checked);
+                showNotification(`Preference updated: ${prefId}`, 'success');
+            });
+        }
+    });
+
+    // Action buttons
+    const actionButtons = document.querySelectorAll('.action-btn-setting');
+    actionButtons.forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+            if (index === 0) {
+                // Reset Portfolio
+                if (confirm('Are you sure you want to reset your portfolio? This cannot be undone.')) {
+                    localStorage.removeItem('portfolio');
+                    localStorage.removeItem('transactions');
+                    portfolio.length = 0;
+                    transactions.length = 0;
+                    showNotification('Portfolio reset successfully! 🔄', 'success');
+                    renderDashboard();
+                    renderPortfolio();
+                }
+            } else if (index === 1) {
+                // Export Data
+                const data = {
+                    portfolio: portfolio,
+                    transactions: transactions,
+                    preferences: {
+                        userMode: currentUserMode,
+                        showTutorial: document.getElementById('showTutorial')?.checked,
+                        soundEffects: document.getElementById('soundEffects')?.checked,
+                        emailNotifications: document.getElementById('emailNotifications')?.checked,
+                        autoRefresh: document.getElementById('autoRefresh')?.checked
+                    }
+                };
+                const dataStr = JSON.stringify(data, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `matchamole-data-${Date.now()}.json`;
+                a.click();
+                showNotification('Data exported successfully! 📥', 'success');
+            } else if (index === 2) {
+                // Disconnect Account
+                if (confirm('Are you sure you want to disconnect? Your data will be preserved locally.')) {
+                    showNotification('Account disconnected. Data saved locally. 🚪', 'info');
+                }
+            }
+        });
+    });
+}
+
+// Set user mode
+function setUserMode(mode) {
+    currentUserMode = mode;
+    localStorage.setItem('userMode', mode);
+
+    // Update UI
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        if (btn.dataset.mode === mode) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    showNotification(`User mode set to: ${mode.charAt(0).toUpperCase() + mode.slice(1)} 🎯`, 'success');
+}
+
+// Initialize settings on load
+setupSettingsListeners();
+
+// Load saved user mode on page load
+document.querySelectorAll('.mode-btn').forEach(btn => {
+    if (btn.dataset.mode === currentUserMode) {
+        btn.classList.add('active');
+    } else {
+        btn.classList.remove('active');
+    }
+});
 
 // ====================================
 // UTILITY FUNCTIONS
