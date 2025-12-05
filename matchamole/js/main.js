@@ -542,6 +542,8 @@ function animateCardExit(direction) {
 
 function showBuyModal(molecule) {
     const content = document.getElementById('buyModalContent');
+    const priceNum = parseFloat(molecule.price.replace(/[$,]/g, ''));
+    
     content.innerHTML = `
         <div style="text-align: center; margin-bottom: 1rem;">
             <div style="font-size: 3rem; margin-bottom: 0.5rem;">${molecule.emoji}</div>
@@ -560,24 +562,115 @@ function showBuyModal(molecule) {
             </div>
             <div style="display: flex; justify-content: space-between;">
                 <span style="color: var(--text-secondary);">24h Change:</span>
-                <span style="font-weight: 700; color: var(--success-green);">${molecule.change24h}</span>
+                <span style="font-weight: 700; color: ${molecule.change24h.startsWith('+') ? 'var(--success-green)' : 'var(--danger-red)'};">${molecule.change24h}</span>
             </div>
         </div>
         
-        <div>
-            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Amount to invest</label>
-            <input type="number" id="buyAmount" placeholder="Enter amount in CURE" 
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 600;">Amount to invest (CURE)</label>
+            <input type="number" id="buyAmount" placeholder="Enter amount" min="1" step="1"
                    style="width: 100%; padding: 0.75rem; background: rgba(255,255,255,0.05); 
-                          border: 1px solid var(--glass-border); border-radius: 8px; 
-                          color: white; font-size: 1rem;" value="100">
+                          border: 2px solid var(--glass-border); border-radius: 8px; 
+                          color: white; font-size: 1.1rem; font-weight: 600;" value="100">
+            <div id="buyError" style="color: var(--danger-red); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+        </div>
+        
+        <div id="buyCalculation" style="background: rgba(59,130,246,0.1); padding: 1rem; border-radius: 12px; border: 1px solid rgba(59,130,246,0.2);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: var(--text-secondary);">You will receive:</span>
+                <span id="tokensReceived" style="font-weight: 700; color: var(--accent-blue); font-size: 1.1rem;">~0 tokens</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-secondary);">Estimated value:</span>
+                <span id="estimatedValue" style="font-weight: 700;">$0</span>
+            </div>
         </div>
     `;
     
+    // Add input validation and calculation
+    const buyInput = document.getElementById('buyAmount');
+    const confirmBtn = document.getElementById('confirmBuy');
+    const errorDiv = document.getElementById('buyError');
+    
+    function validateAndCalculate() {
+        const amount = parseFloat(buyInput.value);
+        const tokensReceived = document.getElementById('tokensReceived');
+        const estimatedValue = document.getElementById('estimatedValue');
+        
+        // Reset error
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+        
+        // Validation
+        if (!buyInput.value || buyInput.value.trim() === '') {
+            errorDiv.textContent = 'Please enter an amount';
+            errorDiv.style.display = 'block';
+            confirmBtn.disabled = true;
+            confirmBtn.style.opacity = '0.5';
+            confirmBtn.style.cursor = 'not-allowed';
+            tokensReceived.textContent = '~0 tokens';
+            estimatedValue.textContent = '$0';
+            return false;
+        }
+        
+        if (isNaN(amount) || amount <= 0) {
+            errorDiv.textContent = 'Amount must be greater than 0';
+            errorDiv.style.display = 'block';
+            confirmBtn.disabled = true;
+            confirmBtn.style.opacity = '0.5';
+            confirmBtn.style.cursor = 'not-allowed';
+            tokensReceived.textContent = '~0 tokens';
+            estimatedValue.textContent = '$0';
+            return false;
+        }
+        
+        if (amount > 100000) {
+            errorDiv.textContent = 'Maximum investment is 100,000 CURE';
+            errorDiv.style.display = 'block';
+            confirmBtn.disabled = true;
+            confirmBtn.style.opacity = '0.5';
+            confirmBtn.style.cursor = 'not-allowed';
+            return false;
+        }
+        
+        // Calculate tokens
+        const tokens = (amount / priceNum).toFixed(2);
+        const value = (amount * 1).toFixed(2); // Assuming 1 CURE = $1
+        
+        tokensReceived.textContent = `~${tokens} tokens`;
+        estimatedValue.textContent = `$${value}`;
+        
+        // Enable button
+        confirmBtn.disabled = false;
+        confirmBtn.style.opacity = '1';
+        confirmBtn.style.cursor = 'pointer';
+        
+        return true;
+    }
+    
+    // Initial calculation
+    validateAndCalculate();
+    
+    // Add event listeners
+    buyInput.addEventListener('input', validateAndCalculate);
+    buyInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter' && !confirmBtn.disabled) {
+            confirmBtn.click();
+        }
+    });
+    
     buyModal.classList.add('active');
+    
+    // Focus input
+    setTimeout(() => buyInput.select(), 100);
 }
 
 function showStakeModal(molecule) {
     const content = document.getElementById('stakeModalContent');
+    const apy = 15 + (molecule.antScore / 100) * 15; // 15-30% based on ANT score
+    const minApy = apy.toFixed(1);
+    const maxApy = (apy + 5).toFixed(1);
+    
     content.innerHTML = `
         <div style="text-align: center; margin-bottom: 1rem;">
             <div style="font-size: 3rem; margin-bottom: 0.5rem;">${molecule.emoji}</div>
@@ -588,7 +681,7 @@ function showStakeModal(molecule) {
         <div style="background: rgba(245,158,11,0.1); padding: 1rem; border-radius: 12px; margin-bottom: 1rem; border: 1px solid rgba(245,158,11,0.2);">
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                 <span style="color: var(--text-secondary);">Potential APY:</span>
-                <span style="font-weight: 700; color: var(--warning-orange);">15-25%</span>
+                <span style="font-weight: 700; color: var(--warning-orange);">${minApy}-${maxApy}%</span>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                 <span style="color: var(--text-secondary);">Lock Period:</span>
@@ -596,20 +689,130 @@ function showStakeModal(molecule) {
             </div>
             <div style="display: flex; justify-content: space-between;">
                 <span style="color: var(--text-secondary);">Risk Level:</span>
-                <span style="font-weight: 700; color: var(--warning-orange);">Medium</span>
+                <span style="font-weight: 700; color: var(--warning-orange);">${molecule.antScore >= 85 ? 'Low-Medium' : 'Medium-High'}</span>
             </div>
         </div>
         
-        <div>
-            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Amount to stake</label>
-            <input type="number" id="stakeAmount" placeholder="Enter amount in CURE" 
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 600;">Amount to stake (CURE)</label>
+            <input type="number" id="stakeAmount" placeholder="Enter amount" min="1" step="1"
                    style="width: 100%; padding: 0.75rem; background: rgba(255,255,255,0.05); 
-                          border: 1px solid var(--glass-border); border-radius: 8px; 
-                          color: white; font-size: 1rem;" value="50">
+                          border: 2px solid var(--glass-border); border-radius: 8px; 
+                          color: white; font-size: 1.1rem; font-weight: 600;" value="50">
+            <div id="stakeError" style="color: var(--danger-red); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+        </div>
+        
+        <div id="stakeCalculation" style="background: rgba(245,158,11,0.1); padding: 1rem; border-radius: 12px; border: 1px solid rgba(245,158,11,0.2);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: var(--text-secondary);">Estimated rewards (90d):</span>
+                <span id="estimatedRewards" style="font-weight: 700; color: var(--warning-orange); font-size: 1.1rem;">~0 CURE</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: var(--text-secondary);">Total after period:</span>
+                <span id="totalAfterStake" style="font-weight: 700;">0 CURE</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-secondary);">Unlock date:</span>
+                <span id="unlockDate" style="font-weight: 700; font-size: 0.9rem;">-</span>
+            </div>
         </div>
     `;
     
+    // Add input validation and calculation
+    const stakeInput = document.getElementById('stakeAmount');
+    const confirmBtn = document.getElementById('confirmStake');
+    const errorDiv = document.getElementById('stakeError');
+    
+    function validateAndCalculate() {
+        const amount = parseFloat(stakeInput.value);
+        const estimatedRewards = document.getElementById('estimatedRewards');
+        const totalAfterStake = document.getElementById('totalAfterStake');
+        const unlockDate = document.getElementById('unlockDate');
+        
+        // Reset error
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+        
+        // Validation
+        if (!stakeInput.value || stakeInput.value.trim() === '') {
+            errorDiv.textContent = 'Please enter an amount';
+            errorDiv.style.display = 'block';
+            confirmBtn.disabled = true;
+            confirmBtn.style.opacity = '0.5';
+            confirmBtn.style.cursor = 'not-allowed';
+            estimatedRewards.textContent = '~0 CURE';
+            totalAfterStake.textContent = '0 CURE';
+            unlockDate.textContent = '-';
+            return false;
+        }
+        
+        if (isNaN(amount) || amount <= 0) {
+            errorDiv.textContent = 'Amount must be greater than 0';
+            errorDiv.style.display = 'block';
+            confirmBtn.disabled = true;
+            confirmBtn.style.opacity = '0.5';
+            confirmBtn.style.cursor = 'not-allowed';
+            estimatedRewards.textContent = '~0 CURE';
+            totalAfterStake.textContent = '0 CURE';
+            unlockDate.textContent = '-';
+            return false;
+        }
+        
+        if (amount < 10) {
+            errorDiv.textContent = 'Minimum stake is 10 CURE';
+            errorDiv.style.display = 'block';
+            confirmBtn.disabled = true;
+            confirmBtn.style.opacity = '0.5';
+            confirmBtn.style.cursor = 'not-allowed';
+            return false;
+        }
+        
+        if (amount > 50000) {
+            errorDiv.textContent = 'Maximum stake is 50,000 CURE';
+            errorDiv.style.display = 'block';
+            confirmBtn.disabled = true;
+            confirmBtn.style.opacity = '0.5';
+            confirmBtn.style.cursor = 'not-allowed';
+            return false;
+        }
+        
+        // Calculate rewards (90 days APY)
+        const dailyRate = apy / 100 / 365;
+        const rewards = (amount * dailyRate * 90).toFixed(2);
+        const total = (amount + parseFloat(rewards)).toFixed(2);
+        
+        // Calculate unlock date
+        const unlock = new Date();
+        unlock.setDate(unlock.getDate() + 90);
+        const unlockStr = unlock.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        
+        estimatedRewards.textContent = `~${rewards} CURE`;
+        totalAfterStake.textContent = `${total} CURE`;
+        unlockDate.textContent = unlockStr;
+        
+        // Enable button
+        confirmBtn.disabled = false;
+        confirmBtn.style.opacity = '1';
+        confirmBtn.style.cursor = 'pointer';
+        
+        return true;
+    }
+    
+    // Initial calculation
+    validateAndCalculate();
+    
+    // Add event listeners
+    stakeInput.addEventListener('input', validateAndCalculate);
+    stakeInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter' && !confirmBtn.disabled) {
+            confirmBtn.click();
+        }
+    });
+    
     stakeModal.classList.add('active');
+    
+    // Focus input
+    setTimeout(() => stakeInput.select(), 100);
 }
 
 // ====================================
@@ -656,6 +859,11 @@ window.switchSection = function(sectionName) {
         // Render dashboard if navigating to it
         if (sectionName === 'dashboard') {
             renderDashboard();
+        }
+        
+        // Render research if navigating to it
+        if (sectionName === 'research') {
+            renderResearch();
         }
         
         // Render portfolio if navigating to it
@@ -1097,6 +1305,242 @@ function setupEventListeners() {
         }
     });
 }
+
+// ====================================
+// RESEARCH SECTION
+// ====================================
+
+let currentView = 'grid'; // 'grid' or 'list'
+let filteredMolecules = [];
+
+// Render Research Section
+function renderResearch() {
+    const moleculeGrid = document.getElementById('moleculeGrid');
+    const resultsCount = document.getElementById('resultsCount');
+    
+    if (!moleculeGrid) return;
+
+    // Apply filters and sorting
+    applyFiltersAndSort();
+
+    if (filteredMolecules.length === 0) {
+        moleculeGrid.innerHTML = `
+            <div class="empty-research-state">
+                <div class="empty-icon">🔍</div>
+                <h3>No molecules found</h3>
+                <p>Try adjusting your filters or search criteria</p>
+            </div>
+        `;
+        resultsCount.textContent = 'No molecules found';
+        return;
+    }
+
+    // Update results count
+    resultsCount.textContent = `Showing ${filteredMolecules.length} molecule${filteredMolecules.length !== 1 ? 's' : ''}`;
+
+    // Render molecule cards
+    moleculeGrid.innerHTML = filteredMolecules.map(mol => {
+        // Parse price for sorting
+        const priceNum = parseFloat(mol.price.replace(/[$,]/g, ''));
+        
+        return `
+            <div class="molecule-card-research" data-molecule-id="${mol.id}">
+                <div class="molecule-card-header">
+                    <div class="molecule-info-left">
+                        <div class="molecule-emoji">${mol.emoji}</div>
+                        <h3 class="molecule-name">${mol.name}</h3>
+                        <span class="molecule-category">${mol.category}</span>
+                    </div>
+                    <div class="molecule-score-badge">
+                        <div class="ant-score-large">${mol.antScore}</div>
+                        <div class="score-label">ANT Score</div>
+                    </div>
+                </div>
+
+                <div class="molecule-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Phase</span>
+                        <span class="detail-value">${mol.phase}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Price</span>
+                        <span class="detail-value">${mol.price}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">24h Change</span>
+                        <span class="detail-value ${mol.change24h.startsWith('+') ? 'positive' : 'negative'}">${mol.change24h}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Volume</span>
+                        <span class="detail-value">${mol.volume}</span>
+                    </div>
+                </div>
+
+                <div class="molecule-footer">
+                    <span class="molecule-market-cap">Market Cap: ${mol.marketCap}</span>
+                    <button class="view-details-btn">View Details</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Add click event listeners
+    document.querySelectorAll('.molecule-card-research').forEach(card => {
+        card.addEventListener('click', (e) => {
+            const moleculeId = parseInt(card.dataset.moleculeId);
+            viewMoleculeDetails(moleculeId);
+        });
+    });
+}
+
+// Apply Filters and Sorting
+function applyFiltersAndSort() {
+    const searchTerm = document.getElementById('moleculeSearch')?.value.toLowerCase() || '';
+    const categoryFilter = document.getElementById('categoryFilter')?.value || 'all';
+    const phaseFilter = document.getElementById('phaseFilter')?.value || 'all';
+    const scoreFilter = document.getElementById('scoreFilter')?.value || 'all';
+    const sortBy = document.getElementById('sortBy')?.value || 'antScore';
+
+    // Start with all molecules
+    filteredMolecules = molecules.filter(mol => {
+        // Search filter
+        if (searchTerm && !mol.name.toLowerCase().includes(searchTerm)) {
+            return false;
+        }
+
+        // Category filter
+        if (categoryFilter !== 'all' && mol.category !== categoryFilter) {
+            return false;
+        }
+
+        // Phase filter
+        if (phaseFilter !== 'all' && mol.phase !== phaseFilter) {
+            return false;
+        }
+
+        // Score filter
+        if (scoreFilter !== 'all') {
+            const score = mol.antScore;
+            if (scoreFilter === '90+' && score < 90) return false;
+            if (scoreFilter === '80-89' && (score < 80 || score >= 90)) return false;
+            if (scoreFilter === '70-79' && (score < 70 || score >= 80)) return false;
+            if (scoreFilter === '60-69' && (score < 60 || score >= 70)) return false;
+        }
+
+        return true;
+    });
+
+    // Sort molecules
+    filteredMolecules.sort((a, b) => {
+        switch (sortBy) {
+            case 'antScore':
+                return b.antScore - a.antScore;
+            case 'antScoreAsc':
+                return a.antScore - b.antScore;
+            case 'price':
+                const priceA = parseFloat(a.price.replace(/[$,]/g, ''));
+                const priceB = parseFloat(b.price.replace(/[$,]/g, ''));
+                return priceB - priceA;
+            case 'priceAsc':
+                const priceA2 = parseFloat(a.price.replace(/[$,]/g, ''));
+                const priceB2 = parseFloat(b.price.replace(/[$,]/g, ''));
+                return priceA2 - priceB2;
+            case 'name':
+                return a.name.localeCompare(b.name);
+            case 'marketCap':
+                const capA = parseFloat(a.marketCap.replace(/[$M,]/g, ''));
+                const capB = parseFloat(b.marketCap.replace(/[$M,]/g, ''));
+                return capB - capA;
+            default:
+                return 0;
+        }
+    });
+}
+
+// View Molecule Details (Go back to molecules section and show specific molecule)
+function viewMoleculeDetails(moleculeId) {
+    // Find the molecule index
+    const index = molecules.findIndex(m => m.id === moleculeId);
+    if (index === -1) return;
+
+    // Set current molecule index
+    currentMoleculeIndex = index;
+
+    // Show molecules section
+    showSection('molecules');
+
+    // Display the molecule
+    showMolecule(getCurrentMolecule());
+}
+
+// Toggle View (Grid/List)
+function toggleView(view) {
+    currentView = view;
+    const moleculeGrid = document.getElementById('moleculeGrid');
+    const gridViewBtn = document.getElementById('gridViewBtn');
+    const listViewBtn = document.getElementById('listViewBtn');
+
+    if (!moleculeGrid) return;
+
+    if (view === 'list') {
+        moleculeGrid.classList.add('list-view');
+        listViewBtn.classList.add('active');
+        gridViewBtn.classList.remove('active');
+    } else {
+        moleculeGrid.classList.remove('list-view');
+        gridViewBtn.classList.add('active');
+        listViewBtn.classList.remove('active');
+    }
+}
+
+// Reset Filters
+function resetFilters() {
+    document.getElementById('moleculeSearch').value = '';
+    document.getElementById('categoryFilter').value = 'all';
+    document.getElementById('phaseFilter').value = 'all';
+    document.getElementById('scoreFilter').value = 'all';
+    document.getElementById('sortBy').value = 'antScore';
+    renderResearch();
+}
+
+// Setup Research Event Listeners
+function setupResearchListeners() {
+    // Search input
+    const searchInput = document.getElementById('moleculeSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', renderResearch);
+    }
+
+    // Filter selects
+    const filters = ['categoryFilter', 'phaseFilter', 'scoreFilter', 'sortBy'];
+    filters.forEach(filterId => {
+        const filterElement = document.getElementById(filterId);
+        if (filterElement) {
+            filterElement.addEventListener('change', renderResearch);
+        }
+    });
+
+    // View toggle buttons
+    const gridViewBtn = document.getElementById('gridViewBtn');
+    const listViewBtn = document.getElementById('listViewBtn');
+    
+    if (gridViewBtn) {
+        gridViewBtn.addEventListener('click', () => toggleView('grid'));
+    }
+    
+    if (listViewBtn) {
+        listViewBtn.addEventListener('click', () => toggleView('list'));
+    }
+
+    // Reset filters button
+    const resetBtn = document.getElementById('resetFilters');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', resetFilters);
+    }
+}
+
+// Initialize Research Section
+setupResearchListeners();
 
 // ====================================
 // UTILITY FUNCTIONS

@@ -80,13 +80,13 @@
                         <span class="btn-icon">❌</span>
                         <span class="btn-text">Pass</span>
                     </button>
-                    <button class="action-btn buy-btn" id="buyBtn">
-                        <span class="btn-icon">💰</span>
-                        <span class="btn-text">Buy</span>
-                    </button>
                     <button class="action-btn stake-btn" id="stakeBtn">
                         <span class="btn-icon">⭐</span>
                         <span class="btn-text">Stake</span>
+                    </button>
+                    <button class="action-btn buy-btn" id="buyBtn">
+                        <span class="btn-icon">💰</span>
+                        <span class="btn-text">Buy</span>
                     </button>
                 </div>
             </div>
@@ -98,11 +98,92 @@
                 </div>
             </div>
 
-            <!-- Research Section (Placeholder) -->
+            <!-- Research Section -->
             <div id="researchSection" class="app-section">
-                <div class="section-placeholder">
-                    <h2>🔬 Research</h2>
-                    <p>Coming soon...</p>
+                <div class="research-container">
+                    <div class="research-header">
+                        <h2>🔬 Molecule Research & Discovery</h2>
+                        <p class="research-subtitle">Browse, search, and analyze pharmaceutical molecules</p>
+                    </div>
+
+                    <!-- Search & Filter Controls -->
+                    <div class="research-controls">
+                        <div class="search-bar">
+                            <input type="text" id="moleculeSearch" placeholder="🔍 Search molecules by name...">
+                        </div>
+
+                        <div class="filter-controls">
+                            <div class="filter-group">
+                                <label>Category</label>
+                                <select id="categoryFilter">
+                                    <option value="all">All Categories</option>
+                                    <option value="Cancer">Cancer</option>
+                                    <option value="Antiviral">Antiviral</option>
+                                    <option value="GLP-1 Agonist">GLP-1 Agonist</option>
+                                    <option value="Monoclonal Antibody">Monoclonal Antibody</option>
+                                    <option value="Immunotherapy">Immunotherapy</option>
+                                    <option value="Statin">Statin</option>
+                                    <option value="Anticoagulant">Anticoagulant</option>
+                                    <option value="Antidepressant">Antidepressant</option>
+                                    <option value="Cell Therapy">Cell Therapy</option>
+                                    <option value="Cholesterol">Cholesterol</option>
+                                    <option value="Alzheimer's">Alzheimer's</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label>Phase</label>
+                                <select id="phaseFilter">
+                                    <option value="all">All Phases</option>
+                                    <option value="Preclinical">Preclinical</option>
+                                    <option value="Phase 1">Phase 1</option>
+                                    <option value="Phase 2">Phase 2</option>
+                                    <option value="Phase 3">Phase 3</option>
+                                    <option value="Phase 4">Phase 4</option>
+                                    <option value="Market">Market</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label>ANT Score</label>
+                                <select id="scoreFilter">
+                                    <option value="all">All Scores</option>
+                                    <option value="90+">90+ (Excellent)</option>
+                                    <option value="80-89">80-89 (Good)</option>
+                                    <option value="70-79">70-79 (Fair)</option>
+                                    <option value="60-69">60-69 (Poor)</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label>Sort By</label>
+                                <select id="sortBy">
+                                    <option value="antScore">ANT Score (High-Low)</option>
+                                    <option value="antScoreAsc">ANT Score (Low-High)</option>
+                                    <option value="price">Price (High-Low)</option>
+                                    <option value="priceAsc">Price (Low-High)</option>
+                                    <option value="name">Name (A-Z)</option>
+                                    <option value="marketCap">Market Cap</option>
+                                </select>
+                            </div>
+
+                            <button class="reset-filters-btn" id="resetFilters">Reset Filters</button>
+                        </div>
+                    </div>
+
+                    <!-- Results Info -->
+                    <div class="research-results-info">
+                        <span id="resultsCount">Showing 20 molecules</span>
+                        <div class="view-toggle">
+                            <button class="view-btn active" id="gridViewBtn">Grid</button>
+                            <button class="view-btn" id="listViewBtn">List</button>
+                        </div>
+                    </div>
+
+                    <!-- Molecule Grid/List -->
+                    <div class="molecule-grid" id="moleculeGrid">
+                        <!-- Molecules will be inserted here by JavaScript -->
+                    </div>
                 </div>
             </div>
 

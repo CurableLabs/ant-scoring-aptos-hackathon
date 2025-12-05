@@ -972,6 +972,19 @@ body {
 /* ====================================
    MODALS
    ==================================== */
+
+/* Hide number input spinner arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -1581,7 +1594,7 @@ body {
     .main-workspace {
         padding: var(--spacing-sm);
         padding-top: 70px; /* Space for fixed header */
-        padding-bottom: var(--spacing-md); /* Normal bottom padding */
+        padding-bottom: 65px; /* Space for fixed action buttons */
         width: 100%;
     }
     
@@ -1609,27 +1622,36 @@ body {
     
     /* Show mobile buttons inside card */
     
-    /* Keep action buttons but hide Pass and Stake on mobile */
-    /* Show action buttons below card on mobile */
+    /* Fixed action buttons at bottom on mobile */
     .action-buttons {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
         display: flex;
         width: 100%;
-        gap: var(--spacing-xs);
-        margin-top: var(--spacing-md);
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        background: rgba(10, 10, 15, 0.95);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid var(--glass-border);
+        z-index: 100;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
     }
     
     .action-btn {
         flex: 1;
-        padding: var(--spacing-sm);
-        font-size: 0.875rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.7rem;
     }
     
     .btn-icon {
-        font-size: 1.25rem;
+        font-size: 0.9rem;
     }
     
     .btn-text {
-        font-size: 0.875rem;
+        font-size: 0.65rem;
+        font-weight: 600;
     }
     
     /* Mobile slide-in sidebar (for Settings/Profile) */
@@ -1792,5 +1814,468 @@ body {
 
 .hidden {
     display: none !important;
+}
+
+/* ====================================
+   RESEARCH SECTION
+   ==================================== */
+.research-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+}
+
+.research-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.research-header h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: var(--spacing-sm);
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.research-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+/* Search & Filter Controls */
+.research-controls {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--blur-lg));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-subtle);
+}
+
+.search-bar {
+    margin-bottom: var(--spacing-lg);
+}
+
+.search-bar input {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 1.1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    transition: all var(--transition-medium);
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.search-bar input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.filter-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.filter-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-group select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-medium);
+}
+
+.filter-group select:hover {
+    border-color: var(--accent-blue);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.filter-group select option {
+    background: #1a1f2e;
+    color: var(--text-primary);
+    padding: var(--spacing-sm);
+}
+
+.filter-group select option:hover,
+.filter-group select option:checked {
+    background: var(--accent-blue);
+    color: white;
+}
+
+.reset-filters-btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 1rem;
+    font-weight: 600;
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-md);
+    color: var(--danger-red);
+    cursor: pointer;
+    transition: all var(--transition-medium);
+}
+
+.reset-filters-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: var(--danger-red);
+    transform: translateY(-2px);
+}
+
+/* Results Info */
+.research-results-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+}
+
+#resultsCount {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.view-toggle {
+    display: flex;
+    gap: var(--spacing-xs);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px;
+    border-radius: var(--radius-md);
+}
+
+.view-btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.view-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.view-btn.active {
+    background: var(--accent-blue);
+    color: white;
+}
+
+/* Molecule Grid View */
+.molecule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--spacing-lg);
+    min-height: 500px;
+}
+
+.molecule-grid.list-view {
+    grid-template-columns: 1fr;
+}
+
+.molecule-card-research {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--blur-lg));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    transition: all var(--transition-medium);
+    position: relative;
+    overflow: hidden;
+}
+
+.molecule-card-research::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity var(--transition-medium);
+}
+
+.molecule-card-research:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+    border-color: var(--accent-blue);
+}
+
+.molecule-card-research:hover::before {
+    opacity: 1;
+}
+
+.molecule-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: var(--spacing-md);
+}
+
+.molecule-info-left {
+    flex: 1;
+}
+
+.molecule-emoji {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.molecule-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.molecule-category {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    border-radius: var(--radius-sm);
+    color: var(--accent-blue);
+    margin-bottom: var(--spacing-sm);
+}
+
+.molecule-score-badge {
+    text-align: right;
+}
+
+.ant-score-large {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--gradient-success);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+}
+
+.score-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.molecule-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.detail-value.positive {
+    color: var(--success-green);
+}
+
+.detail-value.negative {
+    color: var(--danger-red);
+}
+
+.molecule-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--glass-border);
+}
+
+.molecule-market-cap {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.view-details-btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-medium);
+}
+
+.view-details-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* List View Specific Styles */
+.molecule-grid.list-view .molecule-card-research {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--spacing-lg);
+    align-items: center;
+}
+
+.molecule-grid.list-view .molecule-card-header {
+    margin-bottom: 0;
+}
+
+.molecule-grid.list-view .molecule-details {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.molecule-grid.list-view .molecule-footer {
+    border-top: none;
+    padding-top: 0;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+/* Empty State */
+.empty-research-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--spacing-xxl);
+    padding-left: 200px;
+    color: var(--text-secondary);
+    min-height: 400px;
+}
+
+.empty-research-state .empty-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+.empty-research-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.empty-research-state p {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .research-container {
+        padding: var(--spacing-md);
+    }
+
+    .research-header h2 {
+        font-size: 1.8rem;
+    }
+
+    .research-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .research-controls {
+        padding: var(--spacing-md);
+    }
+
+    .filter-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .research-results-info {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: flex-start;
+    }
+
+    .molecule-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+
+    .molecule-grid.list-view .molecule-card-research {
+        grid-template-columns: 1fr;
+    }
+
+    .molecule-grid.list-view .molecule-details {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .molecule-card-research {
+        padding: var(--spacing-md);
+    }
+
+    .molecule-emoji {
+        font-size: 2rem;
+    }
+
+    .molecule-name {
+        font-size: 1.2rem;
+    }
+
+    .ant-score-large {
+        font-size: 2rem;
+    }
 }
 
