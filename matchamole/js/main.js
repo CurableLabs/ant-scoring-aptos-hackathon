@@ -19,6 +19,7 @@ const notificationContainer = document.getElementById('notificationContainer');
 
 let currentCard = null;
 let gestureHandler = null;
+let molecularViewer = null;
 
 // Portfolio tracking
 let portfolio = {
@@ -64,24 +65,50 @@ function showMolecule(molecule) {
     // Clear existing card
     cardContainer.innerHTML = '';
     
+    // Destroy existing molecular viewer
+    if (molecularViewer) {
+        molecularViewer.destroy();
+        molecularViewer = null;
+    }
+    
     // Create molecule card
     const card = document.createElement('div');
     card.className = 'molecule-card';
     card.innerHTML = `
         <div class="card-header">
-            <div class="molecule-emoji">${molecule.emoji}</div>
-            <h2 class="molecule-name">${molecule.name}</h2>
-            <p class="molecule-formula">${molecule.formula}</p>
+            <div class="molecule-header-top">
+                <div class="molecule-info-main">
+                    <div class="molecule-emoji">${molecule.emoji}</div>
+                    <div class="molecule-text">
+                        <h2 class="molecule-name">${molecule.name}</h2>
+                        <p class="molecule-formula">${molecule.formula}</p>
+                    </div>
+                </div>
+                <div class="molecule-3d-container" id="molecule3DViewer">
+                    <!-- 3D Viewer will be inserted here -->
+                </div>
+            </div>
+            <div class="viewer-controls">
+                <button class="viewer-btn" id="toggleRotateBtn" title="Toggle Auto-Rotate">
+                    <i data-lucide="rotate-3d"></i>
+                </button>
+                <button class="viewer-btn" id="cycleStyleBtn" title="Change Style">
+                    <i data-lucide="paintbrush"></i>
+                </button>
+                <button class="viewer-btn" id="resetViewBtn" title="Reset View">
+                    <i data-lucide="rotate-ccw"></i>
+                </button>
+            </div>
         </div>
         
         <!-- Tab Navigation -->
         <div class="tab-navigation">
-            <button class="tab-btn active" data-tab="overview">Overview</button>
-            <button class="tab-btn" data-tab="scientific">Scientific</button>
-            <button class="tab-btn" data-tab="market">Market</button>
-            <button class="tab-btn" data-tab="trials">Trials</button>
-            <button class="tab-btn" data-tab="patents">Patents</button>
-            <button class="tab-btn" data-tab="impact">Impact</button>
+            <button class="tab-btn active" data-tab="overview"><i data-lucide="layout-dashboard"></i> Overview</button>
+            <button class="tab-btn" data-tab="scientific"><i data-lucide="flask-conical"></i> Scientific</button>
+            <button class="tab-btn" data-tab="market"><i data-lucide="trending-up"></i> Market</button>
+            <button class="tab-btn" data-tab="trials"><i data-lucide="clipboard-list"></i> Trials</button>
+            <button class="tab-btn" data-tab="patents"><i data-lucide="file-badge"></i> Patents</button>
+            <button class="tab-btn" data-tab="impact"><i data-lucide="heart-pulse"></i> Impact</button>
         </div>
         
         <!-- Tab Content Container -->
@@ -122,8 +149,61 @@ function showMolecule(molecule) {
     cardContainer.appendChild(card);
     currentCard = card;
     
+    // Initialize Lucide icons in the new card
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+    
     // Setup tab switching
     setupTabSwitching(card);
+    
+    // Setup viewer controls first (they're in the DOM already)
+    const toggleRotateBtn = card.querySelector('#toggleRotateBtn');
+    const cycleStyleBtn = card.querySelector('#cycleStyleBtn');
+    const resetViewBtn = card.querySelector('#resetViewBtn');
+    
+    toggleRotateBtn?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (molecularViewer) {
+            molecularViewer.toggleSpin();
+            this.classList.toggle('active');
+        }
+    });
+    
+    cycleStyleBtn?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (molecularViewer) {
+            const newStyle = molecularViewer.cycleStyle();
+            this.title = `Style: ${newStyle}`;
+        }
+    });
+    
+    resetViewBtn?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (molecularViewer) {
+            molecularViewer.reset();
+            toggleRotateBtn?.classList.remove('active');
+        }
+    });
+    
+    // Initialize 3D Molecular Viewer
+    setTimeout(() => {
+        const viewerContainer = card.querySelector('#molecule3DViewer');
+        if (viewerContainer && typeof MolecularViewer !== 'undefined') {
+            const isMobile = window.innerWidth <= 768;
+            molecularViewer = new MolecularViewer(viewerContainer, {
+                width: isMobile ? 120 : 160,
+                height: isMobile ? 120 : 160,
+                autoRotate: true,
+                glowEffect: true,
+                showLabels: false
+            });
+            molecularViewer.setMolecule(molecule.formula);
+        }
+    }, 100);
     
     // Setup gesture handling (disable swipe up on mobile)
     const isMobile = window.innerWidth <= 768;
@@ -967,6 +1047,22 @@ function renderDashboard() {
         </div>
         ` : ''}
         
+        <!-- Charts Section -->
+        ${portfolio.investments.length > 0 || portfolio.stakes.length > 0 ? `
+        <div class="charts-section">
+            <div class="chart-row">
+                <div class="chart-container-dash">
+                    <h3 class="chart-title">📊 Portfolio Distribution</h3>
+                    <canvas id="portfolioChart"></canvas>
+                </div>
+                <div class="chart-container-dash">
+                    <h3 class="chart-title">📈 Performance Trend</h3>
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+        ` : ''}
+        
         <!-- Recent Activity -->
         ${allActivity.length > 0 ? `
         <div class="dashboard-section">
@@ -997,6 +1093,221 @@ function renderDashboard() {
         </div>
         `}
     `;
+    
+    // Render charts after DOM is updated
+    if (portfolio.investments.length > 0 || portfolio.stakes.length > 0) {
+        setTimeout(() => {
+            createPortfolioChart(moleculeInvestments);
+            createPerformanceChart();
+        }, 100);
+    }
+}
+
+// ====================================
+// CHART CREATION FUNCTIONS
+// ====================================
+
+// Global chart instances
+let portfolioChartInstance = null;
+let performanceChartInstance = null;
+
+// Create Portfolio Distribution Donut Chart
+function createPortfolioChart(moleculeInvestments) {
+    const ctx = document.getElementById('portfolioChart');
+    if (!ctx) return;
+    
+    // Destroy existing chart if any
+    if (portfolioChartInstance) {
+        portfolioChartInstance.destroy();
+    }
+    
+    const molecules = Object.values(moleculeInvestments);
+    const labels = molecules.map(m => `${m.emoji} ${m.name}`);
+    const data = molecules.map(m => m.total);
+    
+    // Generate colors
+    const colors = [
+        'rgba(59, 130, 246, 0.8)',   // Blue
+        'rgba(34, 197, 94, 0.8)',    // Green
+        'rgba(245, 158, 11, 0.8)',   // Orange
+        'rgba(168, 85, 247, 0.8)',   // Purple
+        'rgba(236, 72, 153, 0.8)',   // Pink
+        'rgba(20, 184, 166, 0.8)',   // Teal
+    ];
+    
+    portfolioChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors.slice(0, data.length),
+                borderColor: 'rgba(10, 10, 15, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        padding: 15,
+                        font: {
+                            size: 12,
+                            family: "'Inter', sans-serif"
+                        },
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(10, 10, 15, 0.95)',
+                    titleColor: 'rgba(255, 255, 255, 1)',
+                    bodyColor: 'rgba(255, 255, 255, 0.8)',
+                    borderColor: 'rgba(59, 130, 246, 0.5)',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.parsed;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return ` ${value.toFixed(2)} CURE (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Create Performance Trend Line Chart
+function createPerformanceChart() {
+    const ctx = document.getElementById('performanceChart');
+    if (!ctx) return;
+    
+    // Destroy existing chart if any
+    if (performanceChartInstance) {
+        performanceChartInstance.destroy();
+    }
+    
+    // Generate mock historical data (last 30 days)
+    const days = 30;
+    const labels = [];
+    const values = [];
+    const currentValue = portfolio.totalInvested * 1.15;
+    
+    for (let i = days; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        
+        // Simulate growth curve
+        const progress = 1 - (i / days);
+        const randomVariation = (Math.random() - 0.5) * 0.05; // ±2.5% random variation
+        const value = portfolio.totalInvested * (1 + (0.15 * progress) + randomVariation);
+        values.push(value);
+    }
+    
+    performanceChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Portfolio Value (CURE)',
+                data: values,
+                borderColor: 'rgba(34, 197, 94, 1)',
+                backgroundColor: function(context) {
+                    const ctx = context.chart.ctx;
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                    gradient.addColorStop(0, 'rgba(34, 197, 94, 0.3)');
+                    gradient.addColorStop(1, 'rgba(34, 197, 94, 0)');
+                    return gradient;
+                },
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: 'rgba(34, 197, 94, 1)',
+                pointBorderColor: 'rgba(10, 10, 15, 1)',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: 'rgba(34, 197, 94, 1)',
+                pointHoverBorderColor: 'rgba(255, 255, 255, 1)',
+                pointHoverBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(10, 10, 15, 0.95)',
+                    titleColor: 'rgba(255, 255, 255, 1)',
+                    bodyColor: 'rgba(255, 255, 255, 0.8)',
+                    borderColor: 'rgba(34, 197, 94, 0.5)',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return `Value: ${context.parsed.y.toFixed(2)} CURE`;
+                        },
+                        afterLabel: function(context) {
+                            const change = context.parsed.y - portfolio.totalInvested;
+                            const percent = ((change / portfolio.totalInvested) * 100).toFixed(2);
+                            return `Change: ${change >= 0 ? '+' : ''}${change.toFixed(2)} CURE (${percent}%)`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        font: {
+                            size: 11,
+                            family: "'Inter', sans-serif"
+                        },
+                        callback: function(value) {
+                            return value.toFixed(0) + ' CURE';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        font: {
+                            size: 10,
+                            family: "'Inter', sans-serif"
+                        },
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
 }
 
 // Helper function to format time ago
